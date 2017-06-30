@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a96ba4081c62f3b4e86d568b6d965f92
+timeCreated: 1484750825
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - Title: {instanceID: 0}
+  - Message: {instanceID: 0}
+  - Button: {instanceID: 0}
+  - Panel: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

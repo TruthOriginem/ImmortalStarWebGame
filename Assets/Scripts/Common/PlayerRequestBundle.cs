@@ -469,3 +469,14 @@ public enum BundleFormType
     EQDATA,
     SKILLDATA
 }
+
+public class SyncRequest
+{
+    string requestString;
+    string requestId;
+    public SyncRequest(string id,string content)
+    {
+        requestString = content;
+        requestId = id;
+    }
+}

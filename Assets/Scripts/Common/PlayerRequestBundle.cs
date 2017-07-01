@@ -124,7 +124,14 @@ public class PlayerRequestBundle : MonoBehaviour
     {
         return Instance.StartCoroutine(Instance.ChangeDesignation(id, 1));
     }
-
+    /// <summary>
+    /// 在外部AppendRequest后再进行同步。
+    /// </summary>
+    /// <returns></returns>
+    public static Coroutine RequestSyncUpdate()
+    {
+        return Instance.StartCoroutine(Instance.RequestSyncUpdateCor());
+    }
     const string DESIGNATION_CHANGE_PATH = "scripts/player/designation/updateDesignationData.php";
     /// <summary>
     /// 关于装备/新增称号的迭代器
@@ -232,11 +239,11 @@ public class PlayerRequestBundle : MonoBehaviour
     IEnumerator RequestUpdateRecordCor<T>(T record, IIABinds iia, TempPlayerAttribute attr, TempRandEquipRequest[] requests)
     {
         ConnectUtils.ShowConnectingUI();
-        SyncRequest.AppendRequest("recordData", record == null ? "" : JsonUtility.ToJson(record));
-        SyncRequest.AppendRequest("playerData", attr == null ? "" : JsonUtility.ToJson(attr));
-        SyncRequest.AppendRequest("itemData", iia == null ? "" : iia.GenerateJsonString(false));
-        SyncRequest.AppendRequest("deleteEqData", iia == null ? "" : iia.GenerateJsonString(true));
-        SyncRequest.AppendRequest("rndEquipData", requests == null ? "" : TempRandEquipRequest.GenerateJsonArray(requests));
+        SyncRequest.AppendRequest("recordData", record);
+        SyncRequest.AppendRequest("playerData", attr);
+        SyncRequest.AppendRequest("itemData", iia.GenerateJsonString(false));
+        SyncRequest.AppendRequest("deleteEqData",iia.GenerateJsonString(true));
+        SyncRequest.AppendRequest("rndEquipData", TempRandEquipRequest.GenerateJsonArray(requests));
         WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
         if (ConnectUtils.IsPostSucceed(w))
@@ -250,7 +257,23 @@ public class PlayerRequestBundle : MonoBehaviour
         }
         ConnectUtils.HideConnectingUI();
     }
+    IEnumerator RequestSyncUpdateCor()
+    {
+        WWW w = SyncRequest.CreateSyncWWW();
+        ConnectUtils.ShowConnectingUI();
+        yield return w;
+        ConnectUtils.HideConnectingUI();
+        if (ConnectUtils.IsPostSucceed(w))
+        {
+            yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
 
+        }
+        else
+        {
+            Debug.LogError(w.text);
+            ConnectUtils.ShowConnectFailed();
+        }
+    }
     /// <summary>
     /// 向数据库请求记录，并为指定类赋值
     /// </summary>
@@ -485,10 +508,20 @@ public class SyncRequest
     /// 为下一次同步提交请求消息。
     /// </summary>
     /// <param name="id">请求id</param>
-    /// <param name="content">php收到的数据流/字符串</param>
+    /// <param name="content">php收到的数据流/字符串，若为空则不会发送任何东西</param>
     public static void AppendRequest(string id, string content)
     {
-        requestToUpload.Add(new SyncRequest(id, content));
+        if (!string.IsNullOrEmpty(content))
+        {
+            requestToUpload.Add(new SyncRequest(id, content));
+        }
+    }
+    public static void AppendRequest<T>(string id, T jsonObject)
+    {
+        if (jsonObject != null)
+        {
+            AppendRequest(id, JsonUtility.ToJson(jsonObject));
+        }
     }
     /// <summary>
     /// 集合当前所有创建的请求，合并为一个WWWForm.(发送给UniveralUpdate.php)

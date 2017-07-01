@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System;
 /// <summary>
 /// Json相关的类
 /// </summary>
@@ -28,7 +29,7 @@ namespace SerializedClassForJson
             this.equip_ids_to_delete = equip_ids_to_delete;
 
         }
-        public static IIABinds Create(Dictionary<string,int> itemIdsToAmounts)
+        public static IIABinds Create(Dictionary<string, int> itemIdsToAmounts)
         {
             return new IIABinds(itemIdsToAmounts.Keys.ToArray(), itemIdsToAmounts.Values.ToArray());
         }
@@ -46,7 +47,7 @@ namespace SerializedClassForJson
             sb.Append("[");
             if (deleteEq)
             {
-                if (equip_ids_to_delete ==null || equip_ids_to_delete.Length == 0)
+                if (equip_ids_to_delete == null || equip_ids_to_delete.Length == 0)
                 {
                     return "";
                 }
@@ -79,10 +80,10 @@ namespace SerializedClassForJson
                         sb.Append(",");
                     }
                 }
-                
+
             }
             sb.Append("]");
-            
+
             return sb.ToString();
         }
     }
@@ -131,7 +132,7 @@ namespace SerializedClassForJson
             TempItemIndex temp = new TempItemIndex();
             List<string> item_ids = new List<string>(20);
             List<string> equip_ids = new List<string>(20);
-            List<int> item_indexs= new List<int>(20);
+            List<int> item_indexs = new List<int>(20);
             List<int> equip_indexs = new List<int>(20);
             foreach (var kv in idToIndexs)
             {
@@ -139,7 +140,8 @@ namespace SerializedClassForJson
                 {
                     equip_ids.Add(kv.Key.item_id);
                     equip_indexs.Add(kv.Value);
-                }else
+                }
+                else
                 {
                     item_ids.Add(kv.Key.item_id);
                     item_indexs.Add(kv.Value);
@@ -217,7 +219,7 @@ namespace SerializedClassForJson
         /// </summary>
         /// <param name="source"></param>
         /// <param name="mode"></param>
-        public void CheckAGetEnhanceMode(EquipmentBase source,out EnhanceManager.MODE mode)
+        public void CheckAGetEnhanceMode(EquipmentBase source, out EnhanceManager.MODE mode)
         {
             eha_level = source.eha_level + 1;
             eha_reha = source.eha_reha;
@@ -264,12 +266,15 @@ namespace SerializedClassForJson
         public static string GenerateJsonArray(TempRandEquipRequest[] requests)
         {
             string json = "[";
-            for (int i = 0; i < requests.Length; i++)
+            if (requests != null && requests.Length > 0)
             {
-                json += JsonUtility.ToJson(requests[i]);
-                if (i < requests.Length - 1)
+                for (int i = 0; i < requests.Length; i++)
                 {
-                    json += ",";
+                    json += JsonUtility.ToJson(requests[i]);
+                    if (i < requests.Length - 1)
+                    {
+                        json += ",";
+                    }
                 }
             }
             json += "]";

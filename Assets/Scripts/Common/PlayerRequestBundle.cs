@@ -237,14 +237,6 @@ public class PlayerRequestBundle : MonoBehaviour
         SyncRequest.AppendRequest("itemData", iia == null ? "" : iia.GenerateJsonString(false));
         SyncRequest.AppendRequest("deleteEqData", iia == null ? "" : iia.GenerateJsonString(true));
         SyncRequest.AppendRequest("rndEquipData", requests == null ? "" : TempRandEquipRequest.GenerateJsonArray(requests));
-        /*
-        BundleForm form = new BundleForm();
-        form.SetField("recordData", record == null ? "" : JsonUtility.ToJson(record));
-        form.SetField("playerData", attr == null ? "" : JsonUtility.ToJson(attr));
-        form.SetField("itemData", iia == null ? "" : iia.GenerateJsonString(false));
-        form.SetField("deleteEqData", iia == null ? "" : iia.GenerateJsonString(true));
-        form.SetField("rndEquipData", requests == null ? "" : TempRandEquipRequest.GenerateJsonArray(requests));
-        */
         WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
         if (ConnectUtils.IsPostSucceed(w))

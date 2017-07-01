@@ -322,7 +322,6 @@ public class PlayerInfoInGame : MonoBehaviour
     IEnumerator UpdatePlayerInfo()
     {
         bool needRefreshMoneyAndItem = false;
-        ConnectUtils.ShowConnectingUI();
         //更新成就获取
         if (DesignationManager.DesignToGets.Count > 0)
         {
@@ -331,7 +330,6 @@ public class PlayerInfoInGame : MonoBehaviour
                 yield return PlayerRequestBundle.RequestAddDesignation(DesignationManager.DesignToGets[i]);
             }
             DesignationManager.DesignToGets.Clear();
-
         }
         //先更新人物拥有道具
         yield return PlayerRequestBundle.RequestUpdateItemsInPack();
@@ -341,6 +339,7 @@ public class PlayerInfoInGame : MonoBehaviour
         form.AddField("id", id);
         form.AddField("type", 0);
         WWW w = new WWW(ConnectUtils.ParsePath(UPDATE_PLAYERINFO_FILE_PATH), form);
+        ConnectUtils.ShowConnectingUI();
         yield return w;
         if (ConnectUtils.IsPostSucceed(w))
         {

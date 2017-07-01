@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-public class GlobalSettings
+public static class GlobalSettings
 {
     public static bool SHOW_HEAL_DIALOG = true;//恢复生命时是否提示
     public static bool SHOW_ENHANCE_DIALOG = true;//强化时是否提示

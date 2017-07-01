@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SerializedClassForJson;
 using System.Text;
+using GameId;
 
 /// <summary>
 /// 依附于PlayerInfoInGame
@@ -231,16 +232,22 @@ public class PlayerRequestBundle : MonoBehaviour
     IEnumerator RequestUpdateRecordCor<T>(T record, IIABinds iia, TempPlayerAttribute attr, TempRandEquipRequest[] requests)
     {
         ConnectUtils.ShowConnectingUI();
+        SyncRequest.AppendRequest("recordData", record == null ? "" : JsonUtility.ToJson(record));
+        SyncRequest.AppendRequest("playerData", attr == null ? "" : JsonUtility.ToJson(attr));
+        SyncRequest.AppendRequest("itemData", iia == null ? "" : iia.GenerateJsonString(false));
+        SyncRequest.AppendRequest("deleteEqData", iia == null ? "" : iia.GenerateJsonString(true));
+        SyncRequest.AppendRequest("rndEquipData", requests == null ? "" : TempRandEquipRequest.GenerateJsonArray(requests));
+        /*
         BundleForm form = new BundleForm();
         form.SetField("recordData", record == null ? "" : JsonUtility.ToJson(record));
         form.SetField("playerData", attr == null ? "" : JsonUtility.ToJson(attr));
         form.SetField("itemData", iia == null ? "" : iia.GenerateJsonString(false));
         form.SetField("deleteEqData", iia == null ? "" : iia.GenerateJsonString(true));
         form.SetField("rndEquipData", requests == null ? "" : TempRandEquipRequest.GenerateJsonArray(requests));
-
-        WWW w = new WWW(ConnectUtils.ParsePath(UPDATE_UNIVERSAL_FILEPATH), form.CompleteForm());
+        */
+        WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
-        if (w.isDone && w.text != "failed")
+        if (ConnectUtils.IsPostSucceed(w))
         {
             yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
         }
@@ -469,14 +476,52 @@ public enum BundleFormType
     EQDATA,
     SKILLDATA
 }
-
+/// <summary>
+/// 用于与服务器端同步更新的请求类。
+/// </summary>
 public class SyncRequest
 {
+    static List<SyncRequest> requestToUpload = new List<SyncRequest>();
     string requestString;
     string requestId;
-    public SyncRequest(string id,string content)
+    public SyncRequest(string id, string content)
     {
         requestString = content;
         requestId = id;
+    }
+    /// <summary>
+    /// 为下一次同步提交请求消息。
+    /// </summary>
+    /// <param name="id">请求id</param>
+    /// <param name="content">php收到的数据流/字符串</param>
+    public static void AppendRequest(string id, string content)
+    {
+        requestToUpload.Add(new SyncRequest(id, content));
+    }
+    /// <summary>
+    /// 集合当前所有创建的请求，合并为一个WWWForm.(发送给UniveralUpdate.php)
+    /// </summary>
+    /// <returns></returns>
+    public static WWWForm CompleteRequestForm()
+    {
+        WWWForm form = new WWWForm();
+        for (int i = 0; i < requestToUpload.Count; i++)
+        {
+            var request = requestToUpload[i];
+            form.AddField(request.requestId, request.requestString);
+        }
+        requestToUpload.Clear();
+        form.AddField(Requests.ID, PlayerInfoInGame.Id);
+        form.AddField(Requests.ECKEY, GlobalSettings.GetEncryptKey());
+        return form;
+    }
+    /// <summary>
+    /// 通过SyncRequest集合创建WWW通讯类，会合并被清空所有待同步的SyncRequest。
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static WWW CreateSyncWWW(string path = PlayerRequestBundle.UPDATE_UNIVERSAL_FILEPATH)
+    {
+        return new WWW(ConnectUtils.ParsePath(path), CompleteRequestForm());
     }
 }

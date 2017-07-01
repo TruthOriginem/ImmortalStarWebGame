@@ -7,7 +7,7 @@ namespace GameId
     /// <summary>
     /// 通用的ItemId。
     /// </summary>
-    public class Items
+    public static class Items
     {
         /// <summary>
         /// 再塑秘石
@@ -30,7 +30,7 @@ namespace GameId
     /// <summary>
     /// 常用的游戏字符串.
     /// </summary>
-    public class Infos
+    public static class Infos
     {
         /// <summary>
         /// 当前血量的百分比
@@ -50,9 +50,17 @@ namespace GameId
         public const string ELIMATE_CRI_HIT_PERCENT = "elimate_cri_hit_percent";
     }
     /// <summary>
+    /// SyncRequest请求使用的标识id。
+    /// </summary>
+    public static class Requests
+    {
+        public const string ID = "id";
+        public const string ECKEY = "eckey";
+    }
+    /// <summary>
     /// 常用的技能id。
     /// </summary>
-    public class Skills
+    public static class Skills
     {
         public const string ANTICRI_SHIELD = "anticri_shield";
         public const string DYING_BREAK = "dying_break";
@@ -60,14 +68,14 @@ namespace GameId
     /// <summary>
     /// 常用的称号id。
     /// </summary>
-    public class Designations
+    public static class Designations
     {
         public const int NOTHING = -1;
         public const int CXZ = 1;//初心者
         public const int CJZL = 2;//初见真理
         public const int GWZR = 3;//过往之人
     }
-    public class Stages
+    public static class Stages
     {
         public const string BUNDLE_1_STAGE_1 = "origin";
         public const string BUNDLE_1_STAGE_2 = "prologue";

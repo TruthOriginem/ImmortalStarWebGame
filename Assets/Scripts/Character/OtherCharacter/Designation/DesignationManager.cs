@@ -73,6 +73,9 @@ public class DesignationManager : MonoBehaviour
         designDescription.text = sb.ToString();
         applyButton.interactable = PlayerInfoInGame.Design_NowEquipped != id;
     }
+    /// <summary>
+    /// 按下应用按钮
+    /// </summary>
     public void ApplyDesignChange()
     {
         var id = PlayerInfoInGame.Design_Ids[designDropdown.value];

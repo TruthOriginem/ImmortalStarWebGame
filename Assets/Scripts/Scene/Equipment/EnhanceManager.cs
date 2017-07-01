@@ -384,14 +384,12 @@ public class EnhanceManager : MonoBehaviour
         }
         ConnectUtils.ShowConnectingUI();
         IIABinds bind = new IIABinds(itemDic);
-        BundleForm form = new BundleForm();
-        string data = JsonUtility.ToJson(tempAttr);
-        form.SetField("enhanceEquipData", data);
-        form.SetField("itemData", bind.GenerateJsonString(false));
-        form.SetField("playerData", JsonUtility.ToJson(attr));
-        WWW w = new WWW(ConnectUtils.ParsePath(PlayerRequestBundle.UPDATE_UNIVERSAL_FILEPATH), form.CompleteForm());
+        SyncRequest.AppendRequest("enhanceEquipData", tempAttr);
+        SyncRequest.AppendRequest("itemData", bind.GenerateJsonString(false));
+        SyncRequest.AppendRequest("playerData", attr);
+        WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
-        if (w.isDone && w.text != "failed")
+        if (ConnectUtils.IsPostSucceed(w))
         {
             if (remainToggle.isOn)
             {

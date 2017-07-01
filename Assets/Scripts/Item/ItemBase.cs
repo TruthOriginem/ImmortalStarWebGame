@@ -107,13 +107,13 @@ public class ItemCompoundData
     Dictionary<string, int> compNeeds = new Dictionary<string, int>();
     public int compPrice;
     bool noItems = false;
-    public ItemCompoundData(string item, string[] items, int[] amounts, int price)
+    public ItemCompoundData(string item, string[] needItems, int[] amounts, int price)
     {
-        if (items != null)
+        if (needItems != null)
         {
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0; i < needItems.Length; i++)
             {
-                compNeeds.Add(items[i], amounts[i]);
+                compNeeds.Add(needItems[i], amounts[i]);
                 //Debug.Log(ComedItemId + ":" + items[i] + "/" + amounts[i]);
             }
         }
@@ -123,6 +123,9 @@ public class ItemCompoundData
         }
         compPrice = price;
         ComedItemId = item;
+    }
+    public ItemCompoundData(string item, string needItem, int needAmount, int price) : this(item, new string[] { needItem }, new int[] { needAmount }, price)
+    {
     }
     /// <summary>
     /// 直接访问玩家当前道具数量，并得出是否可合成和合成数量。

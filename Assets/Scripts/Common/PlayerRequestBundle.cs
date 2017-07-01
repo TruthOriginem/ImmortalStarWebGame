@@ -242,7 +242,7 @@ public class PlayerRequestBundle : MonoBehaviour
         SyncRequest.AppendRequest("recordData", record);
         SyncRequest.AppendRequest("playerData", attr);
         SyncRequest.AppendRequest("itemData", iia.GenerateJsonString(false));
-        SyncRequest.AppendRequest("deleteEqData",iia.GenerateJsonString(true));
+        SyncRequest.AppendRequest("deleteEqData", iia.GenerateJsonString(true));
         SyncRequest.AppendRequest("rndEquipData", TempRandEquipRequest.GenerateJsonArray(requests));
         WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
@@ -354,12 +354,11 @@ public class PlayerRequestBundle : MonoBehaviour
     IEnumerator UpdateSkillData(TempSkills skills, int skillPointChange)
     {
         ConnectUtils.ShowConnectingUI();
-        BundleForm form = new BundleForm();
-        form.SetField("skillData", JsonUtility.ToJson(skills));
+        SyncRequest.AppendRequest("skillData", skills);
         TempPlayerAttribute attr = new TempPlayerAttribute();
         attr.skillPoint = skillPointChange;
-        form.SetField("playerData", skillPointChange == 0 ? "" : JsonUtility.ToJson(attr));
-        WWW w = new WWW(ConnectUtils.ParsePath(UPDATE_UNIVERSAL_FILEPATH), form.CompleteForm());
+        SyncRequest.AppendRequest("playerData", skillPointChange == 0 ? null : attr);
+        WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
         if (ConnectUtils.IsPostSucceed(w))
         {
@@ -385,116 +384,9 @@ public class PlayerRequestBundle : MonoBehaviour
     }
 }
 /// <summary>
-/// 用于一次性向php post应该post的表单.
-/// </summary>
-public class BundleForm
-{
-    private WWWForm linkedForm;
-    private Dictionary<string, string> fieldToValues;
-    private bool isCompleted = false;
-    public bool IsCompleted { get { return isCompleted; } }
-    public BundleForm()
-    {
-        linkedForm = new WWWForm();
-        fieldToValues = new Dictionary<string, string>();
-        fieldToValues.Add("id", PlayerInfoInGame.Id);
-        fieldToValues.Add("recordData", "");
-        fieldToValues.Add("itemData", "");
-        fieldToValues.Add("playerData", "");
-        fieldToValues.Add("deleteEqData", "");
-        fieldToValues.Add("rndEquipData", "");
-        fieldToValues.Add("enhanceEquipData", "");
-        fieldToValues.Add("skillData", "");
-        fieldToValues.Add("update", "true");
-        fieldToValues.Add("eckey", GlobalSettings.GetEncryptKey());
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="field"></param>
-    /// <param name="value"></param>
-    /// <returns>是否成功</returns>
-    public bool SetField(string field, string value)
-    {
-        if (!isCompleted)
-        {
-            fieldToValues[field] = value;
-        }
-        return !isCompleted;
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="value"></param>
-    /// <returns>是否成功</returns>
-    public bool SetField(BundleFormType type, string value)
-    {
-        string field = "";
-        switch (type)
-        {
-            case BundleFormType.RECORD:
-                field = "recordData";
-                break;
-            case BundleFormType.IIAITEM:
-                field = "itemData";
-                break;
-            case BundleFormType.PLAYERATTR:
-                field = "playerData";
-                break;
-            case BundleFormType.IIADELETEEQ:
-                field = "deleteEqData";
-                break;
-            case BundleFormType.RNDEQREQUEST:
-                field = "rndEquipData";
-                break;
-            case BundleFormType.EQDATA:
-                field = "enhanceEquipData";
-                break;
-            case BundleFormType.SKILLDATA:
-                field = "skillData";
-                break;
-            default:
-                break;
-        }
-        return SetField(field, value);
-    }
-    /// <summary>
-    /// 完成这个表格并返回WWWForm。
-    /// </summary>
-    public WWWForm CompleteForm()
-    {
-        if (!isCompleted)
-        {
-            foreach (var kv in fieldToValues)
-            {
-                if (!string.IsNullOrEmpty(kv.Value))
-                    linkedForm.AddField(kv.Key, kv.Value);
-            }
-            isCompleted = true;
-        }
-        return linkedForm;
-    }
-    public WWWForm GetForm()
-    {
-        return linkedForm;
-    }
-}
-
-public enum BundleFormType
-{
-    RECORD,
-    IIAITEM,
-    PLAYERATTR,
-    IIADELETEEQ,
-    RNDEQREQUEST,
-    EQDATA,
-    SKILLDATA
-}
-/// <summary>
 /// 用于与服务器端同步更新的请求类。
 /// </summary>
-public class SyncRequest
+public partial class SyncRequest
 {
     static List<SyncRequest> requestToUpload = new List<SyncRequest>();
     string requestString;

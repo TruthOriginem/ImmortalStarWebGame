@@ -37,9 +37,14 @@ public class BatStageData{
     /// <returns></returns>
     public bool IsClear()
     {
-        return grids[grids.Length - 1].IsCompleted();
+        bool isComplete = true;
+        for (int i = 0; i < grids.Length; i++)
+        {
+            if (!grids[i].IsCompleted()) isComplete = false;
+        }
+        return isComplete;
     }
-
+    /*
     public static BatStageData GenerateBatStageData(BattleStage stage)
     {
         BatStageData data = new BatStageData();
@@ -50,4 +55,5 @@ public class BatStageData{
         data.preGridIds = stage.preGridIds;
         return data;
     }
+    */
 }

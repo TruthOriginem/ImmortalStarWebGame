@@ -88,7 +88,7 @@ public class BattleInstanceTooltip : MonoBehaviour
 
             if (limitation.preGridIds != null && limitation.preGridIds.Length != 0)
             {
-                sb.AppendLine(TextUtils.GetColoredText("<size=18>解锁该关卡条件：</size>",255,30,30,255));
+                sb.AppendLine(TextUtils.GetColoredText("<size=18>解锁该关卡条件：</size>", 255, 30, 30, 255));
                 for (int i = 0; i < limitation.preGridIds.Length; i++)
                 {
                     var limitGrid = ScenarioManager.GetGridDataById(limitation.preGridIds[i]);
@@ -123,6 +123,7 @@ public class BattleInstanceTooltip : MonoBehaviour
                 return null;
             }
             totalExp += group.amount * (attr.baseP.exp + attr.growth.exp * (group.enemy.Level - 1));
+            sb.Append("· ");
             sb.AppendLine(attr.name + " Lv." + group.enemy.Level + " x " + group.amount);
             //遍历指定怪物种类的掉落信息
             for (int i = 0; i < attr.dropItems.Length; i++)
@@ -150,7 +151,8 @@ public class BattleInstanceTooltip : MonoBehaviour
         }
         sb.AppendLine();
         sb.AppendLine(TextUtils.GetSizedString("基本掉落", 18));
-        sb.Append("经验: ");
+        sb.Append("▽ ");
+        sb.Append(TextUtils.GetExpText("经验: "));
         if (PlayerInfoInGame.VIP_Level >= 1)
         {
             sb.Append(totalExp);
@@ -164,12 +166,18 @@ public class BattleInstanceTooltip : MonoBehaviour
         }
         foreach (var kv in idsToLarge)
         {
-            string toAppend = ItemDataManager.GetItemName(kv.Key) + " : " + idsToLeast[kv.Key] + " ~ " + idsToLarge[kv.Key];
+            bool isMoney = kv.Key == "money";
+            sb.Append(isMoney ? "▽ " : "▼ ");
+            sb.Append(isMoney ? TextUtils.GetMoneyText(ItemDataManager.GetItemName(kv.Key)) : ItemDataManager.GetItemName(kv.Key));
+            sb.Append(" : ");
+            sb.Append(idsToLeast[kv.Key]);
+            sb.Append(" ~ ");
+            sb.Append(idsToLarge[kv.Key]);
+
             if (PlayerInfoInGame.VIP_Level >= 1)
             {
-                sb.Append(toAppend);
                 sb.Append("<color=#FFAE00FF>(+");
-                if (kv.Key == "money")
+                if (isMoney)
                 {
                     sb.Append(Mathf.RoundToInt((BattleAwardMult.GetMoneyMult() - 1f) * 100f));
                 }
@@ -178,10 +186,6 @@ public class BattleInstanceTooltip : MonoBehaviour
                     sb.Append(Mathf.RoundToInt((BattleAwardMult.GetDropMult() - 1f) * 100f));
                 }
                 sb.AppendLine("%)</color>");
-            }
-            else
-            {
-                sb.AppendLine(toAppend);
             }
         }
         sb.AppendLine();

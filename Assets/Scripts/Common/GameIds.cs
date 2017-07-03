@@ -56,6 +56,12 @@ namespace GameId
     {
         public const string ID = "id";
         public const string ECKEY = "eckey";
+        public const string PLAYER_DATA = "playerData";
+        public const string RECORD_DATA = "recordData";
+        public const string ITEM_DATA = "itemData";
+        public const string EQ_TO_DELETE_DATA = "deleteEqData";
+        public const string RND_EQ_GENA_DATA = "rndEquipData";
+        public const string EQ_ENHANCE_DATA = "enhanceEquipData";
     }
     /// <summary>
     /// 常用的技能id。

@@ -54,6 +54,14 @@ public static class TextUtils
     {
         return "<color=#00D4FFFF>" + text + "</color>";
     }
+    public static string GetMoneyText(string text)
+    {
+        return "<color=#00B5FFFF>" + text + "</color>";
+    }
+    public static string GetExpText(string text)
+    {
+        return "<color=#977DFFFF>" + text + "</color>";
+    }
     public static string GetSpbText(string text)
     {
         return "<b><color=#67FFFFFF>" + text + "</color></b>";
@@ -124,5 +132,30 @@ public static class TextUtils
         sb.Append(text);
         sb.Append("</size>");
         return sb.ToString();
+    }
+    /// <summary>
+    /// 10000 = 10k,10000000 = 10m,100000000 = 10kw
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns></returns>
+    public static string GetOmitNumberString(long number)
+    {
+        if (number >= 100000000)
+        {
+            return (number / 10000000).ToString() + "kw";
+        }
+        else if (number >= 10000000)
+        {
+            return (number / 1000000).ToString() + "m";
+        }
+        else if (number >= 10000)
+        {
+            return (number / 1000).ToString() + "k";
+        }
+        else
+        {
+            return number.ToString();
+        }
+
     }
 }

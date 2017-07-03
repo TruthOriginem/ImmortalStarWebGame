@@ -239,11 +239,11 @@ public class PlayerRequestBundle : MonoBehaviour
     IEnumerator RequestUpdateRecordCor<T>(T record, IIABinds iia, TempPlayerAttribute attr, TempRandEquipRequest[] requests)
     {
         ConnectUtils.ShowConnectingUI();
-        SyncRequest.AppendRequest("recordData", record);
-        SyncRequest.AppendRequest("playerData", attr);
-        SyncRequest.AppendRequest("itemData", iia.GenerateJsonString(false));
-        SyncRequest.AppendRequest("deleteEqData", iia.GenerateJsonString(true));
-        SyncRequest.AppendRequest("rndEquipData", TempRandEquipRequest.GenerateJsonArray(requests));
+        SyncRequest.AppendRequest(Requests.RECORD_DATA, record);
+        SyncRequest.AppendRequest(Requests.PLAYER_DATA, attr);
+        SyncRequest.AppendRequest(Requests.ITEM_DATA, iia!=null?iia.GenerateJsonString(false):null);
+        SyncRequest.AppendRequest(Requests.EQ_TO_DELETE_DATA, iia != null ? iia.GenerateJsonString(true):null);
+        SyncRequest.AppendRequest(Requests.RND_EQ_GENA_DATA, TempRandEquipRequest.GenerateJsonArray(requests));
         WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
         if (ConnectUtils.IsPostSucceed(w))
@@ -287,7 +287,7 @@ public class PlayerRequestBundle : MonoBehaviour
         form.AddField("id", PlayerInfoInGame.Id);
         WWW w = new WWW(ConnectUtils.ParsePath(GET_LIG_FILEPATH), form);
         yield return w;
-        if (w.isDone && w.text != "failed")
+        if (ConnectUtils.IsPostSucceed(w))
         {
             string json = w.text;
             record = JsonUtility.FromJson<T>(json);

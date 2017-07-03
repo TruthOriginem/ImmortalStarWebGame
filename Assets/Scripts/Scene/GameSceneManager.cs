@@ -76,7 +76,16 @@ public class GameSceneManager : MonoBehaviour
             sb.Append("能量值： ");
             sb.AppendLine(TextUtils.GetMpText(playerProperty.GetDynamicPropertyValue(PROPERTY_TYPE.MMP).ToString("0")));
             sb.Append("经验值： <color=#9D6EFFFF>");
-            sb.AppendLine(PlayerInfoInGame.Exp + "/" + PlayerInfoInGame.NextExp + "</color>");
+            sb.Append(TextUtils.GetOmitNumberString(PlayerInfoInGame.Exp));
+            sb.Append("/");
+            sb.Append(TextUtils.GetOmitNumberString(PlayerInfoInGame.NextExp));
+            sb.Append("<size=14>(");
+            if (PlayerInfoInGame.NextExp == 0)
+            {
+                PlayerInfoInGame.NextExp = 1;
+            }
+            sb.Append(Mathf.RoundToInt((float)PlayerInfoInGame.Exp / PlayerInfoInGame.NextExp * 100f));
+            sb.AppendLine("%)</size></color>");
             Dictionary<PROPERTY_TYPE, IProperty> properties = PlayerInfoInGame.Instance.GetDynamicProperties();
             foreach (var kv in properties)
             {

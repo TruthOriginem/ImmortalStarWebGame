@@ -384,9 +384,9 @@ public class EnhanceManager : MonoBehaviour
         }
         ConnectUtils.ShowConnectingUI();
         IIABinds bind = new IIABinds(itemDic);
-        SyncRequest.AppendRequest("enhanceEquipData", tempAttr);
-        SyncRequest.AppendRequest("itemData", bind.GenerateJsonString(false));
-        SyncRequest.AppendRequest("playerData", attr);
+        SyncRequest.AppendRequest(Requests.EQ_ENHANCE_DATA, tempAttr);
+        SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.GenerateJsonString(false));
+        SyncRequest.AppendRequest(Requests.PLAYER_DATA, attr);
         WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
         if (ConnectUtils.IsPostSucceed(w))

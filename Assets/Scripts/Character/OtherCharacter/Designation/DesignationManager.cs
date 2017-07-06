@@ -1,4 +1,5 @@
 ﻿using GameId;
+using SerializedClassForJson;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -172,7 +173,7 @@ public class DesignationManager : MonoBehaviour
     {
         if (!CheckDesignationOwned(id))
         {
-            DesignToGets.Add(id);
+            if (!DesignToGets.Contains(id)) DesignToGets.Add(id);
         }
     }
     /// <summary>
@@ -240,6 +241,13 @@ public class DesignationManager : MonoBehaviour
         if (amount >= 15)
         {
             CheckAndTryGetDesign(Designations.GWZR);
+        }
+    }
+    public static void CheckExtremeLevelDesign(TempStageExLevelRecord[] exRec)
+    {
+        if (exRec != null && exRec.Length != 0)
+        {
+            CheckAndTryGetDesign(Designations.JXTXZ);
         }
     }
 }

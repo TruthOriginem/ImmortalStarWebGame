@@ -18,7 +18,7 @@ public class BatStageData
     public BatInsGridData[] grids;
     private bool isActable = true;
     private int extremeLevel;
-    public const float MULT_PER_EXLEVEL = 0.25f;
+    public const float MULT_PER_EXLEVEL = 1.25f;
     /// <summary>
     /// 是否可以交互(解锁)。
     /// </summary>
@@ -48,6 +48,16 @@ public class BatStageData
         {
             extremeLevel = value;
         }
+    }
+    public float GetMultiExLevelFactor()
+    {
+        float resultf = 1f;
+        int ex = extremeLevel;
+        while (ex-- > 0)
+        {
+            resultf *= MULT_PER_EXLEVEL;
+        }
+        return resultf;
     }
     /// <summary>
     /// 包含极限等级，通关等修饰的地区名。

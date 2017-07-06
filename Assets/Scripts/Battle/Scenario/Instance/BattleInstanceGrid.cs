@@ -116,7 +116,7 @@ private void Start()
     /// </summary>
     public void BeginTheBattle(CanvasGroup battlePart)
     {
-        if (HangUpManager.Instance.isHanging)
+        if (HangUpManager.isHanging)
         {
             MessageBox.Show("挂机状态的时候不能战斗！");
             return;

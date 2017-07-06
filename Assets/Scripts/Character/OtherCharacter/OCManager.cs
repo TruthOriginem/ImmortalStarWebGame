@@ -15,6 +15,7 @@ public class OCManager : MonoBehaviour
     }
     public static void Refresh()
     {
+        Instance.initToggle.isOn = false;
         Instance.initToggle.isOn = true;
     }
 }

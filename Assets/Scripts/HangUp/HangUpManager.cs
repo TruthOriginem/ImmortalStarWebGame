@@ -48,7 +48,7 @@ public class HangUpManager : MonoBehaviour
     /// 表示挂机中，挂机时无法战斗
     /// </summary>
     [HideInInspector]
-    public bool isHanging = false;
+    public static bool isHanging = false;
     /// <summary>
     /// 如果为true将LoadScene
     /// </summary>

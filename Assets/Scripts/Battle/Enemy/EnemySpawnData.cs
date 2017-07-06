@@ -27,7 +27,7 @@ public class EnemySpawnData
                 var group = enemyGroups[i];
                 var enemy = new BaseEnemy();
                 enemy.id = group.enemy.id;
-                enemy.Level = Mathf.RoundToInt(group.enemy.Level * (1f + (data.ExtremeLevel) * BatStageData.MULT_PER_EXLEVEL));
+                enemy.Level = Mathf.RoundToInt(group.enemy.Level * data.GetMultiExLevelFactor());
                 enemy.showIcon = group.enemy.showIcon;
                 var newGroup = new EnemyGroup();
                 newGroup.enemy = enemy;

@@ -186,8 +186,9 @@ public class BattleInstanceTooltip : MonoBehaviour
                 {
                     sb.Append(Mathf.RoundToInt((BattleAwardMult.GetDropMult() - 1f) * 100f));
                 }
-                sb.AppendLine("%)</color>");
+                sb.Append("%)</color>");
             }
+            sb.AppendLine();
         }
         sb.AppendLine();
         sb.Append(TextUtils.GetSizedString(grid.eqDrop.GetDropInfoToolTip(), 13));

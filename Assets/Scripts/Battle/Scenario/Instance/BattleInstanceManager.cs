@@ -146,6 +146,7 @@ public class BattleInstanceManager : MonoBehaviour
 
             DesignationManager.CheckGridsCompleteDesign(ifCompletedGrids);
             DesignationManager.CheckMaxAttackAmountDesign(maxAttackAmount);
+            DesignationManager.CheckExtremeLevelDesign(stageExs);
         }
         else
         {

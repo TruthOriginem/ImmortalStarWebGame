@@ -324,12 +324,14 @@ public class PlayerInfoInGame : MonoBehaviour
     {
         bool needRefreshMoneyAndItem = false;
         //更新成就获取
+        bool updateDesign = false;
         if (DesignationManager.DesignToGets.Count > 0)
         {
             for (int i = 0; i < DesignationManager.DesignToGets.Count; i++)
             {
                 yield return PlayerRequestBundle.RequestAddDesignation(DesignationManager.DesignToGets[i]);
             }
+            updateDesign = true;
             DesignationManager.DesignToGets.Clear();
         }
         //先更新人物拥有道具
@@ -383,6 +385,7 @@ public class PlayerInfoInGame : MonoBehaviour
             IIABinds binds = new IIABinds(new string[] { Items.MONEY_CHEST }, new int[] { 1 });
             yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, binds, tempattr, null);
         }
+        if (updateDesign) OCManager.Refresh();
         //System.GC.Collect();
     }
 

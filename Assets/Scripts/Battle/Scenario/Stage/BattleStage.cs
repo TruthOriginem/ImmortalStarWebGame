@@ -115,6 +115,11 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     /// </summary>
     public void UpgradeExtremeLevel()
     {
+        if (HangUpManager.isHanging)
+        {
+            MessageBox.Show("挂机状态的时候不能进行极限升级！");
+            return;
+        }
         List<string> optionContents = new List<string>();
         List<UnityAction> optionActions = new List<UnityAction>();
         if (ItemDataManager.GetItemAmount(Items.EXTREME_CRYSTAL_LV1) > 0)
@@ -159,6 +164,7 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         SyncRequest.AppendRequest(Requests.EX_LEVEL_DATA, exdata);
         SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.GenerateJsonString(false));
         yield return PlayerRequestBundle.RequestSyncUpdate();
+        BattleLayerManager.Instance.Init();
     }
 
     public void OnPointerEnter(PointerEventData eventData)

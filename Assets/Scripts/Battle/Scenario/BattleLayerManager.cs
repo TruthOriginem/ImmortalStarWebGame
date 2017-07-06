@@ -47,7 +47,7 @@ public class BattleLayerManager : MonoBehaviour
         yield return BattleInstanceManager.Instance.RefreshAllGrids();
         yield return PlayerRequestBundle.RequestGetRecord<TempLigRecord>();
         TempLigRecord record = PlayerRequestBundle.record as TempLigRecord;
-        HangUpManager.Instance.isHanging = record.lig_hangTime >= 0;
+        HangUpManager.isHanging = record.lig_hangTime >= 0;
         ScenarioManager.Instance.InitOrRefreshBattleStageWindow();
     }
     public void Push(CanvasGroup group)

@@ -40,7 +40,9 @@ public class BattleInstanceManager : MonoBehaviour
         yield return w;
         if (ConnectUtils.IsDownloadCompleted(w) && ConnectUtils.IsPostSucceed(w))
         {
-            TempBattleInGridRecord[] gridInfos = JsonHelper.GetJsonArray<TempBattleInGridRecord>(w.text);
+            TempInstanceRecord record = JsonUtility.FromJson<TempInstanceRecord>(w.text);
+            TempBattleInGridRecord[] gridInfos = record.gridRecords;
+            TempStageExLevelRecord[] stageExs = record.stageRecords;
             //计入临时词典，映射为：关卡id-玩家攻击次数
             Dictionary<string, int> tempMap = new Dictionary<string, int>();
             //用于获得成就-第一次被完成的关卡
@@ -51,6 +53,12 @@ public class BattleInstanceManager : MonoBehaviour
             {
                 tempMap.Add(gridInfos[i].id, gridInfos[i].tc);
             }
+            for (int i = 0; i < stageExs.Length; i++)
+            {
+                var id = stageExs[i].id;
+                var data = ScenarioManager.GetStageDataById(id);
+                data.ExtremeLevel = stageExs[i].lv;
+            }
             //处理所有关卡
             foreach (var gridData in ScenarioManager.Instance.GetAllGridDatas())
             {
@@ -58,6 +66,8 @@ public class BattleInstanceManager : MonoBehaviour
                 string id = gridData.id;
                 //具体关卡实例
                 var grid = gridData;
+                grid.Interactive = false;
+                grid.SetCompleted(false);
                 var limitation = grid.limit;
                 //处理关卡的前置关卡
                 if (limitation.preGridIds == null || limitation.preGridIds.Length == 0)
@@ -75,7 +85,8 @@ public class BattleInstanceManager : MonoBehaviour
                         //如果词典无该关卡键，则说明该关卡未被攻略
                         if (!tempMap.ContainsKey(needId))
                         {
-                            grid.SetCanNotAttack();
+                            isInteractable = false;
+                            break;
                         }
                     }
                     grid.Interactive = isInteractable;
@@ -116,8 +127,12 @@ public class BattleInstanceManager : MonoBehaviour
                         //如果前置关卡未解锁，那么该Stage也设置为未解锁
                         if (!grid.IsCompleted())
                         {
-                            isActable = false;
+                            if (!grid.GetParentStageData().IsCompleted())
+                            {
+                                isActable = false;
+                            }
                         }
+
                     }
                     stage.Unlocked = isActable;
                 }

@@ -115,7 +115,8 @@ public class BattleInstanceTooltip : MonoBehaviour
         Dictionary<string, int> idsToLeast = new Dictionary<string, int>();
         Dictionary<string, int> idsToLarge = new Dictionary<string, int>();
         int totalExp = 0;
-        foreach (EnemyGroup group in grid.enemys.enemyGroups)
+        var actualEnemyGroup = grid.enemys.GetActualData(grid.sId);
+        foreach (EnemyGroup group in actualEnemyGroup.enemyGroups)
         {
             EnemyAttribute attr = EnemyDataManager.AskForEnemyAttribute(group.enemy.id);
             if (attr == null)

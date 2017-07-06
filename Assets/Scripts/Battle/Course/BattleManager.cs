@@ -174,7 +174,7 @@ public class BattleManager : MonoBehaviour
         nowBattleType = BATTLE_TYPE.NORMAL;
         autoBattleToggle.gameObject.SetActive(true);
         battleResult = new BattleResult();
-        return StartCoroutine(InitBattleCor(instance.enemys));
+        return StartCoroutine(InitBattleCor(instance.enemys.GetActualData(instance.sId)));
     }
     /// <summary>
     /// 远征的战斗。

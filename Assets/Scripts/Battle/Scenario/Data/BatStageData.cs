@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 [System.Serializable]
-public class BatStageData{
+public class BatStageData
+{
     public int index;
     public string sId;
     /// <summary>
@@ -15,7 +17,8 @@ public class BatStageData{
     public string[] preGridIds;
     public BatInsGridData[] grids;
     private bool isActable = true;
-
+    private int extremeLevel;
+    public const float MULT_PER_EXLEVEL = 0.25f;
     /// <summary>
     /// 是否可以交互(解锁)。
     /// </summary>
@@ -32,7 +35,42 @@ public class BatStageData{
         }
     }
     /// <summary>
-    /// 是否已经通关，需要确保玩家刷新了关卡内容。
+    /// 极限等级
+    /// </summary>
+    public int ExtremeLevel
+    {
+        get
+        {
+            return extremeLevel;
+        }
+
+        set
+        {
+            extremeLevel = value;
+        }
+    }
+    /// <summary>
+    /// 包含极限等级，通关等修饰的地区名。
+    /// </summary>
+    /// <returns></returns>
+    public string GetModifiedName()
+    {
+        StringBuilder sb = new StringBuilder(name);
+        if (extremeLevel > 0)
+        {
+            sb.Append("<size=18>(");
+            sb.Append("极限<color=red>");
+            sb.Append(extremeLevel);
+            sb.Append("</color>)</size>");
+        }
+        if (IsClear())
+        {
+            sb.Append(TextUtils.GetYellowText("<size=12>★</size>"));
+        }
+        return sb.ToString();
+    }
+    /// <summary>
+    /// 返回玩家当前Stage的所有关卡是否都已完成。(极限升级后重启时，关卡的完成状态会重启)
     /// </summary>
     /// <returns></returns>
     public bool IsClear()
@@ -43,6 +81,18 @@ public class BatStageData{
             if (!grids[i].IsCompleted()) isComplete = false;
         }
         return isComplete;
+    }
+    /// <summary>
+    /// Stage是否已经被完成过。如果有极限等级则返回True。
+    /// </summary>
+    /// <returns></returns>
+    public bool IsCompleted()
+    {
+        if (extremeLevel > 0)
+        {
+            return true;
+        }
+        return IsClear();
     }
     /*
     public static BatStageData GenerateBatStageData(BattleStage stage)

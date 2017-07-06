@@ -25,19 +25,15 @@ public class BattleStageBundle : MonoBehaviour
         for (int i = 0; i < data.stages.Length; i++)
         {
             var stageData = data.stages[i];
-            BattleStage stage = Instantiate(stagePrefab, bundle, false).GetComponent<BattleStage>();
+            BattleStage stage = Instantiate(stagePrefab, bundle, false).GetComponentInChildren<BattleStage>();
             stage.stageId = stageData.sId;
-            StringBuilder sb = new StringBuilder(stageData.name);
-            if (stageData.IsClear())
-            {
-                sb.Append(TextUtils.GetYellowText("<size=12>(通关)</size>"));
-            }
-            stage.stageName = sb.ToString();
+            stage.stageName = stageData.GetModifiedName() ;
             stage.stageDescription = stageData.des;
             stage.imageFileName = stageData.imageFileName;
             stage.preGridIds = stageData.preGridIds;
             stage.LinkedStageData = stageData;
             stage.stageButtonText.text = stage.stageName;
+            stage.stageLevelUpButton.gameObject.SetActive(stageData.IsClear() ? true : false);
             stage.InitStageImage();
             stage.SetActable(stageData.Unlocked);
         }

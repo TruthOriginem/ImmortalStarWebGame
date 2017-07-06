@@ -56,7 +56,7 @@ public class BattleResult
         IIABinds binds = null;
         if (grid != null)
         {
-            EnemySpawnData data = grid.enemys;
+            EnemySpawnData data = grid.enemys.GetActualData(grid.sId);
             long totalExp;//经验总计
             int money;//金钱统计
             Dictionary<string, int> idsToAmount = GenerateResultsDict(data, true, true, 1, out money, out totalExp);

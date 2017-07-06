@@ -53,7 +53,7 @@ public class BattleInstanceGridPool : MonoBehaviour
             var grid = stageData.grids[i];
             SetObjectsData(grid, grid.index);
         }
-        stageNameText.text = stageData.name;
+        stageNameText.text = stageData.GetModifiedName();
     }
     /// <summary>
     /// 设置指定对象的信息。

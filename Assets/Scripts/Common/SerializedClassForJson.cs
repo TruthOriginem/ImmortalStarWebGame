@@ -29,6 +29,11 @@ namespace SerializedClassForJson
             this.equip_ids_to_delete = equip_ids_to_delete;
 
         }
+        public IIABinds(string item_id,int amount) : this(new string[] { item_id},new int[] { amount })
+        {
+
+        }
+        
         public static IIABinds Create(Dictionary<string, int> itemIdsToAmounts)
         {
             return new IIABinds(itemIdsToAmounts.Keys.ToArray(), itemIdsToAmounts.Values.ToArray());
@@ -307,6 +312,21 @@ namespace SerializedClassForJson
     public class TempSkills
     {
         public TempSkillData[] datas;
+    }
+    [System.Serializable]
+    public class TempInstanceRecord
+    {
+        public TempBattleInGridRecord[] gridRecords;
+        public TempStageExLevelRecord[] stageRecords;
+    }
+    /// <summary>
+    /// 记录关卡极限等级。
+    /// </summary>
+    [System.Serializable]
+    public class TempStageExLevelRecord
+    {
+        public string id;
+        public int lv;
     }
     /// <summary>
     /// 用于记录关卡信息的，具体是否可以攻击取决于数据库的数据。

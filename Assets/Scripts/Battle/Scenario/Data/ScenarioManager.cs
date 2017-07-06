@@ -59,6 +59,7 @@ public class ScenarioManager : MonoBehaviour
                         //处理grid
                         gridDict.Add(stage.grids[q].id, stage.grids[q]);
                         stage.grids[q].SetParentStageData(stage);
+                        stage.grids[q].sId = stage.sId;
 #if UNITY_EDITOR
                         var grid = stage.grids[q];
                         var dropbundle = grid.eqDrop;

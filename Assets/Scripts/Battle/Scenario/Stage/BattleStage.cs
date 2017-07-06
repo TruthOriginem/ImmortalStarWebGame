@@ -4,6 +4,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using GameId;
+using UnityEngine.Events;
+using SerializedClassForJson;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -19,6 +22,7 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [Header("必须组件")]
     public Text stageButtonText;
     public Image stageImage;
+    public Button stageLevelUpButton;
     [Header("开启该幕需要通关的关卡id")]
     public string[] preGridIds;
 
@@ -106,11 +110,55 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             w.Dispose();
         }
     }
-
-
-
-    void Start()
+    /// <summary>
+    /// 点击“极限升级”会调用的方法。
+    /// </summary>
+    public void UpgradeExtremeLevel()
     {
+        List<string> optionContents = new List<string>();
+        List<UnityAction> optionActions = new List<UnityAction>();
+        if (ItemDataManager.GetItemAmount(Items.EXTREME_CRYSTAL_LV1) > 0)
+        {
+            optionContents.Add("使用 <color=red>极限水晶Lv.1</color> (+1极限等级)");
+            optionActions.Add(() => { PlayerInfoInGame._StartCoroutine(_UpgradeExtremeLevel(Items.EXTREME_CRYSTAL_LV1)); });
+        }
+        if (optionContents.Count == 0 && optionActions.Count == 0)
+        {
+            MessageBox.Show("非常抱歉，你目前没有能极限升级的道具(例如极限水晶)。", "提示", null, MessageBoxButtons.OK);
+        }
+        else
+        {
+            optionContents.Add("取消");
+            optionActions.Add(() => { });
+            MenuBox.Show(optionContents, optionActions, "极限升级选项");
+        }
+    }
+    /// <summary>
+    /// 具体迭代器。
+    /// </summary>
+    /// <param name="itemId"></param>
+    /// <returns></returns>
+    IEnumerator _UpgradeExtremeLevel(string itemId)
+    {
+        var exdata = new TempUpgradeExtremeLevel();
+        exdata.stageId = stageId;
+        List<string> gridIds = new List<string>();
+        for (int i = 0; i < linkedStageData.grids.Length; i++)
+        {
+            var grid = linkedStageData.grids[i];
+            gridIds.Add(grid.id);
+        }
+        exdata.gridsToRemove = gridIds.ToArray();
+        exdata.levelToAdd = 1;
+        //判断道具并决定升几级
+        if (itemId == Items.EXTREME_CRYSTAL_LV1)
+        {
+            exdata.levelToAdd = 1;
+        }
+        IIABinds bind = new IIABinds(itemId, -1);
+        SyncRequest.AppendRequest(Requests.EX_LEVEL_DATA, exdata);
+        SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.GenerateJsonString(false));
+        yield return PlayerRequestBundle.RequestSyncUpdate();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -139,4 +187,11 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         return isActable;
     }
+}
+[Serializable]
+public class TempUpgradeExtremeLevel
+{
+    public string stageId;
+    public int levelToAdd;
+    public string[] gridsToRemove;
 }

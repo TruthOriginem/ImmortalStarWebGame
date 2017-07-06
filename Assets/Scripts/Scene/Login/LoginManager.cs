@@ -77,7 +77,7 @@ public class LoginManager : MonoBehaviour
         ConnectUtils.HideConnectingUI();
         if (w.error == null)
         {
-            if (w.text == "fail")
+            if (w.text == ConnectUtils.FAILED)
             {
                 MessageBox.Show("密码错误！", null, MessageBoxButtons.OK);
                 m_InputPwField.text = "";
@@ -89,6 +89,7 @@ public class LoginManager : MonoBehaviour
             }
             else
             {
+                Debug.Log(w.text);
                 LoginData data = JsonUtility.FromJson<LoginData>(w.text);
                 m_LoadingBar.gameObject.SetActive(true);
                 loginWindow.SetActive(false);

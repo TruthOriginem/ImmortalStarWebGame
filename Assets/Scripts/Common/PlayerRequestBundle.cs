@@ -125,7 +125,7 @@ public class PlayerRequestBundle : MonoBehaviour
         return Instance.StartCoroutine(Instance.ChangeDesignation(id, 1));
     }
     /// <summary>
-    /// 在外部AppendRequest后再进行同步。
+    /// 在外部AppendRequest后再进行同步。完成后更新玩家信息。
     /// </summary>
     /// <returns></returns>
     public static Coroutine RequestSyncUpdate()
@@ -265,8 +265,8 @@ public class PlayerRequestBundle : MonoBehaviour
         ConnectUtils.HideConnectingUI();
         if (ConnectUtils.IsPostSucceed(w))
         {
+            //Debug.Log(w.text);
             yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
-
         }
         else
         {

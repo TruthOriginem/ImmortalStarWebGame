@@ -42,7 +42,9 @@ public class BattleStageTooltip : MonoBehaviour
     {
         RefreshPosition();
         this.gameObject.SetActive(true);
-        title.text = stage.stageName;
+        StringBuilder nameSb = new StringBuilder();
+        nameSb.Append(stage.stageName);
+        title.text = nameSb.ToString();
         if (stage.GetActable())
         {
             content.text = stage.stageDescription;

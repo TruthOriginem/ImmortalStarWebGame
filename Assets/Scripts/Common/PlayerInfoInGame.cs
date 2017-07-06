@@ -232,6 +232,7 @@ public class PlayerInfoInGame : MonoBehaviour
             StartCoroutine(UpdatePlayerInfo());
         }
         */
+        //StartCoroutine(UpdatePlayerInfo());
         while (true)
         {
             yield return new WaitForSeconds(60);
@@ -521,7 +522,10 @@ public class PlayerInfoInGame : MonoBehaviour
     {
         return 5 * level * level - 5 * level + 10;
     }
-
+    public static Coroutine _StartCoroutine(IEnumerator coroutine)
+    {
+        return Instance.StartCoroutine(coroutine);
+    }
 
 }
 /// <summary>

@@ -26,6 +26,7 @@ namespace GameId
         public const string SPB_PIECE = "spb_piece";
         public const string CARD_EXP_DOUBLE = "card_for_expDouble";
         public const string CARD_DROP_DOUBLE = "card_for_dropDouble";
+        public const string EXTREME_CRYSTAL_LV1 = "extreme_crystal_lv1";
     }
     /// <summary>
     /// 常用的游戏字符串.
@@ -62,6 +63,7 @@ namespace GameId
         public const string EQ_TO_DELETE_DATA = "deleteEqData";
         public const string RND_EQ_GENA_DATA = "rndEquipData";
         public const string EQ_ENHANCE_DATA = "enhanceEquipData";
+        public const string EX_LEVEL_DATA = "exLevelAddData";
     }
     /// <summary>
     /// 常用的技能id。

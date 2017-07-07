@@ -12,8 +12,6 @@ public static class ItemModal
     /// </summary>
     public static Dictionary<string, ItemUI> modals = new Dictionary<string, ItemUI>();
 
-    public static Dictionary<string, Sprite> itemIconModals = new Dictionary<string, Sprite>();
-
     public static void AddItemUI(string gridName, ItemUI itemUI)
     {
         if (modals.ContainsKey(gridName))
@@ -45,33 +43,5 @@ public static class ItemModal
         modals.Clear();
     }
 
-    public static void AddIconByPath(string path, Sprite icon)
-    {
-        if (itemIconModals.ContainsKey(path))
-        {
-            itemIconModals[path] = icon;
-        }
-        else
-        {
-            itemIconModals.Add(path, icon);
-        }
-    }
-    public static void RemoveIconByPath(string path)
-    {
-        if (itemIconModals.ContainsKey(path))
-        {
-            itemIconModals.Remove(path);
-        }
-    }
-    public static Sprite GetIconByPath(string path)
-    {
-        if (itemIconModals.ContainsKey(path))
-        {
-            return itemIconModals[path];
-        }
-        else
-        {
-            return null;
-        }
-    }
+
 }

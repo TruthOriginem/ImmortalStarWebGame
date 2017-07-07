@@ -470,8 +470,8 @@ public class BattleManager : MonoBehaviour
         List<Dropdown.OptionData> optionDatas = new List<Dropdown.OptionData>();
         foreach (BattleUnit unit in battle.enemyUnits)
         {
-            Texture2D texture = EnemyDataManager.AskForEnemyAttribute(unit.id).iconTexture;
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            var enemy = EnemyDataManager.AskForEnemyAttribute(unit.id);
+            Sprite sprite = enemy.GetIconSprite();
             string name = unit.name;
             Dropdown.OptionData optionData = new Dropdown.OptionData(name, sprite);
             optionDatas.Add(optionData);

@@ -46,9 +46,9 @@ public class SkillDataManager : MonoBehaviour
             return null;
         }
         string iconName = IDS_TO_SKILLS[id].GetIconName();
-        if (ItemModal.GetIconByPath(iconName) != null)
+        if (SpriteLibrary.GetSprite(iconName) != null)
         {
-            return ItemModal.GetIconByPath(iconName);
+            return SpriteLibrary.GetSprite(iconName);
         }
         else
         {
@@ -63,17 +63,18 @@ public class SkillDataManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator RequestLoadTexture(string iconName)
     {
-        if (ItemModal.GetIconByPath(iconName) == null)
+        if (SpriteLibrary.GetSprite(iconName) == null)
         {
             ConnectUtils.ShowConnectingUI();
-            WWW w = new WWW(ConnectUtils.ParsePath("icons/skills/" + iconName + ".png"));
+            string path = "icons/skills/" + iconName + ".png";
+            WWW w = new WWW(ConnectUtils.ParsePath(path));
             yield return w;
-            if (w.isDone && w.error == null)
+            if (ConnectUtils.IsDownloadCompleted(w))
             {
                 Texture2D iconTex = w.texture;
                 Sprite _icon = Sprite.Create(iconTex, new Rect(0, 0, iconTex.width, iconTex.height), new Vector2(0.5f, 0.5f));
                 ///预加载
-                ItemModal.AddIconByPath(iconName, _icon);
+                SpriteLibrary.AddSprite(path, _icon);
                 ///
             }
             else

@@ -94,7 +94,7 @@ public class EnhanceManager : MonoBehaviour
             }
 
             data.text = sb.ToString();
-            data.image = ItemModal.GetIconByPath(equip.GetIconPath());
+            data.image = SpriteLibrary.GetSprite(equip.GetIconPath());
             eqOptionDatas.Add(data);
             if (remainWeaponId != null && remainWeaponId == equip.item_id)
             {
@@ -161,7 +161,7 @@ public class EnhanceManager : MonoBehaviour
         tempAttr.CheckAGetEnhanceMode(selectedEquip, out mode);
         if (data.image == null)
         {
-            data.image = ItemModal.GetIconByPath(eqLists[index].GetIconPath());
+            data.image = SpriteLibrary.GetSprite(eqLists[index].GetIconPath());
         }
         //原来武器的字符串
         StringBuilder oriSb = new StringBuilder();

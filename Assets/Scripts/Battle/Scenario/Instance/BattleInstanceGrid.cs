@@ -134,10 +134,7 @@ private void Start()
     }
     public void RefreshIcon()
     {
-        if (icon.sprite != null)
-        {
-            Destroy(icon.sprite);
-        }
+        
         for (int i = 0; i < enemyContainer.enemyGroups.Count; i++)
         {
             var group = enemyContainer.enemyGroups[i];
@@ -146,8 +143,7 @@ private void Start()
                 EnemyAttribute eAttr = EnemyDataManager.AskForEnemyAttribute(group.enemy.id);
                 if (eAttr != null)
                 {
-                    Texture2D texture = eAttr.iconTexture;
-                    icon.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                    icon.sprite = eAttr.GetIconSprite();
                     return;
                 }
             }

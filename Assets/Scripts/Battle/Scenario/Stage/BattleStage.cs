@@ -83,9 +83,9 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     IEnumerator DownLoadImage()
     {
         var path = IMAGE_FOLDER_PATH + imageFileName + IMAGE_FILE_SUFFIX;
-        if (ItemModal.GetIconByPath(path) != null)
+        if (SpriteLibrary.GetSprite(path) != null)
         {
-            stageImage.sprite = ItemModal.GetIconByPath(path);
+            stageImage.sprite = SpriteLibrary.GetSprite(path);
         }
         else
         {
@@ -97,7 +97,7 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             {
                 Texture2D texture = w.texture;
                 Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                ItemModal.AddIconByPath(path, sprite);
+                SpriteLibrary.AddSprite(path, sprite);
                 stageImage.sprite = sprite;
             }
             else

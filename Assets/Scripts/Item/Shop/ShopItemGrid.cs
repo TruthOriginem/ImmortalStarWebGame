@@ -30,7 +30,7 @@ public class ShopItemGrid : MonoBehaviour
             if (linkedItem != null)
             {
                 itemName.text = linkedItem.name;
-                itemImage.sprite = ItemModal.GetIconByPath(linkedItem.GetIconPath());
+                itemImage.sprite = SpriteLibrary.GetSprite(linkedItem.GetIconPath());
                 if (itemImage.sprite != null)
                 {
                     isDirty = false;

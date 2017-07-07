@@ -84,9 +84,9 @@ public class ItemUI : MonoBehaviour
     /// </summary>
     public void LoadTexture()
     {
-        if (ItemModal.GetIconByPath(linkedItem.GetIconPath()) != null)
+        if (SpriteLibrary.GetSprite(linkedItem.GetIconPath()) != null)
         {
-            SetIcon(ItemModal.GetIconByPath(linkedItem.GetIconPath()));
+            SetIcon(SpriteLibrary.GetSprite(linkedItem.GetIconPath()));
         }
         else
         {
@@ -100,9 +100,9 @@ public class ItemUI : MonoBehaviour
     IEnumerator RequestLoadTexture()
     {
         ConnectUtils.ShowConnectingUI();
-        if (ItemModal.GetIconByPath(linkedItem.GetIconPath()) != null)
+        if (SpriteLibrary.GetSprite(linkedItem.GetIconPath()) != null)
         {
-            SetIcon(ItemModal.GetIconByPath(linkedItem.GetIconPath()));
+            SetIcon(SpriteLibrary.GetSprite(linkedItem.GetIconPath()));
         }
         else
         {
@@ -117,7 +117,7 @@ public class ItemUI : MonoBehaviour
 
                 Sprite _icon = Sprite.Create(iconTex, new Rect(0, 0, iconTex.width, iconTex.height), new Vector2(0.5f, 0.5f));
                 ///预加载
-                ItemModal.AddIconByPath(linkedItem.GetIconPath(), _icon);
+                SpriteLibrary.AddSprite(linkedItem.GetIconPath(), _icon);
                 ///
                 SetIcon(_icon);
             }
@@ -126,9 +126,9 @@ public class ItemUI : MonoBehaviour
                 if (w.error != null)
                 {
                     Debug.LogWarning(w.error);
-                    w.Dispose();
                 }
             }
+            w.Dispose();
         }
         ConnectUtils.HideConnectingUI();
     }

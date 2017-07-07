@@ -40,7 +40,7 @@ public class ItemCompReadingPart : MonoBehaviour
         }
         linkedCompoundData = data;
         ItemBase item = ItemDataManager.GetItemBase(data.ComedItemId);
-        itemIconImage.sprite = ItemModal.GetIconByPath(item.GetIconPath());
+        itemIconImage.sprite = SpriteLibrary.GetSprite(item.GetIconPath());
         itemNameText.text = item.name;
         itemDesText.text = item.description;
         int amount;

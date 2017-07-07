@@ -208,7 +208,7 @@ public class ItemDataManager : MonoBehaviour
 
     IEnumerator RequestLoadTexture(ItemBase linkedItem)
     {
-        if (ItemModal.GetIconByPath(linkedItem.GetIconPath()) == null)
+        if (SpriteLibrary.GetSprite(linkedItem.GetIconPath()) == null)
         {
             WWW w = new WWW(ConnectUtils.ParsePath(linkedItem.GetIconPath()));
             ConnectUtils.ShowConnectingUI();
@@ -219,7 +219,7 @@ public class ItemDataManager : MonoBehaviour
                 Texture2D iconTex = w.texture;
                 Sprite _icon = Sprite.Create(iconTex, new Rect(0, 0, iconTex.width, iconTex.height), new Vector2(0.5f, 0.5f));
                 ///预加载
-                ItemModal.AddIconByPath(linkedItem.GetIconPath(), _icon);
+                SpriteLibrary.AddSprite(linkedItem.GetIconPath(), _icon);
                 ///
             }
             else

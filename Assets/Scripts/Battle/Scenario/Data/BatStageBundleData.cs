@@ -9,6 +9,9 @@ public class BatStageBundleData {
     public string bundleDes;
     public string[] preGridIds;
     public BatStageData[] stages;
+    /// <summary>
+    /// 该剧集里的地区、地区里的关卡，进行排序。
+    /// </summary>
     public void Sort()
     {
         List<BatStageData> stageList = new List<BatStageData>(stages);

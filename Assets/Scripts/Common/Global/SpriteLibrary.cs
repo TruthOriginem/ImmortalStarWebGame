@@ -19,7 +19,7 @@ public static class SpriteLibrary
             //Resources.UnloadAsset(pathToSprites[path]);
             var oldSprite = pathToSprites[path];
             pathToSprites[path] = icon;
-            Object.Destroy(oldSprite);
+            if (oldSprite != null) Object.Destroy(oldSprite);
         }
         else
         {
@@ -30,10 +30,17 @@ public static class SpriteLibrary
     {
         if (pathToSprites.ContainsKey(path))
         {
+            var oldSprite = pathToSprites[path];
             pathToSprites.Remove(path);
+            if (oldSprite != null) Object.Destroy(oldSprite);
         }
         Resources.UnloadUnusedAssets();
     }
+    /// <summary>
+    /// 返回该路径的Sprite
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
     public static Sprite GetSprite(string path)
     {
         if (pathToSprites.ContainsKey(path))
@@ -44,5 +51,14 @@ public static class SpriteLibrary
         {
             return null;
         }
+    }
+    public static bool IsSpriteDownLoading(string path)
+    {
+        return pathToSprites.ContainsKey(path);
+    }
+    public static void SetSpriteDownLoading(string path)
+    {
+        RemoveSpriteByPath(path);
+        pathToSprites.Add(path, null);
     }
 }

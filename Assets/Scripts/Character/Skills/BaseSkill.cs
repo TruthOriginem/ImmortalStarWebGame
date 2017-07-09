@@ -60,6 +60,10 @@ public class BaseSkill
     {
         return icon_name;
     }
+    public string GetIconPath()
+    {
+        return "icons/skills/" + GetIconName() + ".png";
+    }
     public string GetDescription()
     {
         return description;

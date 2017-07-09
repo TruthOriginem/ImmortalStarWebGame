@@ -18,11 +18,6 @@ public class ScenarioManager : MonoBehaviour
     {
         Instance = this;
     }
-
-    void Update()
-    {
-
-    }
     public static Coroutine InitAllScenarioData()
     {
         return Instance.StartCoroutine(Instance.DownLoadAllScenario());
@@ -37,10 +32,11 @@ public class ScenarioManager : MonoBehaviour
 
     IEnumerator DownLoadAllScenario()
     {
-        ConnectUtils.ShowConnectingUI();
         WWW w = new WWW(ConnectUtils.ParsePath(PATH));
+        ConnectUtils.ShowConnectingUI();
         yield return w;
-        if (w.isDone && w.text != ConnectUtils.FAILED)
+        ConnectUtils.HideConnectingUI();
+        if (ConnectUtils.IsPostSucceed(w))
         {
             BatStageBundleData[] bundles = JsonHelper.GetJsonArray<BatStageBundleData>(w.text);
             bundleDatas = new List<BatStageBundleData>(bundles);
@@ -54,6 +50,7 @@ public class ScenarioManager : MonoBehaviour
                 {
                     //处理stage
                     var stage = bundle.stages[j];
+                    // StringBuilder gridIds = new StringBuilder();
                     for (int q = 0; q < stage.grids.Length; q++)
                     {
                         //处理grid
@@ -63,18 +60,22 @@ public class ScenarioManager : MonoBehaviour
 #if UNITY_EDITOR
                         var grid = stage.grids[q];
                         var dropbundle = grid.eqDrop;
+                        //gridIds.Append("\"");
+                        //gridIds.Append(grid.id);
+                        // gridIds.Append("\",");
                         foreach (var drop in dropbundle.randInfos)
                         {
                             DebugLoadManager.eqdroplists[(int)drop.type]++;
                         }
 #endif
                     }
+                    //Debug.Log(gridIds.ToString());
                     stageDict.Add(stage.sId, stage);
                 }
             }
 #if UNITY_EDITOR
             StringBuilder sb = new StringBuilder();
-            for(int i =0;i<DebugLoadManager.eqdroplists.Count;i++)
+            for (int i = 0; i < DebugLoadManager.eqdroplists.Count; i++)
             {
                 var amount = DebugLoadManager.eqdroplists[i];
                 sb.Append(EquipmentBase.GetEqTypeNameByType((EQ_TYPE)i));
@@ -87,11 +88,9 @@ public class ScenarioManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.HideConnectingUI();
             ConnectUtils.ShowConnectFailed();
             yield break;
         }
-        ConnectUtils.HideConnectingUI();
     }
     public List<BatInsGridData> GetAllGridDatas()
     {

@@ -45,14 +45,14 @@ public class SkillDataManager : MonoBehaviour
         {
             return null;
         }
-        string iconName = IDS_TO_SKILLS[id].GetIconName();
-        if (SpriteLibrary.GetSprite(iconName) != null)
+        string path = IDS_TO_SKILLS[id].GetIconPath();
+        if (SpriteLibrary.GetSprite(path) != null)
         {
-            return SpriteLibrary.GetSprite(iconName);
+            return SpriteLibrary.GetSprite(path);
         }
         else
         {
-            Instance.StartCoroutine(Instance.RequestLoadTexture(iconName));
+            Instance.StartCoroutine(Instance.RequestLoadTexture(path));
             return null;
         }
     }
@@ -61,12 +61,12 @@ public class SkillDataManager : MonoBehaviour
     /// </summary>
     /// <param name="iconName"></param>
     /// <returns></returns>
-    IEnumerator RequestLoadTexture(string iconName)
+    IEnumerator RequestLoadTexture(string path)
     {
-        if (SpriteLibrary.GetSprite(iconName) == null)
+        if (!SpriteLibrary.IsSpriteDownLoading(path))
         {
+            SpriteLibrary.SetSpriteDownLoading(path);
             ConnectUtils.ShowConnectingUI();
-            string path = "icons/skills/" + iconName + ".png";
             WWW w = new WWW(ConnectUtils.ParsePath(path));
             yield return w;
             if (ConnectUtils.IsDownloadCompleted(w))
@@ -76,13 +76,12 @@ public class SkillDataManager : MonoBehaviour
                 ///预加载
                 SpriteLibrary.AddSprite(path, _icon);
                 ///
+                //Debug.Log(path);
             }
             else
             {
-                if (w.error != null)
-                {
-                    Debug.LogWarning(w.error);
-                }
+                Debug.LogWarning(w.error);
+                ConnectUtils.ShowConnectFailed();
             }
             ConnectUtils.HideConnectingUI();
             w.Dispose();

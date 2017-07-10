@@ -163,6 +163,7 @@ public class BattleResult
                 expeInfo.maxLightYear = info.targetLightYear > info.nowMaxLightYear ? info.targetLightYear : info.nowMaxLightYear;
                 expeInfo.ifEscaped = false;
                 BattleManager.ResultString = sb.ToString();
+                //Debug.Log(expeInfo.nowLightYear);
                 yield return PlayerRequestBundle.RequestUpdateRecord(expeInfo, binds, pattr);
             }
             else

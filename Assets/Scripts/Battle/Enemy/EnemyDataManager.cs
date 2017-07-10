@@ -99,11 +99,12 @@ public class EnemyDataManager : MonoBehaviour
             return idToEnmeyAttribute[id];
         }
         else
-        {
+        {   /*
             //先设置为null
             idToEnmeyAttribute.Add(id, null);
             //开始尼玛的下载
             StartCoroutine(DownLoadEnemyAttribute(id));
+            */
             return null;
         }
     }

@@ -83,6 +83,7 @@ namespace GameId
         public const int CJZL = 2;//初见真理
         public const int GWZR = 3;//过往之人
         public const int JXTXZ = 4;//极限探寻者
+        public const int CZYH = 5;//持之以恒
     }
     public static class Stages
     {

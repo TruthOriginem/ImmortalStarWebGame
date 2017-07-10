@@ -92,7 +92,7 @@ public class BaseSkill
     /// <returns></returns>
     public bool CanBeUpgraded()
     {
-        return PlayerInfoInGame.SkillPoint > GetNeedSP() && Level < GetLimitedLevel();
+        return PlayerInfoInGame.SkillPoint >= GetNeedSP() && Level < GetLimitedLevel();
     }
     /// <summary>
     /// 获得相应完整的技能档案

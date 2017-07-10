@@ -20,10 +20,6 @@ public class BattleInstanceManager : MonoBehaviour
         Instance = this;
     }
 
-    void Update()
-    {
-
-    }
     /// <summary>
     /// 刷新所有关卡的情况,并在之后刷新BattleStage的情况。
     /// </summary>

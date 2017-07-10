@@ -45,6 +45,7 @@ public class DesignationManager : MonoBehaviour
         designDropdown.ClearOptions();
         if (PlayerInfoInGame.Design_Ids.Count == 0)
         {
+            applyButton.interactable = false;
             return;
         }
         int index = 0;

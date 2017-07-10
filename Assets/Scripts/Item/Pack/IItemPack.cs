@@ -11,7 +11,7 @@ public interface IItemPack {
     void SetPackLevel(int level);
     int GetPackLevel();
     int GetPackMaxLevel();
-
+    bool IsPackHasLevel();
 }
 public enum ItemPackCostType
 {

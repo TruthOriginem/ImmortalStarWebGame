@@ -22,6 +22,7 @@ public class PlayerRequestBundle : MonoBehaviour
     public const string UPDATE_UNIVERSAL_FILEPATH = "scripts/player/universalUpdate.php";
     private const string GET_LIG_FILEPATH = "scripts/player/instance/getLastInstanceGrid.php";
     private const string GET_SKILLS_FILEPATH = "scripts/player/skill/getSkillDatas.php";
+    private const string GIVE_SUGGESTION = "scripts/player/system/giveSuggestion.php";
     public static PlayerRequestBundle Instance { get; set; }
 
     void Awake()
@@ -241,8 +242,8 @@ public class PlayerRequestBundle : MonoBehaviour
         ConnectUtils.ShowConnectingUI();
         SyncRequest.AppendRequest(Requests.RECORD_DATA, record);
         SyncRequest.AppendRequest(Requests.PLAYER_DATA, attr);
-        SyncRequest.AppendRequest(Requests.ITEM_DATA, iia!=null?iia.GenerateJsonString(false):null);
-        SyncRequest.AppendRequest(Requests.EQ_TO_DELETE_DATA, iia != null ? iia.GenerateJsonString(true):null);
+        SyncRequest.AppendRequest(Requests.ITEM_DATA, iia != null ? iia.GenerateJsonString(false) : null);
+        SyncRequest.AppendRequest(Requests.EQ_TO_DELETE_DATA, iia != null ? iia.GenerateJsonString(true) : null);
         SyncRequest.AppendRequest(Requests.RND_EQ_GENA_DATA, TempRandEquipRequest.GenerateJsonArray(requests));
         WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
@@ -373,14 +374,38 @@ public class PlayerRequestBundle : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// 这个空的attr会让目标php获得需要变更的数值（相对的）
-    /// </summary>
-    /// <returns></returns>
-    public static TempPlayerAttribute CreateEmpty()
+    public void GiveSuggestion()
     {
-        TempPlayerAttribute attr = new TempPlayerAttribute();
-        return attr;
+        InputStringBox.Show("请输入您的宝贵意见", "提示", (result, text) =>
+        {
+            if (result == DialogResult.OK)
+            {
+                if (text.Length >= 5)
+                {
+                    StartCoroutine(_GiveSuggestion(text));
+                }else
+                {
+                    MessageBox.Show("请不要低于5个字！", "提示");
+                }
+
+            }
+        }, MessageBoxButtons.OKCancel);
+    }
+    IEnumerator _GiveSuggestion(string text)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("player_id", PlayerInfoInGame.Id);
+        form.AddField("content", text);
+        WWW w = new WWW(ConnectUtils.ParsePath(GIVE_SUGGESTION), form);
+        yield return w;
+        if (ConnectUtils.IsPostSucceed(w))
+        {
+            MessageBox.Show("感谢您的宝贵意见！", "谢谢");
+        }
+        else
+        {
+            ConnectUtils.ShowConnectFailed();
+        }
     }
 }
 /// <summary>
@@ -441,4 +466,5 @@ public partial class SyncRequest
     {
         return new WWW(ConnectUtils.ParsePath(path), CompleteRequestForm());
     }
+
 }

@@ -92,7 +92,10 @@ public class EnhanceManager : MonoBehaviour
                 sb.Append(equip.eha_reha);
                 sb.Append("]");
             }
-
+            if (equip.IsEquipped())
+            {
+                sb.Append("<color=yellow>(E)</color>");
+            }
             data.text = sb.ToString();
             data.image = SpriteLibrary.GetSprite(equip.GetIconPath());
             eqOptionDatas.Add(data);

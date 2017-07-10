@@ -6,6 +6,7 @@ using UnityEngine;
 /// </summary>
 public static class SpriteLibrary
 {
+    public const Sprite LOADING = null;
     public static Dictionary<string, Sprite> pathToSprites = new Dictionary<string, Sprite>();
     /// <summary>
     /// 往指定路径里保存Sprite。会覆盖之前的Sprite。
@@ -59,6 +60,6 @@ public static class SpriteLibrary
     public static void SetSpriteDownLoading(string path)
     {
         RemoveSpriteByPath(path);
-        pathToSprites.Add(path, null);
+        pathToSprites.Add(path, LOADING);
     }
 }

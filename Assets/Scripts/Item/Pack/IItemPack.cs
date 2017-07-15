@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IItemPack {
-    string GetPackId();
-    int GetWorthMoney();
-    int GetWorthDimen();
-    Dictionary<string, int> GetItemToAmounts();
+    int GetPackId();
+    string GetPackName();
+    string GetPackDescription();
+    string GetPackIconPath();
+    Currency GetWorthMoney();
+    Currency GetWorthDimen();
+    Dictionary<string, Currency> GetItemToAmounts();
 
     void SetPackLevel(int level);
     int GetPackLevel();
-    int GetPackMaxLevel();
     bool IsPackHasLevel();
+    bool IsFree();
+
+    bool CanBeRecievedNow();
 }
 public enum ItemPackCostType
 {

@@ -26,10 +26,6 @@ public class DesignationManager : MonoBehaviour
         Instance = this;
     }
 
-    void Update()
-    {
-
-    }
     public void ToggleThis(bool toggle)
     {
         if (toggle)

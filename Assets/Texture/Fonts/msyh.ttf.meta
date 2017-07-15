@@ -9,9 +9,11 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
+  fontName: 
   fontNames:
   - msyhbd
-  fallbackFontReferences: []
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: dd317cc860af51c49aa0b6b7b3b2d8fc, type: 3}
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1

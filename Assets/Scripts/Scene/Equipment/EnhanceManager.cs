@@ -332,7 +332,7 @@ public class EnhanceManager : MonoBehaviour
     {
         yield return ItemDataManager.GetItemsAmount();
         EquipmentBase equipment = GetSelectedEquip();
-        Dictionary<string, int> itemDic = new Dictionary<string, int>();
+        Dictionary<string, Currency> itemDic = new Dictionary<string, Currency>();
         TempPlayerAttribute attr = new TempPlayerAttribute();
         MODE mode;
         tempAttr.CheckAGetEnhanceMode(equipment, out mode);
@@ -372,7 +372,7 @@ public class EnhanceManager : MonoBehaviour
         }
         if (type != 0)
         {
-            string name = ItemDataManager.GetItemName(Items.SPB_PIECE);
+            //string name = ItemDataManager.GetItemName(Items.SPB_PIECE);
             float divi = type == 1 ? 1000 : type == 2 ? 400 : 1;//除数
             int amount = Mathf.RoundToInt(equipment.GetSpb() / divi * equipment.GetAllocatedLevel());
             amount = amount >= type ? amount : type;//最低灵基碎片需要1或2

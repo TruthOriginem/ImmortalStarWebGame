@@ -148,7 +148,7 @@ public class ItemCompReadingPart : MonoBehaviour
         }
         //开始上传结果
         TempPlayerAttribute attr;
-        Dictionary<string, int> dict = linkedCompoundData.GetCompDict(amount, out attr);
+        Dictionary<string, Currency> dict = linkedCompoundData.GetCompDict(amount, out attr);
         ConnectUtils.ShowConnectingUI();
         yield return PlayerRequestBundle.RequestUpdateIIA(new IIABinds(dict), attr);
         ItemCompManager.Instance.InitOrRefresh(false);

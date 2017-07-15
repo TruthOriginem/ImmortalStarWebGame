@@ -14,27 +14,27 @@ namespace SerializedClassForJson
     public class IIABinds
     {
         public string[] item_ids;
-        public int[] amounts;
+        public Currency[] amounts;
         public string[] equip_ids_to_delete;
-        public IIABinds(string[] item_ids, int[] amounts, string[] equip_ids_to_delete = null)
+        public IIABinds(string[] item_ids, Currency[] amounts, string[] equip_ids_to_delete = null)
         {
             this.item_ids = item_ids;
             this.amounts = amounts;
             this.equip_ids_to_delete = equip_ids_to_delete;
         }
-        public IIABinds(Dictionary<string, int> idsToAmounts, string[] equip_ids_to_delete = null)
+        public IIABinds(Dictionary<string, Currency> idsToAmounts, string[] equip_ids_to_delete = null)
         {
             this.item_ids = idsToAmounts.Keys.ToArray();
             this.amounts = idsToAmounts.Values.ToArray();
             this.equip_ids_to_delete = equip_ids_to_delete;
 
         }
-        public IIABinds(string item_id,int amount) : this(new string[] { item_id},new int[] { amount })
+        public IIABinds(string item_id, Currency amount) : this(new string[] { item_id }, new Currency[] { amount })
         {
 
         }
-        
-        public static IIABinds Create(Dictionary<string, int> itemIdsToAmounts)
+
+        public static IIABinds Create(Dictionary<string, Currency> itemIdsToAmounts)
         {
             return new IIABinds(itemIdsToAmounts.Keys.ToArray(), itemIdsToAmounts.Values.ToArray());
         }
@@ -374,4 +374,5 @@ namespace SerializedClassForJson
         public int maxLightYear;//曾经到达过的最大里程数
         public bool ifEscaped;//上次是否逃跑了
     }
+    //public class Temp
 }

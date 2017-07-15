@@ -9,6 +9,8 @@ namespace GameId
     /// </summary>
     public static class Items
     {
+        public const string MONEY = "money";
+        public const string DIMEN = "dimen";
         /// <summary>
         /// 再塑秘石
         /// </summary>
@@ -64,6 +66,7 @@ namespace GameId
         public const string RND_EQ_GENA_DATA = "rndEquipData";
         public const string EQ_ENHANCE_DATA = "enhanceEquipData";
         public const string EX_LEVEL_DATA = "exLevelAddData";
+        public const string GIFT_PACK_DATA = "giftPackData";
     }
     /// <summary>
     /// 常用的技能id。
@@ -92,4 +95,9 @@ namespace GameId
         public const string BUNDLE_1_STAGE_3 = "uavcastle";
         public const string BUNDLE_1_STAGE_4 = "uavrefuge";
     }
+    
+}
+public enum ItemPacks
+{
+    SIGN_IN = 0
 }

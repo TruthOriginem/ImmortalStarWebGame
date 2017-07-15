@@ -290,7 +290,7 @@ public class ExpeditionManager : MonoBehaviour
     /// BattleResult调用函数，用于生成特殊掉落
     /// </summary>
     /// <param name="items"></param>
-    public static void AddExepSpecItemsToDict(Dictionary<string, int> items, ExpeditionBattleInfo info)
+    public static void AddExepSpecItemsToDict(Dictionary<string, Currency> items, ExpeditionBattleInfo info)
     {
         float mult = BattleAwardMult.GetExpeditionDropMult();
         float baseChance = info.targetLightYear * 0.03f;

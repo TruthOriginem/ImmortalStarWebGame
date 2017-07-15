@@ -59,7 +59,7 @@ public class BattleResult
             EnemySpawnData data = grid.enemys.GetActualData(grid.sId);
             long totalExp;//经验总计
             int money;//金钱统计
-            Dictionary<string, int> idsToAmount = GenerateResultsDict(data, true, true, 1, out money, out totalExp);
+            Dictionary<string, Currency> idsToAmount = GenerateResultsDict(data, true, true, 1, out money, out totalExp);
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(TextUtils.GetSizedString("结算:", 20));
 
@@ -73,7 +73,7 @@ public class BattleResult
             }
             if (ItemDataManager.GetItemAmount(Items.CARD_DROP_DOUBLE) >= 1)
             {
-                var temp = new Dictionary<string, int>(idsToAmount);
+                var temp = new Dictionary<string, Currency>(idsToAmount);
                 foreach (var key in temp.Keys)
                 {
                     idsToAmount[key] = temp[key] * 2;
@@ -85,7 +85,7 @@ public class BattleResult
             sb.AppendLine("获得星币 " + money);
             sb.AppendLine("获得经验 " + totalExp);
             string[] items_ids = idsToAmount.Keys.ToArray();//里面不存在，在更新道具的时候
-            int[] amounts = idsToAmount.Values.ToArray();
+            Currency[] amounts = idsToAmount.Values.ToArray();
             for (int i = 0; i < items_ids.Length; i++)
             {
                 if (amounts[i] > 0) sb.AppendLine(ItemDataManager.GetItemName(items_ids[i]) + " x " + amounts[i]);
@@ -145,12 +145,12 @@ public class BattleResult
             {
                 EnemySpawnData data = info.enemySpawnData;
                 //掉落
-                Dictionary<string, int> idsToAmount = GenerateExpeditionResultsDict(data, info);
+                Dictionary<string, Currency> idsToAmount = GenerateExpeditionResultsDict(data, info);
 
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(TextUtils.GetSizedString("结算:", 20));
                 string[] items_ids = idsToAmount.Keys.ToArray();//里面不存在，在更新道具的时候
-                int[] amounts = idsToAmount.Values.ToArray();
+                Currency[] amounts = idsToAmount.Values.ToArray();
                 for (int i = 0; i < items_ids.Length; i++)
                 {
                     if (amounts[i] > 0) sb.AppendLine(ItemDataManager.GetItemName(items_ids[i]) + " x " + amounts[i]);
@@ -192,7 +192,7 @@ public class BattleResult
     /// <param name="money"></param>
     /// <param name="exp"></param>
     /// <returns></returns>
-    public static Dictionary<string, int> GenerateResultsDict(EnemySpawnData data, bool doRandom, bool countMult, int times, out int money, out long exp)
+    public static Dictionary<string, Currency> GenerateResultsDict(EnemySpawnData data, bool doRandom, bool countMult, int times, out int money, out long exp)
     {
         if (data == null)
         {
@@ -200,7 +200,7 @@ public class BattleResult
             money = 0;
             return null;
         }
-        Dictionary<string, int> idsToAmount = new Dictionary<string, int>();
+        Dictionary<string, Currency> idsToAmount = new Dictionary<string, Currency>();
         exp = 0;//经验总计
         foreach (EnemyGroup group in data.enemyGroups)
         {
@@ -261,10 +261,10 @@ public class BattleResult
     /// </summary>
     /// <param name="data">怪物组</param>
     /// <returns></returns>
-    public static Dictionary<string, int> GenerateExpeditionResultsDict(EnemySpawnData data, ExpeditionBattleInfo info)
+    public static Dictionary<string, Currency> GenerateExpeditionResultsDict(EnemySpawnData data, ExpeditionBattleInfo info)
     {
 
-        Dictionary<string, int> idsToAmount = new Dictionary<string, int>();
+        Dictionary<string, Currency> idsToAmount = new Dictionary<string, Currency>();
         foreach (EnemyGroup group in data.enemyGroups)
         {
             int e_amount = group.amount;

@@ -167,9 +167,9 @@ public class ItemCompoundData
     /// </summary>
     /// <param name="amount"></param>
     /// <returns></returns>
-    public Dictionary<string, int> GetCompDict(int amount, out TempPlayerAttribute attr)
+    public Dictionary<string, Currency> GetCompDict(int amount, out TempPlayerAttribute attr)
     {
-        var result = new Dictionary<string, int>();
+        var result = new Dictionary<string, Currency>();
         foreach (var kv in compNeeds)
         {
             result.Add(kv.Key, -kv.Value * amount);

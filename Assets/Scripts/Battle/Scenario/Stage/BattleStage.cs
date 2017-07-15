@@ -96,16 +96,14 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             if (ConnectUtils.IsDownloadCompleted(w))
             {
                 Texture2D texture = w.texture;
+                texture.Compress(true);
                 Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                 SpriteLibrary.AddSprite(path, sprite);
                 stageImage.sprite = sprite;
             }
             else
             {
-                if (w.error != null)
-                {
-                    Debug.LogWarning("传输图片有问题！");
-                }
+                Debug.LogWarning("传输图片有问题！");
             }
             w.Dispose();
         }

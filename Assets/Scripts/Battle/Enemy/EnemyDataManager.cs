@@ -71,6 +71,7 @@ public class EnemyDataManager : MonoBehaviour
                 {
                     yield break;
                 }
+                iconTexture.Compress(true);
                 EnemyAttribute eAttr = new EnemyAttribute(attr.idkey, attr.id, attr.name, baseP, growP, iconTexture, attr.dropItems);
                 idToEnmeyAttribute.Add(attr.id, eAttr);
             }

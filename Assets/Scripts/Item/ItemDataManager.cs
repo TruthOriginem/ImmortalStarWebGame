@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SerializedClassForJson;
 using UnityEngine.SceneManagement;
+using GameId;
 
 public class ItemDataManager : MonoBehaviour
 {
@@ -132,14 +133,15 @@ public class ItemDataManager : MonoBehaviour
     /// <returns></returns>
     public static string GetItemName(string id)
     {
-        if (id != "money")
-        {
-            return idsToItems[id].name;
-        }
-        else
+        if (id == Items.MONEY)
         {
             return "星币";
         }
+        if (id == Items.DIMEN)
+        {
+            return "次元币";
+        }
+        return idsToItems[id].name;
     }
     /// <summary>
     /// 通过id返回ItemBase类
@@ -208,18 +210,21 @@ public class ItemDataManager : MonoBehaviour
 
     IEnumerator RequestLoadTexture(ItemBase linkedItem)
     {
-        if (SpriteLibrary.GetSprite(linkedItem.GetIconPath()) == null)
+        string path = linkedItem.GetIconPath();
+        if (!SpriteLibrary.IsSpriteDownLoading(path))
         {
-            WWW w = new WWW(ConnectUtils.ParsePath(linkedItem.GetIconPath()));
+            SpriteLibrary.SetSpriteDownLoading(path);
+            WWW w = new WWW(ConnectUtils.ParsePath(path));
             ConnectUtils.ShowConnectingUI();
             yield return w;
             ConnectUtils.HideConnectingUI();
             if (ConnectUtils.IsDownloadCompleted(w))
             {
                 Texture2D iconTex = w.texture;
+                iconTex.Compress(true);
                 Sprite _icon = Sprite.Create(iconTex, new Rect(0, 0, iconTex.width, iconTex.height), new Vector2(0.5f, 0.5f));
                 ///预加载
-                SpriteLibrary.AddSprite(linkedItem.GetIconPath(), _icon);
+                SpriteLibrary.AddSprite(path, _icon);
                 ///
             }
             else

@@ -11,7 +11,7 @@ public class EnemyAttribute{
     public EnemyProperty growth;//怪物成长,包含经验
     public EnemyProperty baseP;//怪物基础属性，包含经验
     public TempItemDrops[] dropItems;//怪物掉落道具，有等级限制
-    private Texture2D iconTexture;
+    //private Texture2D iconTexture;
 
     /// <summary>
     /// 图片的文件夹路径
@@ -29,7 +29,7 @@ public class EnemyAttribute{
         this.name = name;
         this.growth = growP;
         this.baseP = baseP;
-        this.iconTexture = iconTexture;
+        //this.iconTexture = iconTexture;
         this.dropItems = dropItems;
         SpriteLibrary.AddSprite(GetCompletedFilePathById(id), Sprite.Create(iconTexture, new Rect(0, 0, iconTexture.width, iconTexture.height), new Vector2(0.5f, 0.5f)));
     }

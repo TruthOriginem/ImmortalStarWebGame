@@ -66,7 +66,7 @@ public class ShopItemGrid : MonoBehaviour
                     sb.Append("</b>");
                     sb.Append(" 星币");
                 }
-                if(dimen > 0)
+                if (dimen > 0)
                 {
                     sb.Append("<b>");
                     sb.Append(dimen);
@@ -74,7 +74,7 @@ public class ShopItemGrid : MonoBehaviour
                     sb.Append(" 次元币");
                 }
                 sb.Append("。");
-                MessageBox.Show(sb.ToString(), "确认", (dialogResult) => { StartCoroutine(ConfirmBuy(dialogResult, number, price,dimen)); }, MessageBoxButtons.YesNo);
+                MessageBox.Show(sb.ToString(), "确认", (dialogResult) => { StartCoroutine(ConfirmBuy(dialogResult, number, price, dimen)); }, MessageBoxButtons.YesNo);
             }
         }
     }
@@ -83,19 +83,19 @@ public class ShopItemGrid : MonoBehaviour
     /// </summary>
     /// <param name="result"></param>
     /// <returns></returns>
-    IEnumerator ConfirmBuy(DialogResult result, int number, int price,int dimen)
+    IEnumerator ConfirmBuy(DialogResult result, int number, int price, int dimen)
     {
         if (result == DialogResult.Yes)
         {
-            if (price <= PlayerInfoInGame.GetMoney() && dimen<=PlayerInfoInGame.GetDimenCoin())
+            if (price <= PlayerInfoInGame.GetMoney() && dimen <= PlayerInfoInGame.GetDimenCoin())
             {
                 string[] itemids = { item_Id };
-                int[] amounts = { number };
+                Currency[] amounts = { number };
                 IIABinds bind = new IIABinds(itemids, amounts);
                 TempPlayerAttribute attr = new TempPlayerAttribute();
                 attr.money -= price;
                 attr.dimenCoin -= dimen;
-                yield return PlayerRequestBundle.RequestUpdateRecord<UnityEngine.Object>(null, bind,attr);
+                yield return PlayerRequestBundle.RequestUpdateRecord<UnityEngine.Object>(null, bind, attr);
                 input.text = "";
                 PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
             }

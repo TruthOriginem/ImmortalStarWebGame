@@ -132,7 +132,7 @@ public class LeftClickMenu : MonoBehaviour
                   {
                       if (result == DialogResult.Yes)
                       {
-                          IIABinds binds = new IIABinds(new string[] { Items.SPB_PIECE }, new int[] { pieceAmount }, new string[] { equip.item_id });
+                          IIABinds binds = new IIABinds(new string[] { Items.SPB_PIECE }, new Currency[] { pieceAmount }, new string[] { equip.item_id });
                           PlayerInfoInGame.Instance.StartCoroutine(OnGridClickInCategoryCor(binds));
                       }
                   }, MessageBoxButtons.YesNo);
@@ -150,7 +150,7 @@ public class LeftClickMenu : MonoBehaviour
         }
         else
         {
-            yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(new string[] { item.item_id }, new int[] { -amount }), price <= 0 ? null : attr, null);
+            yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(new string[] { item.item_id }, new Currency[] { -amount }), price <= 0 ? null : attr, null);
         }
         yield return CategoryManager.Instance.RequestLoad();
     }

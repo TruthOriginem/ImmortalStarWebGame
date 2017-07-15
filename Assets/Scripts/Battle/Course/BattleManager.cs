@@ -481,15 +481,6 @@ public class BattleManager : MonoBehaviour
     }
     void ClearEnemyList()
     {
-        if (enemyList != null)
-        {
-            var datas = enemyList.options;
-            for (int i = 0; i < datas.Count; i++)
-            {
-                var sprite = datas[i].image;
-                DestroyImmediate(sprite);
-            }
-        }
         enemyList.ClearOptions();
     }
     #endregion

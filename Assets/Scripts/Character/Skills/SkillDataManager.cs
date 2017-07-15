@@ -72,6 +72,7 @@ public class SkillDataManager : MonoBehaviour
             if (ConnectUtils.IsDownloadCompleted(w))
             {
                 Texture2D iconTex = w.texture;
+                iconTex.Compress(true);
                 Sprite _icon = Sprite.Create(iconTex, new Rect(0, 0, iconTex.width, iconTex.height), new Vector2(0.5f, 0.5f));
                 ///预加载
                 SpriteLibrary.AddSprite(path, _icon);

@@ -95,22 +95,6 @@ private void Start()
         gameObject.SetActive(false);
     }
 
-
-
-    void Update()
-    {
-
-        /*
-        if (BattleManager.Instance.IsInBattle())
-        {
-            SetInteractable(false);
-        }
-        else
-        {
-            SetInteractable(true);
-        }
-        */
-    }
     /// <summary>
     /// 按下攻击按钮
     /// </summary>

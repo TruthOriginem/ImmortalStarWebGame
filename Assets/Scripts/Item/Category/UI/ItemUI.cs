@@ -88,48 +88,5 @@ public class ItemUI : MonoBehaviour
         {
             SetIcon(SpriteLibrary.GetSprite(linkedItem.GetIconPath()));
         }
-        else
-        {
-            if (gameObject.activeSelf)
-            {
-                StartCoroutine(RequestLoadTexture());
-            }
-        }
-
-    }
-    IEnumerator RequestLoadTexture()
-    {
-        ConnectUtils.ShowConnectingUI();
-        if (SpriteLibrary.GetSprite(linkedItem.GetIconPath()) != null)
-        {
-            SetIcon(SpriteLibrary.GetSprite(linkedItem.GetIconPath()));
-        }
-        else
-        {
-            WWW w = new WWW(ConnectUtils.ParsePath(linkedItem.GetIconPath()));
-            ConnectUtils.ShowConnectingUI();
-            yield return w;
-            ConnectUtils.HideConnectingUI();
-            if (w.isDone && w.error == null)
-            {
-                //Debug.Log(linkedItem.GetIconPath());
-                Texture2D iconTex = w.texture;
-
-                Sprite _icon = Sprite.Create(iconTex, new Rect(0, 0, iconTex.width, iconTex.height), new Vector2(0.5f, 0.5f));
-                ///预加载
-                SpriteLibrary.AddSprite(linkedItem.GetIconPath(), _icon);
-                ///
-                SetIcon(_icon);
-            }
-            else
-            {
-                if (w.error != null)
-                {
-                    Debug.LogWarning(w.error);
-                }
-            }
-            w.Dispose();
-        }
-        ConnectUtils.HideConnectingUI();
     }
 }

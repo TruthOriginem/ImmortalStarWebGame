@@ -105,8 +105,8 @@ public class PlayerInfoInGame : MonoBehaviour
     private static string username;
     private string temp_pw;
 
-    public static int m_money;//星币
-    public static int m_dimenCoin;//次元币（氪金要素
+    public static Currency m_money;//星币
+    public static Currency m_dimenCoin;//次元币（氪金要素
     public static int VIP_Level;//玩家vip等级
     public static int SkillPoint;//技能点
     public static string OnlineKey;
@@ -348,7 +348,7 @@ public class PlayerInfoInGame : MonoBehaviour
         {
             string jsonText = w.text;
             tempPlayerAttri = JsonUtility.FromJson<TempPlayerAttribute>(jsonText);
-            int money = tempPlayerAttri.money;
+            Currency money = tempPlayerAttri.money;
             //超过5亿则开始
             if (money >= 500000000)
             {
@@ -382,7 +382,7 @@ public class PlayerInfoInGame : MonoBehaviour
         {
             var tempattr = new TempPlayerAttribute();
             tempattr.money -= 100000000;
-            IIABinds binds = new IIABinds(new string[] { Items.MONEY_CHEST }, new int[] { 1 });
+            IIABinds binds = new IIABinds(new string[] { Items.MONEY_CHEST }, new Currency[] { 1 });
             yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, binds, tempattr, null);
         }
         if (updateDesign) OCManager.Refresh();
@@ -539,8 +539,8 @@ public class TempPlayerAttribute : TempAttribute
 {
     public int level;
     public int skillPoint;//技能点
-    public int money;
-    public int dimenCoin;
+    public long money;
+    public long dimenCoin;
     public int vipLevel;//玩家vip等级
     public long exp;
     public long nextExp;

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using SerializedClassForJson;
+using GameId;
 
 /// <summary>
 /// 用于管理从网站上获得的怪物资料，以及一些管理
@@ -56,6 +57,7 @@ public class EnemyDataManager : MonoBehaviour
                     continue;
                 }
                 EnemyProperty baseP = new EnemyProperty();
+
                 baseP.Update(attr);
                 EnemyProperty growP = new EnemyProperty();
 
@@ -184,7 +186,7 @@ public class EnemyDataManager : MonoBehaviour
         }
 
         #endregion
-        EnemyAttribute eAttr = new EnemyAttribute(tempAttr.idkey,id, tempAttr.name, baseP, growP, iconTexture, tempAttr.dropItems);
+        EnemyAttribute eAttr = new EnemyAttribute(tempAttr.idkey, id, tempAttr.name, baseP, growP, iconTexture, tempAttr.dropItems);
         idToEnmeyAttribute[id] = eAttr;
         ConnectUtils.HideConnectingUI();
     }
@@ -202,19 +204,20 @@ public class EnemyDataManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 生成单个敌人的属性词典。并且如果设置了难度系数，将全属性乘以这个系数值
+    /// 生成单个敌人的属性集合。并且如果设置了难度系数，将全属性乘以这个系数值
     /// </summary>
-    public static Dictionary<PROPERTY_TYPE, float> GeneratePropertyDic(EnemyAttribute enemyAttrPrefab, int level)
+    public static AttributeCollection GenerateAttrs(EnemyAttribute enemyAttrPrefab, int level)
     {
-        Dictionary<PROPERTY_TYPE, float> propertyDic = new Dictionary<PROPERTY_TYPE, float>();
-        foreach (SerializedIProperty sProperty in enemyAttrPrefab.baseP.properties)
+        AttributeCollection attrs = new AttributeCollection();
+        var enemyAttrs = enemyAttrPrefab.baseP.attrs;
+        foreach (var attr in AttributeCollection.GetAllAttrs())
         {
-            float value = sProperty.value;
-            value += (level - 1) * enemyAttrPrefab.GetGrowthValue(sProperty.type);
+            float value = enemyAttrs.GetValue(attr);
+            value += (level - 1) * enemyAttrPrefab.GetGrowthValue(attr);
             value *= GlobalSettings.ENEMY_ENHANCE_FACTOR;
-            propertyDic.Add(sProperty.type, value);
+            attrs.SetValue(attr, value);
         }
-        return propertyDic;
+        return attrs;
     }
 }
 

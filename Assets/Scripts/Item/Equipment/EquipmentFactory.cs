@@ -57,13 +57,7 @@ public class EquipmentFactory
 
     public static EquipmentBase CreateEquipment(TempEquipment temp)
     {
-        EquipmentValue values = new EquipmentValue(temp.mhp,
-                                                   temp.mmp,
-                                                   temp.atk,
-                                                   temp.def,
-                                                   temp.log,
-                                                   temp.lck,
-                                                   temp.cri);
+        EquipmentValue values = new EquipmentValue(temp);
         //通过词缀们来构筑description/或者有自定义description
         StringBuilder affixSb = new StringBuilder();
         //通过词缀们来构筑name

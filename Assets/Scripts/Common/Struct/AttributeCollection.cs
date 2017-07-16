@@ -15,7 +15,7 @@ public class AttributeCollection
     static AttributeCollection()
     {
         attrNames = new List<Attr>();
-        Type type = typeof(Attrs);
+        Type type = typeof(GameId.Attrs);
         var infos = type.GetFields(BindingFlags.Public | BindingFlags.Static);
         foreach (var item in infos)
         {
@@ -32,6 +32,17 @@ public class AttributeCollection
                 (attrNames[i], 0);
         }
     }
+
+    public AttributeCollection Clone()
+    {
+        var newAttrs = new AttributeCollection();
+        for (int i = 0; i < attrNames.Count; i++)
+        {
+            var attr = attrNames[i];
+            newAttrs.SetValue(attr, GetValue(attr));
+        }
+        return newAttrs;
+    }
     /*
     public AttributeCollection Create(Dictionary<string,float> dic)
     {
@@ -47,6 +58,10 @@ public class AttributeCollection
     {
         return attrValues.ContainsKey(attr) ? attrValues[attr] : 0;
     }
+    public string GetValueToString(Attr attr)
+    {
+        return GetValue(attr).ToString("0.00");
+    }
     public void SetValue(Attr attr, float value)
     {
         attrValues[attr] = value;
@@ -57,23 +72,33 @@ public class AttributeCollection
     /// <param name="tempAttrs"></param>
     public void SetValues(BaseAttribute tempAttrs)
     {
-        attrValues[Attrs.ATK] = tempAttrs.atk;
-        attrValues[Attrs.DEF] = tempAttrs.def;
-        attrValues[Attrs.LOG] = tempAttrs.log;
-        attrValues[Attrs.LCK] = tempAttrs.lck;
-        attrValues[Attrs.CRI] = tempAttrs.cri;
-        attrValues[Attrs.MHP] = tempAttrs.mhp;
-        attrValues[Attrs.MMP] = tempAttrs.mmp;
+        attrValues[GameId.Attrs.ATK] = tempAttrs.atk;
+        attrValues[GameId.Attrs.DEF] = tempAttrs.def;
+        attrValues[GameId.Attrs.LOG] = tempAttrs.log;
+        attrValues[GameId.Attrs.LCK] = tempAttrs.lck;
+        attrValues[GameId.Attrs.CRI] = tempAttrs.cri;
+        attrValues[GameId.Attrs.MHP] = tempAttrs.mhp;
+        attrValues[GameId.Attrs.MMP] = tempAttrs.mmp;
+    }
+    public void SetValues(BaseModification tempAttrs)
+    {
+        attrValues[GameId.Attrs.ATK] = tempAttrs.atkMult;
+        attrValues[GameId.Attrs.DEF] = tempAttrs.defMult;
+        attrValues[GameId.Attrs.LOG] = tempAttrs.logMult;
+        attrValues[GameId.Attrs.LCK] = tempAttrs.lckMult;
+        attrValues[GameId.Attrs.CRI] = tempAttrs.criMult;
+        attrValues[GameId.Attrs.MHP] = tempAttrs.mhpMult;
+        attrValues[GameId.Attrs.MMP] = tempAttrs.mmpMult;
     }
     public void MultValues(BaseModification modifyAttrs)
     {
-        attrValues[Attrs.ATK] *= modifyAttrs.atkMult;
-        attrValues[Attrs.DEF] *= modifyAttrs.defMult;
-        attrValues[Attrs.LOG] *= modifyAttrs.logMult;
-        attrValues[Attrs.LCK] *= modifyAttrs.lckMult;
-        attrValues[Attrs.CRI] *= modifyAttrs.criMult;
-        attrValues[Attrs.MHP] *= modifyAttrs.mhpMult;
-        attrValues[Attrs.MMP] *= modifyAttrs.mmpMult;
+        attrValues[GameId.Attrs.ATK] *= modifyAttrs.atkMult;
+        attrValues[GameId.Attrs.DEF] *= modifyAttrs.defMult;
+        attrValues[GameId.Attrs.LOG] *= modifyAttrs.logMult;
+        attrValues[GameId.Attrs.LCK] *= modifyAttrs.lckMult;
+        attrValues[GameId.Attrs.CRI] *= modifyAttrs.criMult;
+        attrValues[GameId.Attrs.MHP] *= modifyAttrs.mhpMult;
+        attrValues[GameId.Attrs.MMP] *= modifyAttrs.mmpMult;
     }
 
     public Dictionary<Attr, float> GetValues()
@@ -83,5 +108,25 @@ public class AttributeCollection
     public static List<Attr> GetAllAttrs()
     {
         return attrNames;
+    }
+    public static AttributeCollection operator +(AttributeCollection l, AttributeCollection r)
+    {
+        AttributeCollection newA = new AttributeCollection();
+        for (int i = 0; i < attrNames.Count; i++)
+        {
+            var attr = attrNames[i];
+            newA.SetValue(attr, l.GetValue(attr) + r.GetValue(attr));
+        }
+        return newA;
+    }
+    public static AttributeCollection operator -(AttributeCollection l, AttributeCollection r)
+    {
+        AttributeCollection newA = new AttributeCollection();
+        for (int i = 0; i < attrNames.Count; i++)
+        {
+            var attr = attrNames[i];
+            newA.SetValue(attr, l.GetValue(attr) - r.GetValue(attr));
+        }
+        return newA;
     }
 }

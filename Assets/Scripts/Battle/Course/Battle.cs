@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using GameId;
 
 /// <summary>
 /// 战斗类，当玩家正式攻击目标怪物，并打开战斗界面时实例化。
@@ -52,12 +53,12 @@ public class Battle
     private void InitAllUnits()
     {
         #region 初始化玩家单位
-        TempPropertyRecord playerRecord = new TempPropertyRecord(PlayerInfoInGame.Instance.GetDynamicProperties());
+        TempPropertyRecord playerRecord = new TempPropertyRecord(PlayerInfoInGame.Instance.GetDynamicAttrs());
         //战前技能属性调整
         UnitModifyManager.ModifyRecordBeforeBattle(SkillDataManager.GetPlayersBeforeBattleSkill(), playerRecord);
         BattleUnit playerUnit = new BattleUnit(PlayerInfoInGame.Id, PlayerInfoInGame.NickName, PlayerInfoInGame.Level, BattleUnit.SIDE.PLAYER, playerRecord);
-        playerRecord.hp = playerRecord.GetValue(PROPERTY_TYPE.MHP);
-        playerRecord.mp = playerRecord.GetValue(PROPERTY_TYPE.MMP);
+        playerRecord.hp = playerRecord.GetValue(Attrs.MHP);
+        playerRecord.mp = playerRecord.GetValue(Attrs.MMP);
         playerUnit.SetSkills(SkillDataManager.GetPlayersDuringBattleSkill());
         playerUnits.Add(playerUnit);
         #endregion
@@ -79,7 +80,7 @@ public class Battle
                     enemyCount.Add(name, 1);
                 }
                 name += index;
-                Dictionary<PROPERTY_TYPE, float> dic = EnemyDataManager.GeneratePropertyDic(attr, baseEnemy.Level);
+                var dic = EnemyDataManager.GenerateAttrs(attr, baseEnemy.Level);
                 TempPropertyRecord record = new TempPropertyRecord(dic);
                 var enemy = new BattleUnit(attr.id, name, baseEnemy.Level, BattleUnit.SIDE.ENEMY, record);
                 enemy.SetSkills(new Dictionary<BaseSkill, int>());

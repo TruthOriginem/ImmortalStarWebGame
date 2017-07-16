@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using GameId;
 
 public class BattleManager : MonoBehaviour
 {
@@ -93,8 +94,8 @@ public class BattleManager : MonoBehaviour
         {
             if (nowEnemy != null)
             {
-                float hpValue = nowEnemy.tempRecord.hp / nowEnemy.tempRecord.GetValue(PROPERTY_TYPE.MHP);
-                float mpValue = nowEnemy.tempRecord.mp / nowEnemy.tempRecord.GetValue(PROPERTY_TYPE.MMP);
+                float hpValue = nowEnemy.tempRecord.hp / nowEnemy.tempRecord.GetValue(Attrs.MHP);
+                float mpValue = nowEnemy.tempRecord.mp / nowEnemy.tempRecord.GetValue(Attrs.MMP);
                 if (float.IsNaN(mpValue))
                 {
                     mpValue = 0f;
@@ -105,8 +106,8 @@ public class BattleManager : MonoBehaviour
             }
             if (nowPlayer != null)
             {
-                float hpValue = nowPlayer.tempRecord.hp / nowPlayer.tempRecord.GetValue(PROPERTY_TYPE.MHP);
-                float mpValue = nowPlayer.tempRecord.mp / nowPlayer.tempRecord.GetValue(PROPERTY_TYPE.MMP);
+                float hpValue = nowPlayer.tempRecord.hp / nowPlayer.tempRecord.GetValue(Attrs.MHP);
+                float mpValue = nowPlayer.tempRecord.mp / nowPlayer.tempRecord.GetValue(Attrs.MMP);
                 playerHp.value = Mathf.Lerp(playerHp.value, hpValue, Time.deltaTime * 10f);
                 playerMp.value = Mathf.Lerp(playerMp.value, mpValue, Time.deltaTime * 10f);
             }
@@ -221,16 +222,16 @@ public class BattleManager : MonoBehaviour
         //设置当前玩家、当前敌人，界面调整
         nowPlayer = battle.playerUnits[0];
         nowEnemy = battle.enemyUnits[0];
-        float hpValue = nowEnemy.tempRecord.hp / nowEnemy.tempRecord.GetValue(PROPERTY_TYPE.MHP);
-        float mpValue = nowEnemy.tempRecord.mp / nowEnemy.tempRecord.GetValue(PROPERTY_TYPE.MMP);
+        float hpValue = nowEnemy.tempRecord.hp / nowEnemy.tempRecord.GetValue(Attrs.MHP);
+        float mpValue = nowEnemy.tempRecord.mp / nowEnemy.tempRecord.GetValue(Attrs.MMP);
         if (float.IsNaN(mpValue))
         {
             mpValue = 0f;
         }
         enemyHp.value = hpValue;
         enemyMp.value = mpValue;
-        hpValue = nowPlayer.tempRecord.hp / nowPlayer.tempRecord.GetValue(PROPERTY_TYPE.MHP);
-        mpValue = nowPlayer.tempRecord.mp / nowPlayer.tempRecord.GetValue(PROPERTY_TYPE.MMP);
+        hpValue = nowPlayer.tempRecord.hp / nowPlayer.tempRecord.GetValue(Attrs.MHP);
+        mpValue = nowPlayer.tempRecord.mp / nowPlayer.tempRecord.GetValue(Attrs.MMP);
         playerHp.value = hpValue;
         playerMp.value = mpValue;
 

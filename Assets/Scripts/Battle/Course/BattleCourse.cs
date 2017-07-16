@@ -140,15 +140,15 @@ public class BattleCourse
     bool Attack(BattleUnit from, BattleUnit to, StringBuilder sb)
     {
         //获取属性
-        float f_atk = GetValue(from, PROPERTY_TYPE.ATK);
-        float f_log = GetValue(from, PROPERTY_TYPE.LOG);
-        float f_lck = GetValue(from, PROPERTY_TYPE.LCK);
-        float f_cri = GetValue(from, PROPERTY_TYPE.CRI);
-        float f_mhp = GetValue(from, PROPERTY_TYPE.MHP);
-        float f_mmp = GetValue(from, PROPERTY_TYPE.MMP);
-        float t_log = GetValue(to, PROPERTY_TYPE.LOG);
-        float t_lck = GetValue(to, PROPERTY_TYPE.LCK);
-        float t_def = GetValue(to, PROPERTY_TYPE.DEF);
+        float f_atk = GetValue(from, Attrs.ATK);
+        float f_log = GetValue(from, Attrs.LOG);
+        float f_lck = GetValue(from, Attrs.LCK);
+        float f_cri = GetValue(from, Attrs.CRI);
+        float f_mhp = GetValue(from, Attrs.MHP);
+        float f_mmp = GetValue(from, Attrs.MMP);
+        float t_log = GetValue(to, Attrs.LOG);
+        float t_lck = GetValue(to, Attrs.LCK);
+        float t_def = GetValue(to, Attrs.DEF);
         //属性buff
         #region 属性Buff
         if (from.GetSkillLevel(Skills.DYING_BREAK) > 0)
@@ -226,7 +226,7 @@ public class BattleCourse
     /// <param name="unit"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    float GetValue(BattleUnit unit, PROPERTY_TYPE type)
+    float GetValue(BattleUnit unit, Attr type)
     {
         return unit.tempRecord.GetValue(type);
     }

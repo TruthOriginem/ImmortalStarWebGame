@@ -211,17 +211,18 @@ public class EnhanceManager : MonoBehaviour
         //
         oriSb.AppendLine();
         resultSb.AppendLine();
-        EquipmentValue value = equipment.GetProperties();
-        tempAttr.SetPropertiesByValue(value);
+        EquipmentValue value = equipment.GetAttrs();
+        AttributeCollection attrs = value.values;
+        tempAttr.SetAttrsByValue(value);
         tempAttr.MultAllProperties(multFactor);
-        foreach (var kv in value.values)
+        foreach (var attr in AttributeCollection.GetAllAttrs())
         {
-            IProperty property = kv.Value;
-            if (property.Value != 0f)
+            var attrValue = attrs.GetValue(attr);
+            if (attrValue != 0f)
             {
-                oriSb.AppendLine(property.GetName() + " " + property.GetValueToString());
-                float add = property.Value * (multFactor - 1f);
-                resultSb.Append(property.GetName() + " " + (property.Value * multFactor).ToString("0.00"));
+                oriSb.AppendLine(attr.Name + " " + attrs.GetValueToString(attr));
+                float add = attrValue * (multFactor - 1f);
+                resultSb.Append(attr.Name + " " + (attrValue * multFactor).ToString("0.00"));
                 resultSb.Append(add > 0f ? "<color=green>(+" : "<color=red>(");
                 resultSb.Append(add.ToString("0.00"));
                 resultSb.AppendLine(")</color>");

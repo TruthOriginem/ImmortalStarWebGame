@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Text;
 using System.Collections.Generic;
+using GameId;
 
 /// <summary>
 /// 战斗单位，用来记录暂时的属性。（如玩家，敌人）
@@ -72,16 +73,16 @@ public class BattleUnit
     public string GetPropertyDescription()
     {
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine("生命值:" + tempRecord.hp.ToString("0.0") + "/" + GetValue(PROPERTY_TYPE.MHP));
-        sb.AppendLine("能量值:" + tempRecord.mp.ToString("0.0") + "/" + GetValue(PROPERTY_TYPE.MMP));
-        sb.AppendLine("攻击:" + GetValue(PROPERTY_TYPE.ATK));
-        sb.AppendLine("防御:" + GetValue(PROPERTY_TYPE.DEF));
-        sb.AppendLine("逻辑:" + GetValue(PROPERTY_TYPE.LOG));
-        sb.AppendLine("幸运:" + GetValue(PROPERTY_TYPE.LCK));
-        sb.AppendLine("暴击倍率:" + GetValue(PROPERTY_TYPE.CRI));
+        sb.AppendLine("生命值:" + tempRecord.hp.ToString("0.0") + "/" + GetValue(Attrs.MHP));
+        sb.AppendLine("能量值:" + tempRecord.mp.ToString("0.0") + "/" + GetValue(Attrs.MMP));
+        sb.AppendLine("攻击:" + GetValue(Attrs.ATK));
+        sb.AppendLine("防御:" + GetValue(Attrs.DEF));
+        sb.AppendLine("逻辑:" + GetValue(Attrs.LOG));
+        sb.AppendLine("幸运:" + GetValue(Attrs.LCK));
+        sb.AppendLine("暴击倍率:" + GetValue(Attrs.CRI));
         return sb.ToString();
     }
-    public string GetValue(PROPERTY_TYPE type)
+    public string GetValue(Attr type)
     {
         return tempRecord.GetValue(type).ToString("0.0");
     }

@@ -40,31 +40,33 @@ public class ToolTipUI : MonoBehaviour
             contentSb.AppendLine(TextUtils.GetSpbText("灵基 -- " + equipment.GetSpb().ToString("0.0")));
             contentSb.AppendLine(linkedItem.description);
             contentSb.AppendLine();
-            EquipmentValue value = equipment.GetProperties();
+            EquipmentValue value = equipment.GetAttrs();
+            var attrs = value.values;
 
             if (comparedEq != null)
             {
                 if (comparedEq == linkedItem)
                 {
-                    foreach (var kv in value.values)
+                    foreach (var attr in AttributeCollection.GetAllAttrs())
                     {
-                        IProperty property = kv.Value;
-                        if (property.Value != 0f)
+                        if (attrs.GetValue(attr) != 0f)
                         {
-                            contentSb.AppendLine(property.GetName() + " " + property.GetValueToString());
+                            contentSb.AppendLine(attr.Name + " " + attrs.GetValueToString(attr));
                         }
                     }
                 }
                 else
                 {
-                    EquipmentValue cValue = comparedEq.GetProperties();
-                    foreach (var kv in value.values)
+                    EquipmentValue cValue = comparedEq.GetAttrs();
+                    var cattrs = cValue.values;
+
+                    foreach (var attr in AttributeCollection.GetAllAttrs())
                     {
-                        float pro = kv.Value.Value;
-                        float Cpro = cValue.values[kv.Key].Value;
+                        float pro = attrs.GetValue(attr);
+                        float Cpro = cattrs.GetValue(attr);
                         if (!(pro == 0f && Cpro == 0f))
                         {
-                            contentSb.AppendLine(kv.Value.GetName() + " " + kv.Value.GetValueToString() + GetCompareString(pro, Cpro));
+                            contentSb.AppendLine(attr.Name + " " + attrs.GetValueToString(attr) + GetCompareString(pro, Cpro));
                         }
                     }
                 }
@@ -72,12 +74,12 @@ public class ToolTipUI : MonoBehaviour
             }
             else
             {
-                foreach (var kv in value.values)
+                foreach (var attr in AttributeCollection.GetAllAttrs())
                 {
-                    IProperty property = kv.Value;
-                    if (property.Value != 0f)
+                    float attrValue = attrs.GetValue(attr);
+                    if (attrValue != 0f)
                     {
-                        contentSb.AppendLine(property.GetName() + " " + property.GetValueToString() + GetCompareString(property.Value, 0f));
+                        contentSb.AppendLine(attr .Name+ " " + attrs.GetValueToString(attr) + GetCompareString(attrValue, 0f));
                     }
                 }
             }
@@ -95,8 +97,8 @@ public class ToolTipUI : MonoBehaviour
         contentSb.AppendLine();
         if (linkedItem.CanBeSold())
         {
-            contentSb.Append("<size=10>物品售价:" + linkedItem.price/2);
-            contentSb.Append(linkedItem.GetAmount() > 1 ? " * " + linkedItem.GetAmount() + " = " + linkedItem.GetAmount() * linkedItem.price/2 : "");
+            contentSb.Append("<size=10>物品售价:" + linkedItem.price / 2);
+            contentSb.Append(linkedItem.GetAmount() > 1 ? " * " + linkedItem.GetAmount() + " = " + linkedItem.GetAmount() * linkedItem.price / 2 : "");
             contentSb.Append("</size>");
         }
         else

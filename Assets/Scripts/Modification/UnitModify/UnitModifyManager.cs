@@ -14,15 +14,14 @@ public class UnitModifyManager
     /// <param name="record"></param>
     public static void ModifyRecordBeforeBattle(Dictionary<BeforeBattleModiSkill, int> skillToLevels, TempPropertyRecord record)
     {
-        PROPERTY_TYPE[] types = record.tempProDic.Keys.ToArray();
         foreach (var kv in skillToLevels)
         {
-            foreach(var type in types)
+            foreach (var attr in AttributeCollection.GetAllAttrs())
             {
-                float percent = kv.Key.GetPercentModify(type, kv.Value);
+                float percent = kv.Key.GetPercentModify(attr, kv.Value);
                 if (percent != 0f)
                 {
-                    record.SetValue(type, record.GetValue(type) * (1f + percent * 0.01f));
+                    record.SetValue(attr, record.GetValue(attr) * (1f + percent * 0.01f));
                 }
             }
         }

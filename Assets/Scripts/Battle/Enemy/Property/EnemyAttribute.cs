@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using SerializedClassForJson;
+using GameId;
 /// <summary>
 /// 怪物的基本属性
 /// </summary>
@@ -40,16 +41,9 @@ public class EnemyAttribute{
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public float GetGrowthValue(PROPERTY_TYPE type)
+    public float GetGrowthValue(Attr type)
     {
-        for (int i = 0; i < growth.properties.Count; i++)
-        {
-            if (growth.properties[i].type == type)
-            {
-                return growth.properties[i].value;
-            }
-        }
-        return 0;
+        return growth.attrs.GetValue(type);
     }
     
     /// <summary>

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GameId;
 
 public class EquipmentBase : ItemBase
 {
@@ -103,7 +104,7 @@ public class EquipmentBase : ItemBase
     /// 返回装备属性类
     /// </summary>
     /// <returns></returns>
-    public EquipmentValue GetProperties()
+    public EquipmentValue GetAttrs()
     {
         return values;
     }
@@ -120,9 +121,9 @@ public class EquipmentBase : ItemBase
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public float GetPropertyValue(PROPERTY_TYPE type)
+    public float GetAttrValue(Attr type)
     {
-        return values.values[type].Value;
+        return values.GetValue(type);
     }
 
     public EQ_TYPE GetEquipmentType()
@@ -303,19 +304,13 @@ public enum EQ_TYPE
 /// </summary>
 public class EquipmentValue
 {
-    public Dictionary<PROPERTY_TYPE, IProperty> values = new Dictionary<PROPERTY_TYPE, IProperty>();
-    public EquipmentValue(float hpPlus, float mpPlus, float atkplus, float defplus, float logplus, float lckplus, float criplus)
+    public AttributeCollection values = new AttributeCollection();
+    public EquipmentValue(BaseAttribute attrs)
     {
-        values.Add(PROPERTY_TYPE.MHP, new PropMhp(hpPlus));
-        values.Add(PROPERTY_TYPE.MMP, new PropMmp(mpPlus));
-        values.Add(PROPERTY_TYPE.ATK, new PropAtk(atkplus));
-        values.Add(PROPERTY_TYPE.DEF, new PropDef(defplus));
-        values.Add(PROPERTY_TYPE.LOG, new PropLog(logplus));
-        values.Add(PROPERTY_TYPE.LCK, new PropLck(lckplus));
-        values.Add(PROPERTY_TYPE.CRI, new PropCri(criplus));
+        values.SetValues(attrs);
     }
-    public float GetValue(PROPERTY_TYPE type)
+    public float GetValue(Attr type)
     {
-        return values[type].Value;
+        return values.GetValue(type);
     }
 }

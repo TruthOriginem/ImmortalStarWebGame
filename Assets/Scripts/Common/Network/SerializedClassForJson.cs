@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System;
+using GameId;
 /// <summary>
 /// Json相关的类
 /// </summary>
@@ -208,15 +209,15 @@ namespace SerializedClassForJson
         public int eha_rebuild;//重构等级
         public int price;
 
-        public void SetPropertiesByValue(EquipmentValue value)
+        public void SetAttrsByValue(EquipmentValue value)
         {
-            mhp = value.GetValue(PROPERTY_TYPE.MHP);
-            mmp = value.GetValue(PROPERTY_TYPE.MMP);
-            atk = value.GetValue(PROPERTY_TYPE.ATK);
-            def = value.GetValue(PROPERTY_TYPE.DEF);
-            log = value.GetValue(PROPERTY_TYPE.LOG);
-            lck = value.GetValue(PROPERTY_TYPE.LCK);
-            cri = value.GetValue(PROPERTY_TYPE.CRI);
+            mhp = value.GetValue(Attrs.MHP);
+            mmp = value.GetValue(Attrs.MMP);
+            atk = value.GetValue(Attrs.ATK);
+            def = value.GetValue(Attrs.DEF);
+            log = value.GetValue(Attrs.LOG);
+            lck = value.GetValue(Attrs.LCK);
+            cri = value.GetValue(Attrs.CRI);
         }
 
         /// <summary>

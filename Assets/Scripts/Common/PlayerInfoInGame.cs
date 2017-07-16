@@ -125,26 +125,10 @@ public class PlayerInfoInGame : MonoBehaviour
 
     //source指的是原始属性字典，dynamic指的是最终计算所得属性字典
     //
-    static Dictionary<PROPERTY_TYPE, IProperty> sourcePropertyDic = new Dictionary<PROPERTY_TYPE, IProperty>();
-    static Dictionary<PROPERTY_TYPE, IProperty> dynamicPropertyDic = new Dictionary<PROPERTY_TYPE, IProperty>();
     static AttributeCollection sourceAttrs = new AttributeCollection();
     static AttributeCollection dynamicAttrs = new AttributeCollection();
     static PlayerInfoInGame()
     {
-        sourcePropertyDic.Add(PROPERTY_TYPE.MHP, new PropMhp());
-        sourcePropertyDic.Add(PROPERTY_TYPE.MMP, new PropMmp());
-        sourcePropertyDic.Add(PROPERTY_TYPE.ATK, new PropAtk());
-        sourcePropertyDic.Add(PROPERTY_TYPE.DEF, new PropDef());
-        sourcePropertyDic.Add(PROPERTY_TYPE.LOG, new PropLog());
-        sourcePropertyDic.Add(PROPERTY_TYPE.LCK, new PropLck());
-        sourcePropertyDic.Add(PROPERTY_TYPE.CRI, new PropCri());
-        dynamicPropertyDic.Add(PROPERTY_TYPE.MHP, new PropMhp());
-        dynamicPropertyDic.Add(PROPERTY_TYPE.MMP, new PropMmp());
-        dynamicPropertyDic.Add(PROPERTY_TYPE.ATK, new PropAtk());
-        dynamicPropertyDic.Add(PROPERTY_TYPE.DEF, new PropDef());
-        dynamicPropertyDic.Add(PROPERTY_TYPE.LOG, new PropLog());
-        dynamicPropertyDic.Add(PROPERTY_TYPE.LCK, new PropLck());
-        dynamicPropertyDic.Add(PROPERTY_TYPE.CRI, new PropCri());
 #if UNITY_EDITOR
         DebugMode = true;
 #endif
@@ -267,19 +251,8 @@ public class PlayerInfoInGame : MonoBehaviour
         DesignationManager.ParseDesignData(tempPlayerAttr.designData, out Design_NowEquipped, out designArray);
         Design_Ids = new List<int>(designArray);
         sourceAttrs.SetValues(tempPlayerAttr);
-        SetPropertyValue(PROPERTY_TYPE.MHP, tempPlayerAttr.mhp, sourcePropertyDic);
-        SetPropertyValue(PROPERTY_TYPE.MMP, tempPlayerAttr.mmp, sourcePropertyDic);
-        SetPropertyValue(PROPERTY_TYPE.ATK, tempPlayerAttr.atk, sourcePropertyDic);
-        SetPropertyValue(PROPERTY_TYPE.DEF, tempPlayerAttr.def, sourcePropertyDic);
-        SetPropertyValue(PROPERTY_TYPE.LOG, tempPlayerAttr.log, sourcePropertyDic);
-        SetPropertyValue(PROPERTY_TYPE.LCK, tempPlayerAttr.lck, sourcePropertyDic);
-        SetPropertyValue(PROPERTY_TYPE.CRI, tempPlayerAttr.cri, sourcePropertyDic);
         //初始化动态词典
         dynamicAttrs.SetValues(tempPlayerAttr);
-        foreach (var kv in sourcePropertyDic)
-        {
-            SetPropertyValue(kv.Key, kv.Value.Value, dynamicPropertyDic);
-        }
         //设置装备动态词典
         for (int i = 0; i < Now_Items.Count; i++)
         {
@@ -288,11 +261,8 @@ public class PlayerInfoInGame : MonoBehaviour
                 EquipmentBase equipment = (EquipmentBase)Now_Items[i];
                 if (equipment.IsEquipped())
                 {
-                    EquipmentValue value = equipment.GetProperties();
-                    foreach (var property in dynamicPropertyDic)
-                    {
-                        property.Value.Value += value.values[property.Key].Value;
-                    }
+                    EquipmentValue value = equipment.GetAttrs();
+                    dynamicAttrs += value.values;
                 }
             }
         }
@@ -316,13 +286,6 @@ public class PlayerInfoInGame : MonoBehaviour
         {
             return;
         }
-        dynamicPropertyDic[PROPERTY_TYPE.MHP].Value *= data.mhpMult;
-        dynamicPropertyDic[PROPERTY_TYPE.MMP].Value *= data.mmpMult;
-        dynamicPropertyDic[PROPERTY_TYPE.ATK].Value *= data.atkMult;
-        dynamicPropertyDic[PROPERTY_TYPE.DEF].Value *= data.defMult;
-        dynamicPropertyDic[PROPERTY_TYPE.LOG].Value *= data.logMult;
-        dynamicPropertyDic[PROPERTY_TYPE.LCK].Value *= data.lckMult;
-        dynamicPropertyDic[PROPERTY_TYPE.CRI].Value *= data.criMult;
         dynamicAttrs.MultValues(data);
         //SetPropertyValue(PROPERTY_TYPE.ATK)
     }
@@ -404,32 +367,20 @@ public class PlayerInfoInGame : MonoBehaviour
     /// 获取当前（动态）属性（包括了基础属性与装备属性等的加成）
     /// </summary>
     /// <returns></returns>
-    public Dictionary<PROPERTY_TYPE, IProperty> GetDynamicProperties()
+    public AttributeCollection GetDynamicAttrs()
     {
-        return dynamicPropertyDic;
+        return dynamicAttrs;
     }
 
-    public float GetDynamicPropertyValue(PROPERTY_TYPE type)
+    public float GetDynamicAttrValue(Attr type)
     {
-        return dynamicPropertyDic[type].Value;
+        return dynamicAttrs.GetValue(type);
     }
 
-    public float GetSourcePropertyValue(PROPERTY_TYPE type)
+    public float GetSourceAttrValue(Attr type)
     {
-        return sourcePropertyDic[type].Value;
+        return dynamicAttrs.GetValue(type);
     }
-    /// <summary>
-    /// 设置属性值。
-    /// </summary>
-    /// <param name="type">属性类型</param>
-    /// <param name="value">数值</param>
-    /// <param name="proDic">原始属性/动态属性词典</param>
-    void SetPropertyValue(PROPERTY_TYPE type, float value, Dictionary<PROPERTY_TYPE, IProperty> proDic)
-    {
-        IProperty property = proDic[type];
-        property.Value = value;
-    }
-
     #endregion
 
     /// <summary>

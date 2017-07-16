@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using GameId;
 /// <summary>
 /// 战斗之前，对属性有所改变的技能。
 /// </summary>
 public class BeforeBattleModiSkill : BaseSkill {
-    protected Dictionary<PROPERTY_TYPE,float> percentPerLevelDic = new Dictionary<PROPERTY_TYPE, float>();
-    protected Dictionary<PROPERTY_TYPE, float> multPerLevelDic = new Dictionary<PROPERTY_TYPE, float>();
+    protected Dictionary<Attr,float> percentPerLevelDic = new Dictionary<Attr, float>();
+    protected Dictionary<Attr, float> multPerLevelDic = new Dictionary<Attr, float>();
 
     public BeforeBattleModiSkill() : base() {
 
@@ -16,7 +17,7 @@ public class BeforeBattleModiSkill : BaseSkill {
     /// </summary>
     /// <param name="property"></param>
     /// <returns></returns>
-    public virtual float GetPercentModify(PROPERTY_TYPE property,int level)
+    public virtual float GetPercentModify(Attr property,int level)
     {
         return percentPerLevelDic.ContainsKey(property)?percentPerLevelDic[property] * level:0f;
     }
@@ -25,7 +26,7 @@ public class BeforeBattleModiSkill : BaseSkill {
     /// </summary>
     /// <param name="property"></param>
     /// <returns></returns>
-    public virtual float GetMultModify(PROPERTY_TYPE property,int level)
+    public virtual float GetMultModify(Attr property,int level)
     {
         return multPerLevelDic.ContainsKey(property)?multPerLevelDic[property] * level:1f;
     }
@@ -42,13 +43,13 @@ public class Skill_MachineGenerate : BeforeBattleModiSkill
         this.icon_name = id;
         this.description = "机械体用于加强自身的基本技能。";
         this.documentation = "在整个战斗中，获得$的防御加成。";
-        percentPerLevelDic.Add(PROPERTY_TYPE.DEF, 1f);
+        percentPerLevelDic.Add(Attrs.DEF, 1f);
     }
     public override string GetInfoInDocumentation(int level, int index)
     {
         if (index == 0)
         {
-            return (int)(percentPerLevelDic[PROPERTY_TYPE.DEF] * level) + "%";
+            return (int)(percentPerLevelDic[Attrs.DEF] * level) + "%";
         }
         return "";
     }
@@ -65,18 +66,18 @@ public class Skill_SkillfulAttack : BeforeBattleModiSkill
         this.icon_name = id;
         this.description = "在任何情况下都能快速做出攻击的反应。";
         this.documentation = "在整个战斗中，获得$的攻击加成，$的逻辑加成。";
-        percentPerLevelDic.Add(PROPERTY_TYPE.ATK, 0.5f);
-        percentPerLevelDic.Add(PROPERTY_TYPE.LOG, 0.1f);
+        percentPerLevelDic.Add(Attrs.ATK, 0.5f);
+        percentPerLevelDic.Add(Attrs.LOG, 0.1f);
     }
     public override string GetInfoInDocumentation(int level, int index)
     {
         if (index == 0)
         {
-            return (percentPerLevelDic[PROPERTY_TYPE.ATK] * level).ToString("0.0") + "%";
+            return (percentPerLevelDic[Attrs.ATK] * level).ToString("0.0") + "%";
         }
         if (index == 1)
         {
-            return (percentPerLevelDic[PROPERTY_TYPE.LOG] * level).ToString("0.0") + "%";
+            return (percentPerLevelDic[Attrs.LOG] * level).ToString("0.0") + "%";
         }
         return "";
     }
@@ -93,18 +94,18 @@ public class Skill_UniverseThoughts : BeforeBattleModiSkill
         this.icon_name = id;
         this.description = "心如平静，遁入智瞳。机械生命体掌握自身生命与灵魂的冥想方式。 在这个危险的宇宙中，物理上的打击并不可怕，可怕的是心。 ";
         this.documentation = "在整个战斗中，获得$的全属性加成。";
-        percentPerLevelDic.Add(PROPERTY_TYPE.MHP, 0.15f);
-        percentPerLevelDic.Add(PROPERTY_TYPE.MMP, 0.15f);
-        percentPerLevelDic.Add(PROPERTY_TYPE.ATK, 0.15f);
-        percentPerLevelDic.Add(PROPERTY_TYPE.DEF, 0.15f);
-        percentPerLevelDic.Add(PROPERTY_TYPE.LOG, 0.15f);
-        percentPerLevelDic.Add(PROPERTY_TYPE.LCK, 0.15f);
-        percentPerLevelDic.Add(PROPERTY_TYPE.CRI, 0.15f);
+        percentPerLevelDic.Add(Attrs.MHP, 0.15f);
+        percentPerLevelDic.Add(Attrs.MMP, 0.15f);
+        percentPerLevelDic.Add(Attrs.ATK, 0.15f);
+        percentPerLevelDic.Add(Attrs.DEF, 0.15f);
+        percentPerLevelDic.Add(Attrs.LOG, 0.15f);
+        percentPerLevelDic.Add(Attrs.LCK, 0.15f);
+        percentPerLevelDic.Add(Attrs.CRI, 0.15f);
     }
     public override string GetInfoInDocumentation(int level, int index)
     {
 
-        return (percentPerLevelDic[PROPERTY_TYPE.ATK] * level).ToString("0.0") + "%";
+        return (percentPerLevelDic[Attrs.ATK] * level).ToString("0.0") + "%";
  
     }
 }
@@ -120,19 +121,19 @@ public class Skill_IronWall : BeforeBattleModiSkill
         this.icon_name = id;
         this.description = "在一次战斗之前加强整个身躯的防御，修缮所有防具，另你的生命能量处于最大状态。";
         this.documentation = "在整个战斗中，获得$的防御加成与$的生命、能量加成。";
-        percentPerLevelDic.Add(PROPERTY_TYPE.DEF, 0.5f);
-        percentPerLevelDic.Add(PROPERTY_TYPE.MHP, 0.2f);
-        percentPerLevelDic.Add(PROPERTY_TYPE.MMP, 0.2f);
+        percentPerLevelDic.Add(Attrs.DEF, 0.5f);
+        percentPerLevelDic.Add(Attrs.MHP, 0.2f);
+        percentPerLevelDic.Add(Attrs.MMP, 0.2f);
     }
     public override string GetInfoInDocumentation(int level, int index)
     {
         if (index == 0)
         {
-            return (percentPerLevelDic[PROPERTY_TYPE.DEF] * level).ToString("0.0") + "%";
+            return (percentPerLevelDic[Attrs.DEF] * level).ToString("0.0") + "%";
         }
         if (index == 1)
         {
-            return (percentPerLevelDic[PROPERTY_TYPE.MHP] * level).ToString("0.0") + "%";
+            return (percentPerLevelDic[Attrs.MHP] * level).ToString("0.0") + "%";
         }
         return "";
     }

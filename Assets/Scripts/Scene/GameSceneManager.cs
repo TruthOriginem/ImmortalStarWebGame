@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine.SceneManagement;
+using GameId;
 
 public class GameSceneManager : MonoBehaviour
 {
@@ -72,9 +73,9 @@ public class GameSceneManager : MonoBehaviour
             sb.Append("称号：<b> ");
             sb.AppendLine(DesignationManager.GetDesignationName(PlayerInfoInGame.Design_NowEquipped));
             sb.Append("</b>生命值： ");
-            sb.AppendLine(TextUtils.GetGreenText(playerProperty.GetDynamicPropertyValue(PROPERTY_TYPE.MHP).ToString("0")));
+            sb.AppendLine(TextUtils.GetGreenText(playerProperty.GetDynamicAttrValue(GameId.Attrs.MHP).ToString("0")));
             sb.Append("能量值： ");
-            sb.AppendLine(TextUtils.GetMpText(playerProperty.GetDynamicPropertyValue(PROPERTY_TYPE.MMP).ToString("0")));
+            sb.AppendLine(TextUtils.GetMpText(playerProperty.GetDynamicAttrValue(GameId.Attrs.MMP).ToString("0")));
             sb.Append("经验值： <color=#9D6EFFFF>");
             sb.Append(TextUtils.GetOmitNumberString(PlayerInfoInGame.Exp));
             sb.Append("/");
@@ -86,14 +87,13 @@ public class GameSceneManager : MonoBehaviour
             }
             sb.Append(Mathf.RoundToInt((float)PlayerInfoInGame.Exp / PlayerInfoInGame.NextExp * 100f));
             sb.AppendLine("%)</size></color>");
-            Dictionary<PROPERTY_TYPE, IProperty> properties = PlayerInfoInGame.Instance.GetDynamicProperties();
-            foreach (var kv in properties)
+            var attrs = PlayerInfoInGame.Instance.GetDynamicAttrs();
+            foreach (var attr in AttributeCollection.GetAllAttrs())
             {
-                if (kv.Key == PROPERTY_TYPE.MHP || kv.Key == PROPERTY_TYPE.MMP) continue;
-                IProperty property = kv.Value;
-                sb.Append(property.GetName() + ": " + property.GetValueToString());
+                if (attr == Attrs.MHP || attr == Attrs.MMP) continue;
+                sb.Append(attr.Name + ": " + attrs.GetValueToString(attr));
                 sb.Append("<color=#838383FF>(");
-                sb.Append(PlayerInfoInGame.Instance.GetSourcePropertyValue(kv.Key));
+                sb.Append(PlayerInfoInGame.Instance.GetSourceAttrValue(attr).ToString("0.00"));
                 sb.AppendLine(")</color>");
             }
             propertyText.text = sb.ToString();

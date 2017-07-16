@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using GameId;
 
 /// <summary>
 /// 每个单位用于短暂记录属性的值，用于战斗的各个回合。
@@ -8,63 +9,37 @@ using System.Collections.Generic;
 public class TempPropertyRecord{
     public float hp;
     public float mp;
-    public Dictionary<PROPERTY_TYPE, float> tempProDic;
+    public AttributeCollection attrs = new AttributeCollection();
 
-    public TempPropertyRecord(Dictionary<PROPERTY_TYPE, float> targetDic)
+    public TempPropertyRecord(AttributeCollection nattrs)
     {
-        CloneProperty(ref targetDic);
-        InitHpAndMp();
-    }
-    public TempPropertyRecord(Dictionary<PROPERTY_TYPE, IProperty> targetDic)
-    {
-        CloneProperty(ref targetDic);
-        InitHpAndMp();
-    }
-    public TempPropertyRecord(List<SerializedIProperty> properties)
-    {
-        tempProDic = new Dictionary<PROPERTY_TYPE, float>();
-        foreach(SerializedIProperty pro in properties)
-        {
-            tempProDic.Add(pro.type, pro.value);
-        }
+        CloneProperty(nattrs);
         InitHpAndMp();
     }
 
-    public float GetValue(PROPERTY_TYPE type)
+    public float GetValue(Attr type)
     {
-        return tempProDic[type];
+        return attrs.GetValue(type);
     }
-    public void SetValue(PROPERTY_TYPE type,float value)
+    public void SetValue(Attr type,float value)
     {
-        tempProDic[type] = value;
+        attrs.SetValue(type,value);
     }
 
 
     void InitHpAndMp()
     {
-        hp = GetValue(PROPERTY_TYPE.MHP);
-        mp = GetValue(PROPERTY_TYPE.MMP);
+        hp = GetValue(Attrs.MHP);
+        mp = GetValue(Attrs.MMP);
     }
 
     /// <summary>
     /// 将指定属性字典简单克隆
     /// </summary>
     /// <param name="targetDic"></param>
-    void CloneProperty(ref Dictionary<PROPERTY_TYPE, float> targetDic)
+    void CloneProperty(AttributeCollection attrs)
     {
-        tempProDic = new Dictionary<PROPERTY_TYPE, float>();
-        foreach (var kv in targetDic)
-        {
-            tempProDic.Add(kv.Key, kv.Value);
-        }
-    }
-    void CloneProperty(ref Dictionary<PROPERTY_TYPE, IProperty> targetDic)
-    {
-        tempProDic = new Dictionary<PROPERTY_TYPE, float>();
-        foreach (var kv in targetDic)
-        {
-            tempProDic.Add(kv.Key, kv.Value.Value);
-        }
+        this.attrs = attrs.Clone();
     }
 
     /// <summary>
@@ -73,7 +48,7 @@ public class TempPropertyRecord{
     /// <returns></returns>
     public TempPropertyRecord Clone()
     {
-        TempPropertyRecord record = new TempPropertyRecord(tempProDic);
+        TempPropertyRecord record = new TempPropertyRecord(attrs);
         record.hp = hp;
         record.mp = mp;
         return record;

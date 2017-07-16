@@ -95,9 +95,36 @@ namespace GameId
         public const string BUNDLE_1_STAGE_3 = "uavcastle";
         public const string BUNDLE_1_STAGE_4 = "uavrefuge";
     }
-    
+    /// <summary>
+    /// 游戏属性集合
+    /// </summary>
+    public static class Attrs
+    {
+        public static readonly Attr ATK = new Attr("atk", "攻击");
+        public static readonly Attr DEF = new Attr("def", "防御");
+        public static readonly Attr LOG = new Attr("log", "逻辑");
+        public static readonly Attr LCK = new Attr("lck", "幸运");
+        public static readonly Attr CRI = new Attr("cri", "暴击倍率");
+        public static readonly Attr MHP = new Attr("mhp", "最大生命");
+        public static readonly Attr MMP = new Attr("mmp", "最大能量");
+    }
+    public class Attr
+    {
+        public string Id;
+        public string Name;
+        public Attr(string id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
+        public override string ToString()
+        {
+            return Id;
+        }
+    }
 }
 public enum ItemPacks
 {
-    SIGN_IN = 0
+    SIGN_IN = 0,
+    VIP_NORMAL = 1
 }

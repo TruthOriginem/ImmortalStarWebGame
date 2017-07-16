@@ -115,7 +115,7 @@ public class BattleInstanceManager : MonoBehaviour
             {
                 string[] gridIds = stage.preGridIds;
                 //如果有前置关卡
-                if (EArray.IsNullOrEmpty(gridIds))
+                if (!EArray.IsNullOrEmpty(gridIds))
                 {
                     bool isActable = true;
                     foreach (string id in gridIds)

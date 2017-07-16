@@ -97,7 +97,7 @@ namespace SerializedClassForJson
     /// 缓存属性的子类，用于记录一部分怪物信息。
     /// </summary>
     [System.Serializable]
-    public class TempEnemyAttribute : TempAttribute
+    public class TempEnemyAttribute : BaseAttribute
     {
         public int idkey;
         public string id;
@@ -109,7 +109,7 @@ namespace SerializedClassForJson
         public TempEnemyGrowthAttr growAttr;
     }
     [System.Serializable]
-    public class TempEnemyGrowthAttr : TempAttribute
+    public class TempEnemyGrowthAttr : BaseAttribute
     {
         public int dropExp;
     }
@@ -199,7 +199,7 @@ namespace SerializedClassForJson
     /// 用于更新/获取装备状态而使用的Temp父类
     /// </summary>
     [System.Serializable]
-    public class TempEquipAttr : TempAttribute
+    public class TempEquipAttr : BaseAttribute
     {
         public string item_id;
         public float spb;

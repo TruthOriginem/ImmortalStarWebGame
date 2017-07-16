@@ -102,7 +102,7 @@ public class BaseProperty : IProperty
 /// 应与Propertytype相对应。
 /// </summary>
 [System.Serializable]
-public class TempAttribute
+public class BaseAttribute
 {
     public float mhp;
     public float mmp;

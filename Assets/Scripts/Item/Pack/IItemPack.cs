@@ -16,6 +16,7 @@ public interface IItemPack {
     bool IsPackHasLevel();
     bool IsFree();
 
+    bool HaveAccessToReceive();
     bool CanBeRecievedNow();
 }
 public enum ItemPackCostType

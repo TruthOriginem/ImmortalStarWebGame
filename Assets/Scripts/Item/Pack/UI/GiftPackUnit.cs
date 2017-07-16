@@ -27,12 +27,16 @@ public class GiftPackUnit : MonoBehaviour
         packId = pack.GetPackId();
         gp_name.text = pack.GetPackName();
 
-        gp_receiveButton.interactable = pack.CanBeRecievedNow();
+        gp_receiveButton.interactable = pack.CanBeRecievedNow() && pack.HaveAccessToReceive();
         StringBuilder sb = new StringBuilder();
         sb.AppendLine(pack.GetPackName());
         string color = "red";
         string t = "已";
-        if (pack.CanBeRecievedNow())
+        if (!pack.HaveAccessToReceive())
+        {
+            t = "无法";
+        }
+        else if (pack.CanBeRecievedNow())
         {
             color = "lime";
             t = "未";
@@ -96,7 +100,11 @@ public class GiftPackUnit : MonoBehaviour
         sb.AppendLine();
         string color = "red";
         string t = "已";
-        if (pack.CanBeRecievedNow())
+        if (!pack.HaveAccessToReceive())
+        {
+            t = "无法";
+        }
+        else if (pack.CanBeRecievedNow())
         {
             color = "lime";
             t = "未";
@@ -104,8 +112,11 @@ public class GiftPackUnit : MonoBehaviour
         sb.AppendFormat("<color={0}><size=14>等级{1} {2}领取</size></color>", color, pack.GetPackLevel(), t);
         sb.AppendLine();
         sb.AppendLine(pack.GetPackDescription());
-        sb.AppendLine();
-        sb.AppendLine(pack.GetItemsString());
+        if (pack.HaveAccessToReceive())
+        {
+            sb.AppendLine();
+            sb.AppendLine(pack.GetItemsString());
+        }
         return sb.ToString();
     }
 

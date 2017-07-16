@@ -13,6 +13,7 @@ public partial class ItemPack : IItemPack
     string description;
     string iconPath;
     bool canRecieved = false;
+    bool haveAccessToRecieve = true;
     Dictionary<string, Currency> itemToAmounts = new Dictionary<string, Currency>();
 
     private ItemPack(ItemPacks id, string name, int level = 0)
@@ -85,6 +86,11 @@ public partial class ItemPack : IItemPack
     {
         canRecieved = able;
     }
+    public void SetAccess(bool access)
+    {
+        haveAccessToRecieve = access;
+    }
+
     public bool CanBeRecievedNow()
     {
         return canRecieved;
@@ -98,5 +104,10 @@ public partial class ItemPack : IItemPack
     public string GetPackIconPath()
     {
         return iconPath;
+    }
+
+    public bool HaveAccessToReceive()
+    {
+        return haveAccessToRecieve ;
     }
 }

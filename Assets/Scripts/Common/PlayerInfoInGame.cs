@@ -127,6 +127,8 @@ public class PlayerInfoInGame : MonoBehaviour
     //
     static Dictionary<PROPERTY_TYPE, IProperty> sourcePropertyDic = new Dictionary<PROPERTY_TYPE, IProperty>();
     static Dictionary<PROPERTY_TYPE, IProperty> dynamicPropertyDic = new Dictionary<PROPERTY_TYPE, IProperty>();
+    static AttributeCollection sourceAttrs = new AttributeCollection();
+    static AttributeCollection dynamicAttrs = new AttributeCollection();
     static PlayerInfoInGame()
     {
         sourcePropertyDic.Add(PROPERTY_TYPE.MHP, new PropMhp());
@@ -184,6 +186,12 @@ public class PlayerInfoInGame : MonoBehaviour
     }
     void Start()
     {
+        /*
+        for (int i = 0; i < AttributeCollection.attrNames.Count; i++)
+        {
+            Debug.Log(AttributeCollection.attrNames[i].Name);
+        }
+        */
         StartCoroutine(AutoUpdatePlayerInfo());
     }
     private void Update()
@@ -258,7 +266,7 @@ public class PlayerInfoInGame : MonoBehaviour
         int[] designArray;
         DesignationManager.ParseDesignData(tempPlayerAttr.designData, out Design_NowEquipped, out designArray);
         Design_Ids = new List<int>(designArray);
-
+        sourceAttrs.SetValues(tempPlayerAttr);
         SetPropertyValue(PROPERTY_TYPE.MHP, tempPlayerAttr.mhp, sourcePropertyDic);
         SetPropertyValue(PROPERTY_TYPE.MMP, tempPlayerAttr.mmp, sourcePropertyDic);
         SetPropertyValue(PROPERTY_TYPE.ATK, tempPlayerAttr.atk, sourcePropertyDic);
@@ -267,6 +275,7 @@ public class PlayerInfoInGame : MonoBehaviour
         SetPropertyValue(PROPERTY_TYPE.LCK, tempPlayerAttr.lck, sourcePropertyDic);
         SetPropertyValue(PROPERTY_TYPE.CRI, tempPlayerAttr.cri, sourcePropertyDic);
         //初始化动态词典
+        dynamicAttrs.SetValues(tempPlayerAttr);
         foreach (var kv in sourcePropertyDic)
         {
             SetPropertyValue(kv.Key, kv.Value.Value, dynamicPropertyDic);
@@ -314,6 +323,7 @@ public class PlayerInfoInGame : MonoBehaviour
         dynamicPropertyDic[PROPERTY_TYPE.LOG].Value *= data.logMult;
         dynamicPropertyDic[PROPERTY_TYPE.LCK].Value *= data.lckMult;
         dynamicPropertyDic[PROPERTY_TYPE.CRI].Value *= data.criMult;
+        dynamicAttrs.MultValues(data);
         //SetPropertyValue(PROPERTY_TYPE.ATK)
     }
     /// <summary>
@@ -535,7 +545,7 @@ public class PlayerInfoInGame : MonoBehaviour
 /// 缓存属性的子类，用于记录玩家信息。
 /// </summary>
 [System.Serializable]
-public class TempPlayerAttribute : TempAttribute
+public class TempPlayerAttribute : BaseAttribute
 {
     public int level;
     public int skillPoint;//技能点

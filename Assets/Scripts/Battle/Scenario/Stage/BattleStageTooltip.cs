@@ -8,7 +8,6 @@ public class BattleStageTooltip : MonoBehaviour
 {
     public Text title;
     public Text content;
-
     void Awake()
     {
         BattleStage.onToolTipEnter = null;
@@ -57,7 +56,7 @@ public class BattleStageTooltip : MonoBehaviour
                 foreach (string id in stage.preGridIds)
                 {
                     var grid = ScenarioManager.GetGridDataById(id);
-                    if (!grid.IsCompleted())
+                    if (!grid.IsCurrentCompleted())
                     {
                         sb.Append("-解锁需要关卡：");
                         sb.Append(TextUtils.GetGreenText(ScenarioManager.GetStageDataById(grid.sId).name));

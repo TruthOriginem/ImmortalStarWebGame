@@ -78,7 +78,7 @@ public class BattleInstanceGridPool : MonoBehaviour
             grid.border.sprite = data.isGold ? goldGridBorder : bossGridBorder;
         }
         grid.transform.Find("gridName").GetComponent<Text>().text = data.name;
-        grid.SetUnlocked(data.IsCompleted());
+        grid.SetUnlocked(data.IsCurrentCompleted());
         grid.SetInteractable(data.Interactive);
         grid.RefreshIcon();
     }

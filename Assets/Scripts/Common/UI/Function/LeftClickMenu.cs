@@ -18,6 +18,10 @@ public class LeftClickMenu : MonoBehaviour
 
     private bool isShowing = false;
 
+    public static bool GetMenuShowing()
+    {
+        return Instance.isShowing;
+    }
     void Awake()
     {
         Instance = this;
@@ -184,6 +188,8 @@ public class LeftClickMenu : MonoBehaviour
         Vector2 pos;
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(transform.parent.transform as RectTransform, Input.mousePosition, Camera.main, out pos))
         {
+            pos.x += 10;
+            pos.y -= 10;
             transform.localPosition = pos;
         }
         transform.SetAsLastSibling();

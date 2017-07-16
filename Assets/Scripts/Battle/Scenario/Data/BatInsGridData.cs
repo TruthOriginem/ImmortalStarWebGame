@@ -106,11 +106,19 @@ public class BatInsGridData
     }
     /// <summary>
     /// 返回该关卡是否已完成(成功攻破)。当该关卡被顺利攻破，则会加入数据库词条并视作已完成。
+    /// 需要注意，这不包括极限等级。
     /// </summary>
     /// <returns></returns>
-    public bool IsCompleted()
+    public bool IsCurrentCompleted()
     {
         return isCompleted;
     }
-
+    /// <summary>
+    /// 进行过极限重置的地区里，该关卡是一定完成过的。
+    /// </summary>
+    /// <returns></returns>
+    public bool IsOnceCompleted()
+    {
+        return GetParentStageData().ExtremeLevel > 0;
+    }
 }

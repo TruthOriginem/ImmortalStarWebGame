@@ -9,9 +9,9 @@ public class GiftPackUnitManager : MonoBehaviour
 {
     static bool HasAddAction = false;
     ComToolTip toolTip;
-    List<GiftPackUnit> units = new List<GiftPackUnit>();
+    public List<GiftPackUnit> units = new List<GiftPackUnit>();
     bool isShowingTips = false;
-    private void Start()
+    private void Awake()
     {
         if (!HasAddAction)
         {
@@ -21,14 +21,6 @@ public class GiftPackUnitManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 在GiftPackUnit的Start里调用
-    /// </summary>
-    /// <param name="unit"></param>
-    public void AddUnit(GiftPackUnit unit)
-    {
-        units.Add(unit);
-    }
     /// <summary>
     /// 进入签到界面即刷新
     /// </summary>

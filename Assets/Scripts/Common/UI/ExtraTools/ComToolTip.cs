@@ -25,6 +25,9 @@ public class ComToolTip : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        canvasRT = mainCanvas.GetComponent<RectTransform>();
+        //SetWidth(120f);
+        Hide();
     }
     /// <summary>
     /// 根据不同的调用方式设置不同的宽度以容纳字体。
@@ -56,13 +59,6 @@ public class ComToolTip : MonoBehaviour
             localPosition.y += yoffSet;
             rectTransform.anchoredPosition = localPosition;
         }
-    }
-
-    void Start()
-    {
-        canvasRT = mainCanvas.GetComponent<RectTransform>();
-        //SetWidth(120f);
-        Hide();
     }
 
 }

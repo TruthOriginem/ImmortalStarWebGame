@@ -18,19 +18,15 @@ public class GiftPackUnit : MonoBehaviour
     public ItemPacks packIdEnum;
     private ItemPack pack;
     int packId;
-    void Start()
-    {
-        pack = ItemPackManager.GetItemPack(packIdEnum);
-        packId = pack.GetPackId();
-        gp_manager.AddUnit(this);
-        gp_name.text = pack.GetPackName();
-    }
-
     /// <summary>
     /// 根据链接的ItemPack状态刷新状态
     /// </summary>
     public void Refresh()
     {
+        pack = ItemPackManager.GetItemPack(packIdEnum);
+        packId = pack.GetPackId();
+        gp_name.text = pack.GetPackName();
+
         gp_receiveButton.interactable = pack.CanBeRecievedNow();
         StringBuilder sb = new StringBuilder();
         sb.AppendLine(pack.GetPackName());

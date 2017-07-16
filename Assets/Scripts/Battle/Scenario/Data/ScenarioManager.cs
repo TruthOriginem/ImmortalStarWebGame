@@ -92,7 +92,7 @@ public class ScenarioManager : MonoBehaviour
             yield break;
         }
     }
-    public List<BatInsGridData> GetAllGridDatas()
+    public static List<BatInsGridData> GetAllGridDatas()
     {
         List<BatInsGridData> datas = new List<BatInsGridData>();
         for (int i = 0; i < bundleDatas.Count; i++)
@@ -109,7 +109,7 @@ public class ScenarioManager : MonoBehaviour
         }
         return datas;
     }
-    public List<BatStageData> GetAllStageDatas()
+    public static List<BatStageData> GetAllStageDatas()
     {
         List<BatStageData> datas = new List<BatStageData>();
         for (int i = 0; i < bundleDatas.Count; i++)

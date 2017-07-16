@@ -24,6 +24,7 @@ public class CategoryManager : MonoBehaviour
     /// 如果是更新玩家界面。。
     /// </summary>
     private bool isRefreshing = false;
+    bool shouldRefreshToolTipNextTime = false;
 
     void Awake()
     {
@@ -111,7 +112,11 @@ public class CategoryManager : MonoBehaviour
         }
         else if (isToolTipHelping)
         {
-            float height = toolTipUI.GetComponent<RectTransform>().rect.height + 30;
+
+
+            float height = toolTipUI.rectTransform.rect.height + 30;
+            position.x -= toolTipUI.rectTransform.rect.width + 30;
+            position.y += 20;
             //float width = toolTipUI.GetComponent<RectTransform>().rect.width;
             if (Input.mousePosition.y - height < 0)
             {
@@ -119,6 +124,8 @@ public class CategoryManager : MonoBehaviour
             }
             toolTipUI.Show();
             toolTipUI.SetLocalPosition(position);
+
+
         }
 
     }
@@ -318,6 +325,10 @@ public class CategoryManager : MonoBehaviour
     }
     void OnGridExit()
     {
+        SetToolTipHide();
+    }
+    void SetToolTipHide()
+    {
         if (toolTipUI.linkedItemUI != null)
         {
             toolTipUI.linkedItemUI.DeactHighLight();
@@ -328,7 +339,6 @@ public class CategoryManager : MonoBehaviour
         toolTipUI.Hide();
     }
     #endregion
-
 
     void OnGridRightClick(Transform gridTransform)
     {

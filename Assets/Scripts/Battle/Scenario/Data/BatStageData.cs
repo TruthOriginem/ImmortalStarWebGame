@@ -88,7 +88,7 @@ public class BatStageData
         bool isComplete = true;
         for (int i = 0; i < grids.Length; i++)
         {
-            if (!grids[i].IsCompleted()) isComplete = false;
+            if (!grids[i].IsCurrentCompleted()) isComplete = false;
         }
         return isComplete;
     }

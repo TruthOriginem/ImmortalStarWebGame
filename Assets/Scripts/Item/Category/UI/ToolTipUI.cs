@@ -12,6 +12,8 @@ public class ToolTipUI : MonoBehaviour
 
     private ItemBase linkedItem;//目标
     private EquipmentBase comparedEq = null;//用来比较的item
+    [HideInInspector]
+    public RectTransform rectTransform;
     public ItemUI linkedItemUI { get; set; }
     /// <summary>
     /// 使提示框指向ItemBase的一个对象。如果不是装备，不存在对比的装备的话，cItem填null。
@@ -142,5 +144,9 @@ public class ToolTipUI : MonoBehaviour
     void AddTextToContent(string text)
     {
         content.text += text + "\n";
+    }
+    private void Awake()
+    {
+        rectTransform = GetComponent<RectTransform>();
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using SerializedClassForJson;
 using System.IO;
+using System;
 
 /// <summary>
 /// 用于管理、收集所有在客户端中的BattleInstanceGrid信息
@@ -40,14 +41,14 @@ public class BattleInstanceManager : MonoBehaviour
             TempBattleInGridRecord[] gridInfos = record.gridRecords;
             TempStageExLevelRecord[] stageExs = record.stageRecords;
             //计入临时词典，映射为：关卡id-玩家攻击次数
-            Dictionary<string, int> tempMap = new Dictionary<string, int>();
+            Dictionary<string, int> gridIdToAttackTimeColl = new Dictionary<string, int>();
             //用于获得成就-第一次被完成的关卡
-            List<BatInsGridData> ifCompletedGrids = new List<BatInsGridData>();
+            List<BatInsGridData> firstTimeCompletedGridIdList = new List<BatInsGridData>();
             //对一个关卡的最高重复击败次数
             float maxAttackAmount = 0;
             for (int i = 0; i < gridInfos.Length; i++)
             {
-                tempMap.Add(gridInfos[i].id, gridInfos[i].tc);
+                gridIdToAttackTimeColl.Add(gridInfos[i].id, gridInfos[i].tc);
             }
             for (int i = 0; i < stageExs.Length; i++)
             {
@@ -56,7 +57,7 @@ public class BattleInstanceManager : MonoBehaviour
                 data.ExtremeLevel = stageExs[i].lv;
             }
             //处理所有关卡
-            foreach (var gridData in ScenarioManager.Instance.GetAllGridDatas())
+            foreach (var gridData in ScenarioManager.GetAllGridDatas())
             {
                 //关卡id
                 string id = gridData.id;
@@ -79,7 +80,7 @@ public class BattleInstanceManager : MonoBehaviour
                     {
                         string needId = limitation.preGridIds[i];
                         //如果词典无该关卡键，则说明该关卡未被攻略
-                        if (!tempMap.ContainsKey(needId))
+                        if (!gridIdToAttackTimeColl.ContainsKey(needId))
                         {
                             isInteractable = false;
                             break;
@@ -88,18 +89,18 @@ public class BattleInstanceManager : MonoBehaviour
                     grid.Interactive = isInteractable;
                 }
                 //如果有记录该关卡，则记录该关卡的攻击次数，并且这个关卡被视作解锁。
-                if (tempMap.ContainsKey(id))
+                if (gridIdToAttackTimeColl.ContainsKey(id))
                 {
-                    grid.SetAttackCount(tempMap[id]);
+                    grid.SetAttackCount(gridIdToAttackTimeColl[id]);
                     //如果这个关卡是限制关卡，超过攻击次数也会被禁用
-                    if (limitation.attackTimesPerDay != -1 && tempMap[id] >= limitation.attackTimesPerDay)
+                    if (limitation.attackTimesPerDay != -1 && gridIdToAttackTimeColl[id] >= limitation.attackTimesPerDay)
                     {
                         grid.SetCanNotAttack();
                     }
                     //如果关卡已完成，则判断成就要素1
                     if (IsInit)
                     {
-                        ifCompletedGrids.Add(grid);
+                        firstTimeCompletedGridIdList.Add(grid);
                         if (maxAttackAmount < grid.GetAttackCount())
                         {
                             maxAttackAmount = grid.GetAttackCount();
@@ -109,26 +110,25 @@ public class BattleInstanceManager : MonoBehaviour
                 }
 
             }
-            //开始处理BattleStage
-            foreach (var stage in ScenarioManager.Instance.GetAllStageDatas())
+            //所有grid处理完毕后，开始处理Stage
+            foreach (var stage in ScenarioManager.GetAllStageDatas())
             {
                 string[] gridIds = stage.preGridIds;
                 //如果有前置关卡
-                if (gridIds != null && gridIds.Length > 0)
+                if (EArray.IsNullOrEmpty(gridIds))
                 {
                     bool isActable = true;
                     foreach (string id in gridIds)
                     {
                         BatInsGridData grid = ScenarioManager.GetGridDataById(id);
                         //如果前置关卡未解锁，那么该Stage也设置为未解锁
-                        if (!grid.IsCompleted())
+                        if (!grid.IsCurrentCompleted())
                         {
-                            if (!grid.GetParentStageData().IsCompleted())
+                            if (!grid.IsOnceCompleted())
                             {
                                 isActable = false;
                             }
                         }
-
                     }
                     stage.Unlocked = isActable;
                 }
@@ -140,7 +140,7 @@ public class BattleInstanceManager : MonoBehaviour
                 //Debug.Log(stage.stageName);
             }
 
-            DesignationManager.CheckGridsCompleteDesign(ifCompletedGrids);
+            DesignationManager.CheckGridsCompleteDesign(firstTimeCompletedGridIdList);
             DesignationManager.CheckMaxAttackAmountDesign(maxAttackAmount);
             DesignationManager.CheckExtremeLevelDesign(stageExs);
         }

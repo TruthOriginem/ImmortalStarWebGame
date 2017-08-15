@@ -30,12 +30,12 @@ public class BattleInstanceManager : MonoBehaviour
     }
     IEnumerator RefreshAllGridsCor()
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         WWWForm form = new WWWForm();
         form.AddField("id", PlayerInfoInGame.Id);
-        WWW w = new WWW(ConnectUtils.ParsePath(GET_INSTANCEGRID_PATH), form);
+        WWW w = new WWW(CU.ParsePath(GET_INSTANCEGRID_PATH), form);
         yield return w;
-        if (ConnectUtils.IsDownloadCompleted(w) && ConnectUtils.IsPostSucceed(w))
+        if (CU.IsPostSucceed(w))
         {
             TempInstanceRecord record = JsonUtility.FromJson<TempInstanceRecord>(w.text);
             TempBattleInGridRecord[] gridInfos = record.gridRecords;
@@ -146,9 +146,9 @@ public class BattleInstanceManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
 
 

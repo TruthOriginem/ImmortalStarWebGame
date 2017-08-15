@@ -15,27 +15,27 @@ namespace SerializedClassForJson
     public class IIABinds
     {
         public string[] item_ids;
-        public Currency[] amounts;
+        public lint[] amounts;
         public string[] equip_ids_to_delete;
-        public IIABinds(string[] item_ids, Currency[] amounts, string[] equip_ids_to_delete = null)
+        public IIABinds(string[] item_ids, lint[] amounts, string[] equip_ids_to_delete = null)
         {
             this.item_ids = item_ids;
             this.amounts = amounts;
             this.equip_ids_to_delete = equip_ids_to_delete;
         }
-        public IIABinds(Dictionary<string, Currency> idsToAmounts, string[] equip_ids_to_delete = null)
+        public IIABinds(Dictionary<string, lint> idsToAmounts, string[] equip_ids_to_delete = null)
         {
             this.item_ids = idsToAmounts.Keys.ToArray();
             this.amounts = idsToAmounts.Values.ToArray();
             this.equip_ids_to_delete = equip_ids_to_delete;
 
         }
-        public IIABinds(string item_id, Currency amount) : this(new string[] { item_id }, new Currency[] { amount })
+        public IIABinds(string item_id, lint amount) : this(new string[] { item_id }, new lint[] { amount })
         {
 
         }
 
-        public static IIABinds Create(Dictionary<string, Currency> itemIdsToAmounts)
+        public static IIABinds Create(Dictionary<string, lint> itemIdsToAmounts)
         {
             return new IIABinds(itemIdsToAmounts.Keys.ToArray(), itemIdsToAmounts.Values.ToArray());
         }
@@ -47,7 +47,7 @@ namespace SerializedClassForJson
         /// 将道具id及字符串转化为json字符串，形式为数组,比如[{"item_id":"","amount":0}]
         /// </summary>
         /// <returns></returns>
-        public string GenerateJsonString(bool deleteEq)
+        public string ToJson(bool deleteEq)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("[");
@@ -202,7 +202,7 @@ namespace SerializedClassForJson
     [System.Serializable]
     public class TempEquipAttr : BaseAttribute
     {
-        public string item_id;
+        public int item_id;
         public float spb;
         public int eha_level;//强化等级
         public int eha_reha;//再塑等级
@@ -257,6 +257,7 @@ namespace SerializedClassForJson
         public int eqType;
         public int indexInPack = -1;
         public bool isEquipped;
+        public bool isInStorage;
     }
     /// <summary>
     /// 用于生成随机武器的序列化对象，请求数据库专用

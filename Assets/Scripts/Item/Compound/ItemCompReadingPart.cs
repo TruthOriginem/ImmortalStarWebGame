@@ -128,32 +128,32 @@ public class ItemCompReadingPart : MonoBehaviour
           {
               if (result == DialogResult.Yes)
               {
-                  StartCoroutine(CompCor());
+                  StartCoroutine(_Comp());
               }
           }, MessageBoxButtons.YesNo);
     }
-    IEnumerator CompCor()
+    IEnumerator _Comp()
     {
         //首先更新一波玩家道具
         yield return PlayerInfoInGame.Instance.RequestUpdatePlayerItems();
         //判断是否可以合成，如果有问题则当做网络问题
         int amount = GetAmountToComp();
         int maxAmount;
-        bool canComp = linkedCompoundData.IfCanCompound(out maxAmount);
+        linkedCompoundData.IfCanCompound(out maxAmount);
         if (amount > maxAmount)
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
             RefreshUI(linkedCompoundData);
             yield break;
         }
         //开始上传结果
         TempPlayerAttribute attr;
-        Dictionary<string, Currency> dict = linkedCompoundData.GetCompDict(amount, out attr);
-        ConnectUtils.ShowConnectingUI();
+        Dictionary<string, lint> dict = linkedCompoundData.GetCompDict(amount, out attr);
+        CU.ShowConnectingUI();
         yield return PlayerRequestBundle.RequestUpdateIIA(new IIABinds(dict), attr);
         ItemCompManager.Instance.InitOrRefresh(false);
         RefreshUI(linkedCompoundData);
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
     /// <summary>
     /// 当前滑条指定的合成数量。

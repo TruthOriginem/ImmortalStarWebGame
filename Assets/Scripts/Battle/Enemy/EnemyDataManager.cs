@@ -13,7 +13,7 @@ public class EnemyDataManager : MonoBehaviour
 
     public static EnemyDataManager Instance { get; set; }
 
-    private static List<string> enemyIds = new List<string>();
+    //private static List<string> enemyIds = new List<string>();
     private static Dictionary<string, EnemyAttribute> idToEnmeyAttribute = new Dictionary<string, EnemyAttribute>();
 
     private static string LOAD_ENEMY_ATTR_PATH = "scripts/battle/enemy/loadEnemyAttr.php";
@@ -42,10 +42,10 @@ public class EnemyDataManager : MonoBehaviour
         //        yield return Instance.StartCoroutine(Instance.DownLoadEnemyAttribute(id));
         //    }
         //}
-        ConnectUtils.ShowConnectingUI();
-        WWW w = new WWW(ConnectUtils.ParsePath(LOAD_ENEMIES_PATH));
+        CU.ShowConnectingUI();
+        WWW w = new WWW(CU.ParsePath(LOAD_ENEMIES_PATH));
         yield return w;
-        if (ConnectUtils.IsDownloadCompleted(w))
+        if (CU.IsDownloadCompleted(w))
         {
             //Debug.Log(w.text);
             TempEnemyAttribute[] attrs = JsonHelper.GetJsonArray<TempEnemyAttribute>(w.text);
@@ -63,9 +63,9 @@ public class EnemyDataManager : MonoBehaviour
 
                 growP.Update(attr.growAttr);
                 Texture2D iconTexture = null;
-                WWW wIcon = new WWW(ConnectUtils.ParsePath(EnemyAttribute.GetCompletedFilePathById(attr.iconName)));
+                WWW wIcon = new WWW(CU.ParsePath(EnemyAttribute.GetCompletedFilePathById(attr.iconName)));
                 yield return wIcon;
-                if (ConnectUtils.IsDownloadCompleted(wIcon))
+                if (CU.IsDownloadCompleted(wIcon))
                 {
                     iconTexture = wIcon.texture;
                 }
@@ -80,10 +80,10 @@ public class EnemyDataManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.HideConnectingUI();
+            CU.HideConnectingUI();
             yield break;
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public class EnemyDataManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator DownLoadEnemyAttribute(string id)
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         EnemyProperty baseP = new EnemyProperty();
         EnemyProperty growP = new EnemyProperty();
         TempEnemyAttribute tempAttr = null;//除了有基本属性还记录了名字，描述等
@@ -128,7 +128,7 @@ public class EnemyDataManager : MonoBehaviour
         WWWForm fb = new WWWForm();
         fb.AddField("id", id);
         fb.AddField("type", 0);
-        WWW w1 = new WWW(ConnectUtils.ParsePath(LOAD_ENEMY_ATTR_PATH), fb);
+        WWW w1 = new WWW(CU.ParsePath(LOAD_ENEMY_ATTR_PATH), fb);
         yield return w1;
         if (w1.isDone && w1.text != "failed")
         {
@@ -139,7 +139,7 @@ public class EnemyDataManager : MonoBehaviour
         else
         {
             Debug.LogWarning(w1.text);
-            ConnectUtils.HideConnectingUI();
+            CU.HideConnectingUI();
             yield break;
         }
         #endregion
@@ -151,7 +151,7 @@ public class EnemyDataManager : MonoBehaviour
         WWWForm fb2 = new WWWForm();
         fb2.AddField("id", id);
         fb2.AddField("type", 1);
-        WWW w2 = new WWW(ConnectUtils.ParsePath(LOAD_ENEMY_ATTR_PATH), fb2);
+        WWW w2 = new WWW(CU.ParsePath(LOAD_ENEMY_ATTR_PATH), fb2);
         yield return w2;
         if (w2.isDone && w2.text != "failed")
         {
@@ -162,14 +162,14 @@ public class EnemyDataManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.HideConnectingUI();
-            ConnectUtils.ShowConnectFailed();
+            CU.HideConnectingUI();
+            CU.ShowConnectFailed();
             yield break;
         }
         #endregion
 
         #region 第三阶段，下载敌人图标
-        WWW wIcon = new WWW(ConnectUtils.ParsePath(EnemyAttribute.GetCompletedFilePathById(tempAttr.iconName)));
+        WWW wIcon = new WWW(CU.ParsePath(EnemyAttribute.GetCompletedFilePathById(tempAttr.iconName)));
         yield return wIcon;
         if (wIcon.isDone && wIcon.error == null)
         {
@@ -180,7 +180,7 @@ public class EnemyDataManager : MonoBehaviour
         {
             Debug.Log(id);
             Debug.LogWarning(wIcon.error);
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
             wIcon.Dispose();
             yield break;
         }
@@ -188,7 +188,7 @@ public class EnemyDataManager : MonoBehaviour
         #endregion
         EnemyAttribute eAttr = new EnemyAttribute(tempAttr.idkey, id, tempAttr.name, baseP, growP, iconTexture, tempAttr.dropItems);
         idToEnmeyAttribute[id] = eAttr;
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
 
 
@@ -210,12 +210,12 @@ public class EnemyDataManager : MonoBehaviour
     {
         AttributeCollection attrs = new AttributeCollection();
         var enemyAttrs = enemyAttrPrefab.baseP.attrs;
-        foreach (var attr in AttributeCollection.GetAllAttrs())
+        foreach (var attr in AttributeCollection.GetAllAttributes())
         {
-            float value = enemyAttrs.GetValue(attr);
+            float value = enemyAttrs[attr];
             value += (level - 1) * enemyAttrPrefab.GetGrowthValue(attr);
             value *= GlobalSettings.ENEMY_ENHANCE_FACTOR;
-            attrs.SetValue(attr, value);
+            attrs[attr] = value;
         }
         return attrs;
     }

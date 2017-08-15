@@ -35,18 +35,18 @@ public class ItemPackManager : MonoBehaviour
     {
         WWWForm form = new WWWForm();
         form.AddField(Requests.ID, PlayerInfoInGame.Id);
-        WWW w = new WWW(ConnectUtils.ParsePath(GET_BUNDLE_PATH), form);
-        ConnectUtils.ShowConnectingUI();
+        WWW w = new WWW(CU.ParsePath(GET_BUNDLE_PATH), form);
+        CU.ShowConnectingUI();
         yield return w;
-        ConnectUtils.HideConnectingUI();
-        if (ConnectUtils.IsPostSucceed(w))
+        CU.HideConnectingUI();
+        if (CU.IsPostSucceed(w))
         {
             bundle = JsonUtility.FromJson<TempItemPackBundle>(w.text);
             ParseBundle();
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
     }
     /// <summary>

@@ -83,7 +83,7 @@ public class GiftPackUnit : MonoBehaviour
         gpu.targetLevel = pack.GetPackLevel();
         //Debug.Log(JsonUtility.ToJson(gpu));
         SyncRequest.AppendRequest(Requests.PLAYER_DATA, attr);
-        SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.GenerateJsonString(false));
+        SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.ToJson(false));
         SyncRequest.AppendRequest(Requests.GIFT_PACK_DATA, gpu);
         yield return PlayerRequestBundle.RequestSyncUpdate();
         MessageBox.Show("成功领取了:\n" + packNowString, "恭喜");
@@ -125,12 +125,12 @@ public class GiftPackUnit : MonoBehaviour
         var path = pack.GetPackIconPath();
         if (!SpriteLibrary.IsSpriteDownLoading(path))
         {
-            WWW w = new WWW(ConnectUtils.ParsePath(pack.GetPackIconPath()));
-            ConnectUtils.ShowConnectingUI();
+            WWW w = new WWW(CU.ParsePath(pack.GetPackIconPath()));
+            CU.ShowConnectingUI();
             SpriteLibrary.SetSpriteDownLoading(path);
             yield return w;
-            ConnectUtils.HideConnectingUI();
-            if (ConnectUtils.IsDownloadCompleted(w))
+            CU.HideConnectingUI();
+            if (CU.IsDownloadCompleted(w))
             {
                 var tex = w.texture;
                 tex.Compress(true);

@@ -42,4 +42,18 @@ public class EnemySpawnData
             return this;
         }
     }
+    /// <summary>
+    /// 获得该SpawnData生成怪物总数。
+    /// </summary>
+    /// <returns></returns>
+    public int GetEnemiesCount()
+    {
+        int count = 0;
+        for (int i = 0; i < enemyGroups.Count; i++)
+        {
+            var group = enemyGroups[i];
+            count += group.amount;
+        }
+        return count;
+    }
 }

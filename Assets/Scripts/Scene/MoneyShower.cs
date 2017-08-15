@@ -10,8 +10,6 @@ public class MoneyShower : MonoBehaviour {
     public Text levelText;
     public Text ExpText;
     public Slider expSlider;
-
-
     // Update is called once per frame
     public static MoneyShower Instance { get; set; }
     private void Awake()
@@ -27,14 +25,4 @@ public class MoneyShower : MonoBehaviour {
         Instance.ExpText.text = PlayerInfoInGame.Exp + "/" + PlayerInfoInGame.NextExp;
         Instance.expSlider.value = (float)PlayerInfoInGame.Exp / (float)PlayerInfoInGame.NextExp;
     }
-    /*
-    void Update () {
-        moneyShow.text = PlayerInfoInGame.GetMoney() + "";
-        dimenShow.text = PlayerInfoInGame.GetDimenCoin() + "";
-        vipShow.text = PlayerInfoInGame.VIP_Level + "";
-        levelText.text = PlayerInfoInGame.Level.ToString();
-        ExpText.text = PlayerInfoInGame.Exp + "/" + PlayerInfoInGame.NextExp;
-        expSlider.value = (float)PlayerInfoInGame.Exp / (float)PlayerInfoInGame.NextExp;
-    }
-    */
 }

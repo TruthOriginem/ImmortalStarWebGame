@@ -11,18 +11,28 @@ public class EquipmentBase : ItemBase
     private EQ_TYPE type;
     private EquipmentValue values;
     private bool isEquipped = false;
+    private bool isInStorage = false;
     private float spb;//灵基值
     private int[] prefixMod_ids;//词缀
     private int baseMod_id;//基本名
+    private List<ChipData> linkedChips = new List<ChipData>();
     public int eha_level;//强化等级
     public int eha_reha;//再塑等级
     public int eha_rebuild;//重构等级
 
-    private static Dictionary<EQ_TYPE, string> typeToNames = new Dictionary<EQ_TYPE, string>();
-    private static Dictionary<EQ_QUALITY, string> qualityToNames = new Dictionary<EQ_QUALITY, string>();
+    private static readonly Dictionary<EQ_TYPE, string> typeToNames = new Dictionary<EQ_TYPE, string>();
+    private static readonly Dictionary<EQ_QUALITY, string> qualityToNames = new Dictionary<EQ_QUALITY, string>();
 
     private static string EQUIPMENT_PATH = "icons/equipments/";
     private static string EQUIPMENT_SUFFIX = ".png";
+
+    public List<ChipData> LinkedChips
+    {
+        get
+        {
+            return linkedChips;
+        }
+    }
 
     static EquipmentBase()
     {
@@ -48,10 +58,27 @@ public class EquipmentBase : ItemBase
         ItemDataManager.LoadTargetItemIcon(this);
     }
 
-
-    public override Dictionary<string, string> GetInfoForToolTip()
+    public void AddChip(ChipData chip)
     {
-        return base.GetInfoForToolTip();
+        linkedChips.Add(chip);
+    }
+    /// <summary>
+    /// 返回该装备拥有的芯片的说明。
+    /// </summary>
+    /// <returns></returns>
+    public string GetChipDescription()
+    {
+        if (linkedChips.Count == 0)
+        {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("<color=cyan>安装芯片：</color>");
+        for (int i = 0; i < linkedChips.Count; i++)
+        {
+            sb.AppendLine(linkedChips[i].GetFullName(true));
+        }
+        return sb.ToString();
     }
     /// <summary>
     /// 设置武器是否被装备。
@@ -66,9 +93,37 @@ public class EquipmentBase : ItemBase
     /// 返回武器是否被装备的布尔值。
     /// </summary>
     /// <returns></returns>
-    public bool IsEquipped()
+    public bool IsEquipped
     {
-        return isEquipped;
+        get
+        {
+            return isEquipped;
+        }
+    }
+    /// <summary>
+    /// 是否储存在仓库里。
+    /// </summary>
+    public bool IsInStorage
+    {
+        get
+        {
+            return isInStorage;
+        }
+
+        set
+        {
+            isInStorage = value;
+        }
+    }
+
+    /// <summary>
+    /// 获得该武器芯片装卸上限。
+    /// </summary>
+    /// <returns></returns>
+    public int GetMaxChipDeployment()
+    {
+        int qualityLevel = (int)quality;
+        return 1 + qualityLevel / 2;
     }
     /// <summary>
     /// 设置装备的词缀、基本名
@@ -107,6 +162,23 @@ public class EquipmentBase : ItemBase
     public EquipmentValue GetAttrs()
     {
         return values;
+    }
+    /// <summary>
+    /// 返回装备受到一切加成后的属性。
+    /// </summary>
+    /// <returns></returns>
+    public AttributeCollection GetActualAttrs()
+    {
+        var srcAttrs = values.values.Clone();
+        for (int i = 0; i < linkedChips.Count; i++)
+        {
+            var chip = linkedChips[i];
+            if (chip.IsEffect(Effects.ATTR))
+            {
+                srcAttrs += srcAttrs * chip.GetAttrColl();
+            }
+        }
+        return srcAttrs;
     }
     /// <summary>
     /// 返回数量，武器固定为1
@@ -148,13 +220,13 @@ public class EquipmentBase : ItemBase
     /// <returns></returns>
     public string GetName()
     {
-        return GetName(name,quality);
+        return GetName(name, quality);
     }
     /// <summary>
     /// 返回带名字的richtext名,有颜色
     /// </summary>
     /// <returns></returns>
-    public static string GetName(string name,EQ_QUALITY quality)
+    public static string GetName(string name, EQ_QUALITY quality)
     {
         StringBuilder sb = new StringBuilder();
         switch (quality)
@@ -262,7 +334,7 @@ public class EquipmentBase : ItemBase
     }
     public override bool CanBeSold()
     {
-        return true;
+        return LinkedChips.Count == 0;
     }
     /// <summary>
     /// 通过再塑次数和强化等级获得真实等级。
@@ -270,7 +342,7 @@ public class EquipmentBase : ItemBase
     /// <param name="reha"></param>
     /// <param name="level"></param>
     /// <returns></returns>
-    public static int GetRealLevel(int reha,int level)
+    public static int GetRealLevel(int reha, int level)
     {
         return reha * 10 + level;
     }

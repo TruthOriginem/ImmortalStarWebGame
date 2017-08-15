@@ -25,7 +25,9 @@ public class BattleCourse
     private int index;
     public float timeToWait;
 
-
+    /// <summary>
+    /// 记录整个回合结束后所有单位的属性状态
+    /// </summary>
     public Dictionary<BattleUnit, TempPropertyRecord> changedProperty = new Dictionary<BattleUnit, TempPropertyRecord>();
     /// <summary>
     /// 记录该回合发生了什么事的
@@ -44,15 +46,16 @@ public class BattleCourse
         StringBuilder sb = new StringBuilder();
         if (tag == TAG.START)
         {
-            sb.AppendLine("<size=22>战斗开始!</size>");
+            sb.AppendLine("<size=18>战斗开始!</size>");
         }
         else if (tag == TAG.END)
         {
-            sb.AppendLine("<size=22>战斗结束!</size>");
+            sb.AppendLine("<size=18>战斗结束!</size>");
         }
         else
         {
-            sb.AppendLine("<color=#FFC45BFF><size=20><b>第" + index + "回合</b></size></color>");
+            sb.AppendFormat("<color=#FFC45BFF><size=16><b>第{0}回合</b></size></color>", index);
+            sb.AppendLine();
             //玩家的回合
             foreach (BattleUnit unit in battle.playerUnits)
             {
@@ -126,7 +129,7 @@ public class BattleCourse
     {
         foreach (var kv in changedProperty)
         {
-            kv.Key.tempRecord = kv.Value;
+            kv.Key.ChangeToRecord(kv.Value);
         }
         return progressText;
     }
@@ -165,7 +168,7 @@ public class BattleCourse
                     f_atk += f_atk * 0.01f * skill.GetPercentModify(Infos.ADD_ATK_PERCENT, level);
                     sb.Append(from.GetNameBySide());
                     sb.Append("濒死爆发！这个回合里攻击上升为");
-                    sb.Append(TextUtils.GetColoredText(f_atk.ToString("0"),Color.red));
+                    sb.Append(TextUtils.GetColoredText(f_atk.ToString("0"), Color.red));
                     sb.AppendLine("!");
                 }
             }

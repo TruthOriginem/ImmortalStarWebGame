@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
-using System.Collections;
 using System.Text;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -53,8 +51,8 @@ public class BattleInstanceTooltip : MonoBehaviour
 
     void onIconEnter(BattleInstanceGrid grid)
     {
-        RefreshPosition();
         gameObject.SetActive(true);
+        RefreshPosition();
         title.text = grid.isBossGrid ? TextUtils.GetColoredText(grid.gridName, 150f, 100f, 255f, 255f) : grid.gridName;
         description.text = grid.description;
         data.text = CompleteDataContent(grid.LinkedGridData);
@@ -133,16 +131,16 @@ public class BattleInstanceTooltip : MonoBehaviour
                 TempItemDrops itemDrop = attr.dropItems[i];
                 if (group.enemy.Level >= itemDrop.needLevel)
                 {
+                    float amount = group.amount * itemDrop.amount * (1f + itemDrop.multLevel * (group.enemy.Level - itemDrop.multLevel));
+                    amount *= BattleAwardMult.GetDropMult();
                     if (idsToLarge.ContainsKey(itemDrop.id))
                     {
-                        float amount = group.amount * itemDrop.amount * (1f + itemDrop.multLevel * (group.enemy.Level - itemDrop.multLevel));
 
                         idsToLarge[itemDrop.id] += Mathf.RoundToInt(amount);
                         idsToLeast[itemDrop.id] += Mathf.RoundToInt(amount * itemDrop.chance);
                     }
                     else
                     {
-                        float amount = group.amount * itemDrop.amount * (1f + itemDrop.multLevel * (group.enemy.Level - itemDrop.multLevel));
 
                         idsToLarge.Add(itemDrop.id, Mathf.RoundToInt(amount));
                         idsToLeast.Add(itemDrop.id, Mathf.RoundToInt(amount * itemDrop.chance));
@@ -150,6 +148,7 @@ public class BattleInstanceTooltip : MonoBehaviour
                 }
             }
         }
+        totalExp = Mathf.RoundToInt(totalExp * BattleAwardMult.GetExpMult());
         sb.AppendLine();
         sb.AppendLine(TextUtils.GetSizedString("基本掉落", 18));
         sb.Append("▽ ");
@@ -157,9 +156,8 @@ public class BattleInstanceTooltip : MonoBehaviour
         if (PlayerInfoInGame.VIP_Level >= 1)
         {
             sb.Append(totalExp);
-            sb.Append("<color=#FFAE00FF>(+");
-            sb.Append(Mathf.RoundToInt((BattleAwardMult.GetExpMult() - 1f) * 100f));
-            sb.AppendLine("%)</color>");
+            sb.AppendFormat("<color=#FFAE00FF>(+{0}%)</color>", Mathf.RoundToInt((BattleAwardMult.GetExpMult() - 1f) * 100f));
+            sb.AppendLine();
         }
         else
         {
@@ -168,13 +166,9 @@ public class BattleInstanceTooltip : MonoBehaviour
         foreach (var kv in idsToLarge)
         {
             bool isMoney = kv.Key == "money";
-            sb.Append(isMoney ? "▽ " : "▼ ");
-            sb.Append(isMoney ? TextUtils.GetMoneyText(ItemDataManager.GetItemName(kv.Key)) : ItemDataManager.GetItemName(kv.Key));
-            sb.Append(" : ");
-            sb.Append(idsToLeast[kv.Key]);
-            sb.Append(" ~ ");
-            sb.Append(idsToLarge[kv.Key]);
-
+            string signal = isMoney ? "▽ " : "▼ ";
+            string name = isMoney ? TextUtils.GetMoneyText(ItemDataManager.GetItemName(kv.Key)) : ItemDataManager.GetItemName(kv.Key);
+            sb.AppendFormat("{0}{1} : {2} ~ {3}", signal, name, idsToLeast[kv.Key], idsToLarge[kv.Key]);
             if (PlayerInfoInGame.VIP_Level >= 1)
             {
                 sb.Append("<color=#FFAE00FF>(+");
@@ -191,7 +185,7 @@ public class BattleInstanceTooltip : MonoBehaviour
             sb.AppendLine();
         }
         sb.AppendLine();
-        sb.Append(TextUtils.GetSizedString(grid.eqDrop.GetDropInfoToolTip(), 13));
+        sb.Append(TextUtils.GetSizedString(grid.eqDrop.GetDropInfo(), 13));
         //sb.Remove(sb.Length - 1, 1);
         return sb.ToString();
     }

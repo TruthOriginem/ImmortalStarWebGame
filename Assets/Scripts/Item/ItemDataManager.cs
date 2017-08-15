@@ -5,16 +5,19 @@ using SerializedClassForJson;
 using UnityEngine.SceneManagement;
 using GameId;
 
+/// <summary>
+/// 储存普通道具
+/// </summary>
 public class ItemDataManager : MonoBehaviour
 {
-    private static string INIT_ITEMS_FILEPATH = "scripts/player/item/initItems.php";
-    private static string GET_ITEMS_FILEPATH = "scripts/player/item/loadItems.php";
+    private const string INIT_ITEMS_FILEPATH = "scripts/player/item/initItems.php";
+    private const string GET_ITEMS_FILEPATH = "scripts/player/item/loadItems.php";
     public static ItemDataManager Instance { get; set; }
 
     /// <summary>
     /// 玩家拥有道具的数量
     /// </summary>
-    public static Dictionary<ItemBase, int> itemsToAmount = new Dictionary<ItemBase, int>();
+    public static Dictionary<ItemBase, lint> itemsToAmount = new Dictionary<ItemBase, lint>();
     public static Dictionary<string, ItemBase> idsToItems = new Dictionary<string, ItemBase>();
     public static WWW InitWWWPost;
     /// <summary>
@@ -27,19 +30,6 @@ public class ItemDataManager : MonoBehaviour
         Instance = this;
 
     }
-    void Start()
-    {
-#if UNITY_EDITOR
-        if (SceneManager.GetActiveScene().name != "login")
-        {
-            //StartInit = true;
-        }
-#endif
-        if (itemsToAmount == null && idsToItems == null && StartInit)
-        {
-            //InitAllItems();
-        }
-    }
 
     #region 道具更新和初始化
     /// <summary>
@@ -47,7 +37,7 @@ public class ItemDataManager : MonoBehaviour
     /// </summary>
     public static Coroutine InitAllItems()
     {
-        itemsToAmount = new Dictionary<ItemBase, int>();
+        itemsToAmount = new Dictionary<ItemBase, lint>();
         idsToItems = new Dictionary<string, ItemBase>();
         return Instance.StartCoroutine(Instance.InitAllItemsCor());
     }
@@ -66,11 +56,11 @@ public class ItemDataManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator GetItemAmountCor()
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         WWWForm form = new WWWForm();
         form.AddField("playerId", PlayerInfoInGame.Id);
         form.AddField("type", 0);
-        WWW w = new WWW(ConnectUtils.ParsePath(GET_ITEMS_FILEPATH), form);
+        WWW w = new WWW(CU.ParsePath(GET_ITEMS_FILEPATH), form);
         yield return w;
         if (w.isDone && w.text != null)
         {
@@ -93,7 +83,7 @@ public class ItemDataManager : MonoBehaviour
                 }
             }
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
 
     }
 
@@ -103,10 +93,10 @@ public class ItemDataManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator InitAllItemsCor()
     {
-        ConnectUtils.ShowConnectingUI();
-        WWW InitWWWPost = new WWW(ConnectUtils.ParsePath(INIT_ITEMS_FILEPATH));
+        CU.ShowConnectingUI();
+        WWW InitWWWPost = new WWW(CU.ParsePath(INIT_ITEMS_FILEPATH));
         yield return InitWWWPost;
-        if (InitWWWPost.isDone && InitWWWPost.text != null)
+        if (CU.IsPostSucceed(InitWWWPost))
         {
             ItemBase[] tempItems = JsonHelper.GetJsonArray<ItemBase>(InitWWWPost.text);
 
@@ -122,7 +112,7 @@ public class ItemDataManager : MonoBehaviour
                 }
             }
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
     #endregion
 
@@ -166,7 +156,7 @@ public class ItemDataManager : MonoBehaviour
         {
             if (kv.Value > 0)
             {
-                PlayerInfoInGame.Now_Items.Add(kv.Key);
+                PlayerInfoInGame.CurrentItems.Add(kv.Key);
             }
         }
     }
@@ -186,22 +176,22 @@ public class ItemDataManager : MonoBehaviour
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public static int GetItemAmount(ItemBase item)
+    public static lint GetItemAmount(ItemBase item)
     {
-        return itemsToAmount.ContainsKey(item) ? itemsToAmount[item] : 0;
+        return itemsToAmount.ContainsKey(item) ? itemsToAmount[item] : (lint)0;
     }
     /// <summary>
     /// 返回指定道具的数量，如果是money则返回星币
     /// </summary>
     /// <param name="item_id"></param>
     /// <returns></returns>
-    public static int GetItemAmount(string item_id)
+    public static lint GetItemAmount(string item_id)
     {
         if (item_id == "money")
         {
             return PlayerInfoInGame.GetMoney();
         }
-        return idsToItems.ContainsKey(item_id) ? itemsToAmount[idsToItems[item_id]] : 0;
+        return idsToItems.ContainsKey(item_id) ? itemsToAmount[idsToItems[item_id]] : (lint)0;
     }
     public static Coroutine LoadTargetItemIcon(ItemBase item)
     {
@@ -214,11 +204,11 @@ public class ItemDataManager : MonoBehaviour
         if (!SpriteLibrary.IsSpriteDownLoading(path))
         {
             SpriteLibrary.SetSpriteDownLoading(path);
-            WWW w = new WWW(ConnectUtils.ParsePath(path));
-            ConnectUtils.ShowConnectingUI();
+            WWW w = new WWW(CU.ParsePath(path));
+            CU.ShowConnectingUI();
             yield return w;
-            ConnectUtils.HideConnectingUI();
-            if (ConnectUtils.IsDownloadCompleted(w))
+            CU.HideConnectingUI();
+            if (CU.IsDownloadCompleted(w))
             {
                 Texture2D iconTex = w.texture;
                 iconTex.Compress(true);
@@ -229,11 +219,9 @@ public class ItemDataManager : MonoBehaviour
             }
             else
             {
-                if (w.error != null)
-                {
-                    Debug.LogWarning(w.error);
-                    w.Dispose();
-                }
+                Debug.LogWarning(w.error);
+                CU.ShowConnectFailed();
+                yield break;
             }
             w.Dispose();
         }

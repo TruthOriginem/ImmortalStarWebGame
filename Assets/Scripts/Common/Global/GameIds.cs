@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace GameId
 {
+    public static class Effects
+    {
+        public const int ATTR = 0;
+    }
     /// <summary>
     /// 通用的ItemId。
     /// </summary>
@@ -29,6 +33,8 @@ namespace GameId
         public const string CARD_EXP_DOUBLE = "card_for_expDouble";
         public const string CARD_DROP_DOUBLE = "card_for_dropDouble";
         public const string EXTREME_CRYSTAL_LV1 = "extreme_crystal_lv1";
+        public const string EXTREME_CRYSTAL_LV2 = "extreme_crystal_lv2";
+        public const string MM_TICKET = "mm_ticket";
     }
     /// <summary>
     /// 常用的游戏字符串.
@@ -67,6 +73,8 @@ namespace GameId
         public const string EQ_ENHANCE_DATA = "enhanceEquipData";
         public const string EX_LEVEL_DATA = "exLevelAddData";
         public const string GIFT_PACK_DATA = "giftPackData";
+        public const string CHIP_HANDLER_DATA = "chipHandlerData";
+        public const string MACHINE_MATCH_DATA = "machineMData";
     }
     /// <summary>
     /// 常用的技能id。
@@ -87,6 +95,13 @@ namespace GameId
         public const int GWZR = 3;//过往之人
         public const int JXTXZ = 4;//极限探寻者
         public const int CZYH = 5;//持之以恒
+        public const int JZZ = 6;//集资者
+        public const int SYJ = 7;//商业家
+        /// <summary>
+        /// 极限研究者
+        /// </summary>
+        public const int JXYJZ = 9;
+        public const int XZCS = 10;
     }
     public static class Stages
     {

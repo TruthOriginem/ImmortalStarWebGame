@@ -116,10 +116,10 @@ public class EnemyExpeditionManager : MonoBehaviour
         if (infos == null)
         {
 
-            ConnectUtils.ShowConnectingUI();
-            WWW w = new WWW(ConnectUtils.ParsePath(FILEPATH));
+            CU.ShowConnectingUI();
+            WWW w = new WWW(CU.ParsePath(FILEPATH));
             yield return w;
-            if (w.isDone && w.error == null && w.text != null)
+            if (CU.IsPostSucceed(w))
             {
                 //Debug.Log(w.text);
                 infos = JsonHelper.GetJsonArray<TempEnemyExpeditionInfo>(w.text);
@@ -133,11 +133,11 @@ public class EnemyExpeditionManager : MonoBehaviour
             }
             else
             {
-                ConnectUtils.ShowConnectFailed();
+                CU.ShowConnectFailed();
 
                 yield break;
             }
-            ConnectUtils.HideConnectingUI();
+            CU.HideConnectingUI();
             //yield return new WaitForSeconds(3);
             //Debug.Log(GenearatePossibleEnemyText(PlayerInfoInGame.Level));
         }

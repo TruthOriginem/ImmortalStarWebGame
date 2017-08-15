@@ -88,7 +88,7 @@ public class GameSceneManager : MonoBehaviour
             sb.Append(Mathf.RoundToInt((float)PlayerInfoInGame.Exp / PlayerInfoInGame.NextExp * 100f));
             sb.AppendLine("%)</size></color>");
             var attrs = PlayerInfoInGame.Instance.GetDynamicAttrs();
-            foreach (var attr in AttributeCollection.GetAllAttrs())
+            foreach (var attr in AttributeCollection.GetAllAttributes())
             {
                 if (attr == Attrs.MHP || attr == Attrs.MMP) continue;
                 sb.Append(attr.Name + ": " + attrs.GetValueToString(attr));

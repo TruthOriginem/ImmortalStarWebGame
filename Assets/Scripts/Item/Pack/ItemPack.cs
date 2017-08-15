@@ -7,14 +7,14 @@ public partial class ItemPack : IItemPack
     ItemPacks packId;
     int packLevel = 0;
     int packMaxLevel = -1;
-    Currency worthDimen = 0;
-    Currency worthMoney = 0;
+    lint worthDimen = 0;
+    lint worthMoney = 0;
     string name;
     string description;
     string iconPath;
     bool canRecieved = false;
     bool haveAccessToRecieve = true;
-    Dictionary<string, Currency> itemToAmounts = new Dictionary<string, Currency>();
+    Dictionary<string, lint> itemToAmounts = new Dictionary<string, lint>();
 
     private ItemPack(ItemPacks id, string name, int level = 0)
     {
@@ -53,12 +53,12 @@ public partial class ItemPack : IItemPack
         return packMaxLevel;
     }
 
-    public Currency GetWorthDimen()
+    public lint GetWorthDimen()
     {
         return worthDimen;
     }
 
-    public Currency GetWorthMoney()
+    public lint GetWorthMoney()
     {
         return worthMoney;
     }

@@ -7,9 +7,9 @@ public interface IItemPack {
     string GetPackName();
     string GetPackDescription();
     string GetPackIconPath();
-    Currency GetWorthMoney();
-    Currency GetWorthDimen();
-    Dictionary<string, Currency> GetItemToAmounts();
+    lint GetWorthMoney();
+    lint GetWorthDimen();
+    Dictionary<string, lint> GetItemToAmounts();
 
     void SetPackLevel(int level);
     int GetPackLevel();

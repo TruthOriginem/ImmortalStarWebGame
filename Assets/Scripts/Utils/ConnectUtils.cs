@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ConnectUtils
+/// <summary>
+/// ConnectUtils类，专门用于处理链接等。
+/// </summary>
+public class CU
 {
     public const string FAILED = "failed";
     public static string server = "http://localhost";

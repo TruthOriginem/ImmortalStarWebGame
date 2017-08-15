@@ -90,7 +90,7 @@ public class ShopItemGrid : MonoBehaviour
             if (price <= PlayerInfoInGame.GetMoney() && dimen <= PlayerInfoInGame.GetDimenCoin())
             {
                 string[] itemids = { item_Id };
-                Currency[] amounts = { number };
+                lint[] amounts = { number };
                 IIABinds bind = new IIABinds(itemids, amounts);
                 TempPlayerAttribute attr = new TempPlayerAttribute();
                 attr.money -= price;

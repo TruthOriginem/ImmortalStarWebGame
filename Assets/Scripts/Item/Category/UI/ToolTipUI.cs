@@ -40,14 +40,13 @@ public class ToolTipUI : MonoBehaviour
             contentSb.AppendLine(TextUtils.GetSpbText("灵基 -- " + equipment.GetSpb().ToString("0.0")));
             contentSb.AppendLine(linkedItem.description);
             contentSb.AppendLine();
-            EquipmentValue value = equipment.GetAttrs();
-            var attrs = value.values;
+            var attrs = equipment.GetActualAttrs();
 
             if (comparedEq != null)
             {
                 if (comparedEq == linkedItem)
                 {
-                    foreach (var attr in AttributeCollection.GetAllAttrs())
+                    foreach (var attr in AttributeCollection.GetAllAttributes())
                     {
                         if (attrs.GetValue(attr) != 0f)
                         {
@@ -57,10 +56,9 @@ public class ToolTipUI : MonoBehaviour
                 }
                 else
                 {
-                    EquipmentValue cValue = comparedEq.GetAttrs();
-                    var cattrs = cValue.values;
+                    var cattrs = comparedEq.GetActualAttrs();
 
-                    foreach (var attr in AttributeCollection.GetAllAttrs())
+                    foreach (var attr in AttributeCollection.GetAllAttributes())
                     {
                         float pro = attrs.GetValue(attr);
                         float Cpro = cattrs.GetValue(attr);
@@ -74,7 +72,7 @@ public class ToolTipUI : MonoBehaviour
             }
             else
             {
-                foreach (var attr in AttributeCollection.GetAllAttrs())
+                foreach (var attr in AttributeCollection.GetAllAttributes())
                 {
                     float attrValue = attrs.GetValue(attr);
                     if (attrValue != 0f)
@@ -83,8 +81,9 @@ public class ToolTipUI : MonoBehaviour
                     }
                 }
             }
-
-            contentSb.AppendLine("\n<color=#808080ff><size=10>按右键以装备或卸除</size></color>");
+            contentSb.AppendLine();
+            contentSb.Append(equipment.GetChipDescription());
+            contentSb.Append("\n<color=#808080ff><size=10>按右键以装备或卸除</size></color>");
         }
         else
         {

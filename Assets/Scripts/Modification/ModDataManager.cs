@@ -13,19 +13,19 @@ public class ModDataManager : MonoBehaviour
 
     public static IEnumerator InitEquipmentFactory()
     {
-        ConnectUtils.ShowConnectingUI();
-        WWW w = new WWW(ConnectUtils.ParsePath(EQUIP_MOD_LOAD_PATH));
+        CU.ShowConnectingUI();
+        WWW w = new WWW(CU.ParsePath(EQUIP_MOD_LOAD_PATH));
         yield return w;
-        if (ConnectUtils.IsPostSucceed(w))
+        if (CU.IsPostSucceed(w))
         {
             //Debug.Log(w.text);
             EquipmentFactory.InitFactory(JsonUtility.FromJson<TempEquipModCollection>(w.text));
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
 
 }

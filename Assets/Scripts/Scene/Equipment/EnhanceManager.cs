@@ -92,7 +92,7 @@ public class EnhanceManager : MonoBehaviour
                 sb.Append(equip.eha_reha);
                 sb.Append("]");
             }
-            if (equip.IsEquipped())
+            if (equip.IsEquipped)
             {
                 sb.Append("<color=yellow>(E)</color>");
             }
@@ -159,7 +159,7 @@ public class EnhanceManager : MonoBehaviour
         EquipmentBase selectedEquip = eqLists[index];
         Dropdown.OptionData data = eqOptionDatas[index];
         tempAttr = new TempEquipAttr();
-        tempAttr.item_id = selectedEquip.item_id;
+        int.TryParse(selectedEquip.item_id, out tempAttr.item_id);
         MODE mode;
         tempAttr.CheckAGetEnhanceMode(selectedEquip, out mode);
         if (data.image == null)
@@ -215,7 +215,7 @@ public class EnhanceManager : MonoBehaviour
         AttributeCollection attrs = value.values;
         tempAttr.SetAttrsByValue(value);
         tempAttr.MultAllProperties(multFactor);
-        foreach (var attr in AttributeCollection.GetAllAttrs())
+        foreach (var attr in AttributeCollection.GetAllAttributes())
         {
             var attrValue = attrs.GetValue(attr);
             if (attrValue != 0f)
@@ -333,7 +333,7 @@ public class EnhanceManager : MonoBehaviour
     {
         yield return ItemDataManager.GetItemsAmount();
         EquipmentBase equipment = GetSelectedEquip();
-        Dictionary<string, Currency> itemDic = new Dictionary<string, Currency>();
+        Dictionary<string, lint> itemDic = new Dictionary<string, lint>();
         TempPlayerAttribute attr = new TempPlayerAttribute();
         MODE mode;
         tempAttr.CheckAGetEnhanceMode(equipment, out mode);
@@ -386,14 +386,14 @@ public class EnhanceManager : MonoBehaviour
             }
             itemDic.Add(Items.SPB_PIECE, -amount);
         }
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         IIABinds bind = new IIABinds(itemDic);
         SyncRequest.AppendRequest(Requests.EQ_ENHANCE_DATA, tempAttr);
-        SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.GenerateJsonString(false));
+        SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.ToJson(false));
         SyncRequest.AppendRequest(Requests.PLAYER_DATA, attr);
         WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
-        if (ConnectUtils.IsPostSucceed(w))
+        if (CU.IsPostSucceed(w))
         {
             if (remainToggle.isOn)
             {
@@ -408,8 +408,8 @@ public class EnhanceManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
 }

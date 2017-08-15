@@ -21,11 +21,14 @@ public class LinkSkillButton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (linkedSkillId == null) return;
+        if (string.IsNullOrEmpty(linkedSkillId)) return;
+
         if (linkedSkillIcon.sprite == null)
         {
             linkedSkillIcon.sprite = SkillDataManager.GetSpriteById(linkedSkillId);
+            //linkedSkillIcon.SetNativeSize();
         }
+
         if (iconDirty)
         {
             BaseSkill skill = GetLinkedSkill();
@@ -34,6 +37,7 @@ public class LinkSkillButton : MonoBehaviour
             {
                 return;
             }
+
             if (skill.Level == 0)
             {
                 linkedSkillIcon.material = greyMaterial;
@@ -42,6 +46,7 @@ public class LinkSkillButton : MonoBehaviour
             {
                 linkedSkillIcon.material = null;
             }
+
             iconDirty = false;
         }
     }

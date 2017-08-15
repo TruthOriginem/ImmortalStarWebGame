@@ -16,7 +16,7 @@ public class UnitModifyManager
     {
         foreach (var kv in skillToLevels)
         {
-            foreach (var attr in AttributeCollection.GetAllAttrs())
+            foreach (var attr in AttributeCollection.GetAllAttributes())
             {
                 float percent = kv.Key.GetPercentModify(attr, kv.Value);
                 if (percent != 0f)

@@ -54,11 +54,11 @@ public static class TextUtils
     {
         return "<color=#00D4FFFF>" + text + "</color>";
     }
-    public static string GetMoneyText(string text)
+    public static string GetMoneyText(object text)
     {
         return "<color=#00B5FFFF>" + text + "</color>";
     }
-    public static string GetExpText(string text)
+    public static string GetExpText(object text)
     {
         return "<color=#977DFFFF>" + text + "</color>";
     }
@@ -157,5 +157,25 @@ public static class TextUtils
             return number.ToString();
         }
 
+    }
+    public static string GetRarityColorCode(int rarity = 1)
+    {
+        switch (rarity)
+        {
+            case 1:
+                return "grey";
+            case 2:
+                return "white";
+            case 3:
+                return "#008000ff";//绿
+            case 4:
+                return "blue";//蓝色
+            case 5:
+                return "#9D2FFFFF";//紫色
+            case 6:
+                return "#d9d919FF";//金色
+            default:
+                return "";
+        }
     }
 }

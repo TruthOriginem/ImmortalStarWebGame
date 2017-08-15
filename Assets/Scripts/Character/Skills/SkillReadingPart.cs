@@ -54,22 +54,25 @@ public class SkillReadingPart : MonoBehaviour
     {
         if (skill != null)
         {
+            bool interactable = false;
             if (skill.Level > 0)
             {
-                skillEquipButton.interactable = true;
+                interactable = true;
                 if (skill.Equipped)
                 {
                     skillEquipText.text = "卸载技能";
                 }
                 else
                 {
+                    interactable = SkillDataManager.GetNowEquippedSkillAmount() < SkillDataManager.GetMaxEquippedSkillAmount();
                     skillEquipText.text = "装备技能";
                 }
             }
             else
             {
-                skillEquipButton.interactable = false;
+                interactable = false;
             }
+            skillEquipButton.interactable = interactable;
             //设置是否可以升级
             skillUpgradeButton.interactable = skill.CanBeUpgraded();
         }
@@ -81,14 +84,14 @@ public class SkillReadingPart : MonoBehaviour
         {
             return;
         }
-        MessageBox.Show("您确定要升级这个技能？你需要花费"+skill.GetNeedSP()+"点技能点。", "提示", (result) =>
-        {
-            if (result == DialogResult.Yes)
+        MessageBox.Show("您确定要升级这个技能？你需要花费" + skill.GetNeedSP() + "点技能点。", "提示", (result) =>
             {
-                skill.Level++;
-                PlayerRequestBundle.RequestUpdateSkills(-skill.GetNeedSP());
-            }
-        }, MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    skill.Level++;
+                    PlayerRequestBundle.RequestUpdateSkills(-skill.GetNeedSP());
+                }
+            }, MessageBoxButtons.YesNo);
 
     }
     public void EquipTargetSkill()

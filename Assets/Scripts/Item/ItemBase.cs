@@ -15,7 +15,7 @@ public class ItemBase
     /// 物品描述
     /// </summary>
     public string description;
-    public bool canBeSold;//是否可以出售
+    protected bool canBeSold;//是否可以出售
     public int indexInPack = -1;
     public int price;
     public int dimen;
@@ -39,11 +39,6 @@ public class ItemBase
     }
 
 
-    virtual public Dictionary<string, string> GetInfoForToolTip()
-    {
-        Dictionary<string, string> info = new Dictionary<string, string>();
-        return info;
-    }
     /// <summary>
     /// 生成并指定该道具的合成类，注意，若compItems为空则直接返回null。
     /// </summary>
@@ -167,9 +162,9 @@ public class ItemCompoundData
     /// </summary>
     /// <param name="amount"></param>
     /// <returns></returns>
-    public Dictionary<string, Currency> GetCompDict(int amount, out TempPlayerAttribute attr)
+    public Dictionary<string, lint> GetCompDict(int amount, out TempPlayerAttribute attr)
     {
-        var result = new Dictionary<string, Currency>();
+        var result = new Dictionary<string, lint>();
         foreach (var kv in compNeeds)
         {
             result.Add(kv.Key, -kv.Value * amount);

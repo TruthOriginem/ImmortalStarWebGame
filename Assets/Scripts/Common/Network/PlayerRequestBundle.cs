@@ -16,7 +16,7 @@ public class PlayerRequestBundle : MonoBehaviour
     /// </summary>
     public static System.Object record;
     public PlayerInfoInGame pii;
-    private const string UPDATE_ITEM_INDEX_FILEPATH = "scripts/player/item/updateIndexInPack.php";
+    public const string UPDATE_ITEM_INDEX_FILEPATH = "scripts/player/item/updateIndexInPack.php";
     private const string UPDATE_ITEMS_INDEX_FILEPATH = "scripts/player/item/updateIndexsInPack.php";
     private const string UPDATE_ITEMS_FILEPATH = "scripts/player/item/loaditems.php";
     public const string UPDATE_UNIVERSAL_FILEPATH = "scripts/player/universalUpdate.php";
@@ -38,12 +38,16 @@ public class PlayerRequestBundle : MonoBehaviour
     {
         if (item is EquipmentBase)
         {
-            Instance.StartCoroutine(Instance.UpdateItemIndex(item.item_id, item.indexInPack, 1, ((EquipmentBase)item).IsEquipped()));
+            Instance.StartCoroutine(Instance.UpdateItemIndex(item.item_id, item.indexInPack, 1, ((EquipmentBase)item).IsEquipped));
         }
         else
         {
             Instance.StartCoroutine(Instance.UpdateItemIndex(item.item_id, item.indexInPack, 0, false));
         }
+    }
+    public static Coroutine MakeEquipToStorage(EquipmentBase equip)
+    {
+        return Instance.StartCoroutine(Instance.UpdateItemIndex(equip.item_id, 0, 2, false, true));
     }
 
     /// <summary>
@@ -126,12 +130,12 @@ public class PlayerRequestBundle : MonoBehaviour
         return Instance.StartCoroutine(Instance.ChangeDesignation(id, 1));
     }
     /// <summary>
-    /// 在外部AppendRequest后再进行同步。完成后更新玩家信息。
+    /// 在外部AppendRequest后再进行同步。完成后默认更新玩家信息。
     /// </summary>
     /// <returns></returns>
-    public static Coroutine RequestSyncUpdate()
+    public static Coroutine RequestSyncUpdate(bool updatePlayerInfo = true)
     {
-        return Instance.StartCoroutine(Instance.RequestSyncUpdateCor());
+        return Instance.StartCoroutine(Instance.RequestSyncUpdateCor(updatePlayerInfo));
     }
     const string DESIGNATION_CHANGE_PATH = "scripts/player/designation/updateDesignationData.php";
     /// <summary>
@@ -146,13 +150,13 @@ public class PlayerRequestBundle : MonoBehaviour
         form.AddField("player_id", PlayerInfoInGame.Id);
         form.AddField("design_id", id);
         form.AddField("type", type);
-        WWW w = new WWW(ConnectUtils.ParsePath(DESIGNATION_CHANGE_PATH), form);
-        ConnectUtils.ShowConnectingUI();
+        WWW w = new WWW(CU.ParsePath(DESIGNATION_CHANGE_PATH), form);
+        CU.ShowConnectingUI();
         yield return w;
-        ConnectUtils.HideConnectingUI();
-        if (!ConnectUtils.IsPostSucceed(w))
+        CU.HideConnectingUI();
+        if (!CU.IsPostSucceed(w))
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
         else
         {
@@ -171,13 +175,13 @@ public class PlayerRequestBundle : MonoBehaviour
     /// <returns></returns>
     public IEnumerator UpdateItemsInPack()
     {
-        ConnectUtils.ShowConnectingUI();
-
+        CU.ShowConnectingUI();
+        yield return ChipManager.RequestGetAllChipsData();
         ///刷新武器
         WWWForm form = new WWWForm();
         form.AddField("playerId", PlayerInfoInGame.Id);
         form.AddField("type", 1);
-        WWW w = new WWW(ConnectUtils.ParsePath(UPDATE_ITEMS_FILEPATH), form);
+        WWW w = new WWW(CU.ParsePath(UPDATE_ITEMS_FILEPATH), form);
         yield return w;
         //清空M_items
         pii.ClearAllItems();
@@ -188,23 +192,33 @@ public class PlayerRequestBundle : MonoBehaviour
 
             if (tempEquips != null && tempEquips.Length != 0)
             {
-
+                Dictionary<string, EquipmentBase> idToEq = new Dictionary<string, EquipmentBase>();
                 foreach (TempEquipment temp in tempEquips)
                 {
-                    PlayerInfoInGame.Now_Items.Add(EquipmentFactory.CreateEquipment(temp));
+                    var eq = EquipmentFactory.CreateEquipment(temp);
+                    PlayerInfoInGame.CurrentItems.Add(eq);
+                    idToEq.Add(eq.item_id, eq);
+                }
+                foreach (var data in PlayerInfoInGame.CurrentChips)
+                {
+                    var dataId = data.GetEquippedId().ToString();
+                    if (idToEq.ContainsKey(dataId))
+                    {
+                        idToEq[dataId].AddChip(data);
+                    }
                 }
             }
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
             yield break;
         }
         //刷新道具
         yield return ItemDataManager.GetItemsAmount();
 
         ItemDataManager.AddItemsToPlayerInfo();
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
     /// <summary>
     /// 批量排序相对应的协程。
@@ -213,22 +227,22 @@ public class PlayerRequestBundle : MonoBehaviour
     /// <returns></returns>
     public IEnumerator UpdateItemsIndexInPack(Dictionary<ItemBase, int> itemToKeys)
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         TempItemIndex indexs = TempItemIndex.Create(itemToKeys); ;
         string json = JsonUtility.ToJson(indexs);
         WWWForm form = new WWWForm();
         form.AddField("playerId", PlayerInfoInGame.Id);
         form.AddField("data", json);
-        WWW w = new WWW(ConnectUtils.ParsePath(UPDATE_ITEMS_INDEX_FILEPATH), form);
+        WWW w = new WWW(CU.ParsePath(UPDATE_ITEMS_INDEX_FILEPATH), form);
         yield return w;
         if (w.isDone && w.text != "failed")
         {
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
     IEnumerator RequestIIABinds(IIABinds binds, TempPlayerAttribute attr)
     {
@@ -239,40 +253,40 @@ public class PlayerRequestBundle : MonoBehaviour
     /// </summary>
     IEnumerator RequestUpdateRecordCor<T>(T record, IIABinds iia, TempPlayerAttribute attr, TempRandEquipRequest[] requests)
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         SyncRequest.AppendRequest(Requests.RECORD_DATA, record);
         SyncRequest.AppendRequest(Requests.PLAYER_DATA, attr);
-        SyncRequest.AppendRequest(Requests.ITEM_DATA, iia != null ? iia.GenerateJsonString(false) : null);
-        SyncRequest.AppendRequest(Requests.EQ_TO_DELETE_DATA, iia != null ? iia.GenerateJsonString(true) : null);
+        SyncRequest.AppendRequest(Requests.ITEM_DATA, iia != null ? iia.ToJson(false) : null);
+        SyncRequest.AppendRequest(Requests.EQ_TO_DELETE_DATA, iia != null ? iia.ToJson(true) : null);
         SyncRequest.AppendRequest(Requests.RND_EQ_GENA_DATA, TempRandEquipRequest.GenerateJsonArray(requests));
         WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
-        if (ConnectUtils.IsPostSucceed(w))
+        if (CU.IsPostSucceed(w))
         {
             yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
         }
         else
         {
             Debug.LogWarning(w.text);
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
-    IEnumerator RequestSyncUpdateCor()
+    IEnumerator RequestSyncUpdateCor(bool updatePlayerInfo)
     {
         WWW w = SyncRequest.CreateSyncWWW();
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         yield return w;
-        ConnectUtils.HideConnectingUI();
-        if (ConnectUtils.IsPostSucceed(w))
+        CU.HideConnectingUI();
+        if (CU.IsPostSucceed(w))
         {
             //Debug.Log(w.text);
-            yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
+            if (updatePlayerInfo) yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
         }
         else
         {
             Debug.LogError(w.text);
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
     }
     /// <summary>
@@ -283,12 +297,12 @@ public class PlayerRequestBundle : MonoBehaviour
     /// <returns></returns>
     IEnumerator RequestGetRecordCor<T>() where T : class
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         WWWForm form = new WWWForm();
         form.AddField("id", PlayerInfoInGame.Id);
-        WWW w = new WWW(ConnectUtils.ParsePath(GET_LIG_FILEPATH), form);
+        WWW w = new WWW(CU.ParsePath(GET_LIG_FILEPATH), form);
         yield return w;
-        if (ConnectUtils.IsPostSucceed(w))
+        if (CU.IsPostSucceed(w))
         {
             string json = w.text;
             record = JsonUtility.FromJson<T>(json);
@@ -296,10 +310,10 @@ public class PlayerRequestBundle : MonoBehaviour
         else
         {
             record = null;
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
         // Debug.Log(((target as TempLigRecord).lig_id));
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
 
     /// <summary>
@@ -308,10 +322,10 @@ public class PlayerRequestBundle : MonoBehaviour
     /// <returns></returns>
     IEnumerator RequestGetSkillDataCor()
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         WWWForm form = new WWWForm();
         form.AddField("id", PlayerInfoInGame.Id);
-        WWW w = new WWW(ConnectUtils.ParsePath(GET_SKILLS_FILEPATH), form);
+        WWW w = new WWW(CU.ParsePath(GET_SKILLS_FILEPATH), form);
         yield return w;
         if (w.isDone && w.text != "failed")
         {
@@ -320,10 +334,10 @@ public class PlayerRequestBundle : MonoBehaviour
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
             yield break;
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
     /// <summary>
     /// 令数据库更新装备、道具等位置。
@@ -333,18 +347,19 @@ public class PlayerRequestBundle : MonoBehaviour
     /// <param name="type">0为道具，1为装备</param>
     /// <param name="isEquipped">如果是装备，则上传是否装备的信息。</param>
     /// <returns></returns>
-    IEnumerator UpdateItemIndex(string itemId, int index, int type, bool isEquipped)
+    IEnumerator UpdateItemIndex(string itemId, int index, int type, bool isEquipped, bool inStorage = false)
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         WWWForm form = new WWWForm();
         form.AddField("playerId", PlayerInfoInGame.Id);
         form.AddField("itemId", itemId);
         form.AddField("index", index);
         form.AddField("type", type);
         form.AddField("equipped", isEquipped ? 1 : 0);
-        WWW w = new WWW(ConnectUtils.ParsePath(UPDATE_ITEM_INDEX_FILEPATH), form);
+        form.AddField("isInStorage", type == 2 ? (inStorage ? 1 : 0) : 0);
+        WWW w = new WWW(CU.ParsePath(UPDATE_ITEM_INDEX_FILEPATH), form);
         yield return w;
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
     /// <summary>
     /// 令数据库更新技能数据
@@ -354,23 +369,23 @@ public class PlayerRequestBundle : MonoBehaviour
     /// <returns></returns>
     IEnumerator UpdateSkillData(TempSkills skills, int skillPointChange)
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         SyncRequest.AppendRequest("skillData", skills);
         TempPlayerAttribute attr = new TempPlayerAttribute();
         attr.skillPoint = skillPointChange;
         SyncRequest.AppendRequest("playerData", skillPointChange == 0 ? null : attr);
         WWW w = SyncRequest.CreateSyncWWW();
         yield return w;
-        if (ConnectUtils.IsPostSucceed(w))
+        if (CU.IsPostSucceed(w))
         {
             yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
             SkillReadingPart.Instance.RefreshTargetSkill();
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
 
 
@@ -383,7 +398,8 @@ public class PlayerRequestBundle : MonoBehaviour
                 if (text.Length >= 5)
                 {
                     StartCoroutine(_GiveSuggestion(text));
-                }else
+                }
+                else
                 {
                     MessageBox.Show("请不要低于5个字！", "提示");
                 }
@@ -396,24 +412,24 @@ public class PlayerRequestBundle : MonoBehaviour
         WWWForm form = new WWWForm();
         form.AddField("player_id", PlayerInfoInGame.Id);
         form.AddField("content", text);
-        WWW w = new WWW(ConnectUtils.ParsePath(GIVE_SUGGESTION), form);
+        WWW w = new WWW(CU.ParsePath(GIVE_SUGGESTION), form);
         yield return w;
-        if (ConnectUtils.IsPostSucceed(w))
+        if (CU.IsPostSucceed(w))
         {
             MessageBox.Show("感谢您的宝贵意见！", "谢谢");
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
     }
 }
 /// <summary>
 /// 用于与服务器端同步更新的请求类。
 /// </summary>
-public partial class SyncRequest
+public class SyncRequest
 {
-    static List<SyncRequest> requestToUpload = new List<SyncRequest>();
+    static readonly List<SyncRequest> requestToUpload = new List<SyncRequest>();
     string requestString;
     string requestId;
     public SyncRequest(string id, string content)
@@ -464,7 +480,7 @@ public partial class SyncRequest
     /// <returns></returns>
     public static WWW CreateSyncWWW(string path = PlayerRequestBundle.UPDATE_UNIVERSAL_FILEPATH)
     {
-        return new WWW(ConnectUtils.ParsePath(path), CompleteRequestForm());
+        return new WWW(CU.ParsePath(path), CompleteRequestForm());
     }
 
 }

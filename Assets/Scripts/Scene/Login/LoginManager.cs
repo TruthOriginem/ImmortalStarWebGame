@@ -17,6 +17,7 @@ public class LoginManager : MonoBehaviour
 
     public GameObject loginWindow;
 
+    private Text m_progressText;
     private Image m_BarContent;
     private float m_ShowProgress = 0f;
     private AsyncOperation m_SceneLoadAysnc;
@@ -29,13 +30,16 @@ public class LoginManager : MonoBehaviour
 
         m_LoadingBar.gameObject.SetActive(false);
         m_BarContent = m_LoadingBar.Find("Fill").GetComponent<Image>();
+        m_progressText = m_LoadingBar.Find("Text").GetComponent<Text>();
     }
     void Start()
     {
-        Debug.Log(ConnectUtils.server);
+#if UNITY_EDITOR
+        Debug.Log(CU.server);
+#endif
 #if UNITY_WEBGL && !UNITY_EDITOR
-        ConnectUtils.server = Application.absoluteURL;
-        ConnectUtils.port = "";
+        CU.server = Application.absoluteURL;
+        CU.port = "";
 #endif
     }
 
@@ -67,17 +71,22 @@ public class LoginManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator RequestLogin()
     {
-        WWWForm form = new WWWForm();
+        string pw = m_InputPwField.text;
         string id = m_InputNameField.text;
-        form.AddField("name", id);
-        form.AddField("password", m_InputPwField.text);
-        WWW w = new WWW(ConnectUtils.ParsePath("login.php"), form);
-        ConnectUtils.ShowConnectingUI();
-        yield return w;
-        ConnectUtils.HideConnectingUI();
-        if (w.error == null)
+        if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(pw))
         {
-            if (w.text == ConnectUtils.FAILED)
+            yield break;
+        }
+        WWWForm form = new WWWForm();
+        form.AddField("name", id);
+        form.AddField("password", pw);
+        WWW w = new WWW(CU.ParsePath("login.php"), form);
+        CU.ShowConnectingUI();
+        yield return w;
+        CU.HideConnectingUI();
+        if (CU.IsDownloadCompleted(w))
+        {
+            if (w.text == CU.FAILED)
             {
                 MessageBox.Show("密码错误！", null, MessageBoxButtons.OK);
                 m_InputPwField.text = "";
@@ -89,7 +98,6 @@ public class LoginManager : MonoBehaviour
             }
             else
             {
-                Debug.Log(w.text);
                 LoginData data = JsonUtility.FromJson<LoginData>(w.text);
                 m_LoadingBar.gameObject.SetActive(true);
                 loginWindow.SetActive(false);
@@ -100,13 +108,13 @@ public class LoginManager : MonoBehaviour
                 GlobalSettings.SetEncryptPerset(PlayerInfoInGame.OnlineKey);
                 StartCoroutine(LoadScene());
             }
-            w.Dispose();
         }
         else
         {
             Debug.LogWarning("出错!");
-            w.Dispose();
+            CU.ShowConnectFailed();
         }
+        w.Dispose();
     }
 
     /// <summary>
@@ -117,25 +125,40 @@ public class LoginManager : MonoBehaviour
     {
         nowLoad = 0;
         loadCompleted = false;
+        yield return 0;
+
         //道具
+        SetProgressText("加载道具信息");
         yield return ItemDataManager.InitAllItems();
         nowLoad++;
+
         //怪物
+        SetProgressText("加载怪物信息");
         yield return EnemyDataManager.InitAllEnemiesInList();
         nowLoad++;
+
         //词缀
+        SetProgressText("加载词缀信息");
         yield return ModDataManager.InitEquipmentFactory();
         nowLoad++;
+
         //远征怪物信息
+        SetProgressText("加载远征信息");
         yield return EnemyExpeditionManager.InitEnemyExpeditionInfos();
         nowLoad++;
+
         //关卡信息
+        SetProgressText("加载关卡信息");
         yield return ScenarioManager.InitAllScenarioData();
         nowLoad++;
+
         //称号信息
+        SetProgressText("加载称号信息");
         yield return DesignationManager.InitDesignationDatas();
         nowLoad++;
+
         //场景
+        SetProgressText("加载游戏场景");
         StartCoroutine(AysncLoadScene());
         while (m_SceneLoadAysnc != null && m_SceneLoadAysnc.progress < 0.8f)
         {
@@ -143,7 +166,11 @@ public class LoginManager : MonoBehaviour
         }
         nowLoad++;
         loadCompleted = true;
-        m_LoadingBar.Find("Text").GetComponent<Text>().text = "按鼠标左键进入游戏";
+        m_progressText.text = "按鼠标左键进入游戏";
+    }
+    void SetProgressText(string text)
+    {
+        m_progressText.text = string.Format("{0}...({1}/{2})", text,nowLoad, shouldLoad);
     }
     /// <summary>
     /// 初始化场景
@@ -190,10 +217,10 @@ public class LoginManager : MonoBehaviour
         form.AddField("password", register.inputPassWordField.text);
         form.AddField("nickname", register.inputNickNameField.text);
         form.AddField("leader_uid", register.inputLeaderUIDField.text);
-        WWW w = new WWW(ConnectUtils.ParsePath("register.php"), form);
-        ConnectUtils.ShowConnectingUI();
+        WWW w = new WWW(CU.ParsePath("register.php"), form);
+        CU.ShowConnectingUI();
         yield return w;
-        if (w.isDone && w.text != "failed")
+        if (CU.IsPostSucceed(w))
         {
             if (w.text == "exists")
             {
@@ -206,9 +233,9 @@ public class LoginManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
     [System.Serializable]
     public class LoginData

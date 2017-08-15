@@ -12,6 +12,7 @@ using GameId;
 /// </summary>
 public class PlayerInfoInGame : MonoBehaviour
 {
+    #region 相关变量
     /// <summary>
     /// 玩家装备数量的最大值
     /// </summary>
@@ -105,8 +106,8 @@ public class PlayerInfoInGame : MonoBehaviour
     private static string username;
     private string temp_pw;
 
-    public static Currency m_money;//星币
-    public static Currency m_dimenCoin;//次元币（氪金要素
+    public static lint m_money;//星币
+    public static lint m_dimenCoin;//次元币（氪金要素
     public static int VIP_Level;//玩家vip等级
     public static int SkillPoint;//技能点
     public static string OnlineKey;
@@ -117,38 +118,80 @@ public class PlayerInfoInGame : MonoBehaviour
     //private bool autoUpdate = true;
     public static bool DebugMode = false;
 
-    //s开头的为没有其他加成的原始属性（基础属性）
-
-    private float s_hprate;//回复生命速率，具体回复应该由服务器控制
-    private float s_mprate;//回复能量速率
-
-
     //source指的是原始属性字典，dynamic指的是最终计算所得属性字典
     //
     static AttributeCollection sourceAttrs = new AttributeCollection();
     static AttributeCollection dynamicAttrs = new AttributeCollection();
+    #endregion
     static PlayerInfoInGame()
     {
 #if UNITY_EDITOR
         DebugMode = true;
 #endif
     }
-
-    /// <summary>
-    /// 玩家目前身上拥有的物品
-    /// </summary>
-    public static List<ItemBase> Now_Items = new List<ItemBase>();
-    /// <summary>
-    /// 玩家目前所拥有的称号的id
-    /// </summary>
-    public static List<int> Design_Ids = new List<int>();
-    /// <summary>
-    /// 玩家当前使用的称号id
-    /// </summary>
-    public static int Design_NowEquipped = Designations.NOTHING;
+    private static List<ChipData> now_Chips = new List<ChipData>();
+    private static List<ItemBase> now_Items = new List<ItemBase>();
+    private static List<int> design_Ids = new List<int>();
+    private static int design_NowEquipped = Designations.NOTHING;
 
     public static PlayerInfoInGame Instance { get; set; }
 
+    /// <summary>
+    /// 最近阶段更新，当前拥有的ItemBase的集合。
+    /// </summary>
+    public static List<ItemBase> CurrentItems
+    {
+        get
+        {
+            return now_Items;
+        }
+
+        set
+        {
+            now_Items = value;
+        }
+    }
+
+    public static List<int> Design_Ids
+    {
+        get
+        {
+            return design_Ids;
+        }
+
+        set
+        {
+            design_Ids = value;
+        }
+    }
+    /// <summary>
+    /// 最近阶段更新，当前拥有的ChipData的集合。
+    /// </summary>
+    public static List<ChipData> CurrentChips
+    {
+        get
+        {
+            return now_Chips;
+        }
+
+        set
+        {
+            now_Chips = value;
+        }
+    }
+
+    public static int Design_NowEquipped
+    {
+        get
+        {
+            return design_NowEquipped;
+        }
+
+        set
+        {
+            design_NowEquipped = value;
+        }
+    }
 
     private static string UPDATE_PLAYERINFO_FILE_PATH = "scripts/player/getPlayerInfo.php";
 
@@ -176,11 +219,13 @@ public class PlayerInfoInGame : MonoBehaviour
             Debug.Log(AttributeCollection.attrNames[i].Name);
         }
         */
+
         StartCoroutine(AutoUpdatePlayerInfo());
     }
+
+#if UNITY_EDITOR
     private void Update()
     {
-#if UNITY_EDITOR
         //制作装备前缀说明
         if (Input.GetKeyDown(KeyCode.F10))
         {
@@ -188,17 +233,13 @@ public class PlayerInfoInGame : MonoBehaviour
             //BattleInstanceManager.GenerateAllFiles();
             //EquipmentFactory.CreatePrefixReadingFile();
         }
-        if (Input.GetKeyDown(KeyCode.F11))
-        {
-            //ExpeditionManager.Instance.expeditionWindowToggle.isOn = true;
-        }
         if (Input.GetKeyDown(KeyCode.O))
         {
             ConTipsManager.AddMessage("测试", "成功了");
         }
 
-#endif
     }
+#endif
     #region 人物状态相关
 
     /// <summary>
@@ -216,15 +257,6 @@ public class PlayerInfoInGame : MonoBehaviour
     /// <returns></returns>
     IEnumerator AutoUpdatePlayerInfo()
     {
-        /*
-        autoUpdate = true;
-        while (autoUpdate)
-        {
-            yield return new WaitForSeconds(60);
-            StartCoroutine(UpdatePlayerInfo());
-        }
-        */
-        //StartCoroutine(UpdatePlayerInfo());
         while (true)
         {
             yield return new WaitForSeconds(60);
@@ -232,7 +264,46 @@ public class PlayerInfoInGame : MonoBehaviour
             Resources.UnloadUnusedAssets();
         }
     }
+    public static Coroutine OnlyUpdatePlayerAttrs()
+    {
+        return Instance.StartCoroutine(Instance._OnlyUpdatePlayerAttrs());
+    }
 
+    IEnumerator _OnlyUpdatePlayerAttrs()
+    {
+        //更新人物状态
+        TempPlayerAttribute tempPlayerAttri = null;
+        WWWForm form = new WWWForm();
+        form.AddField("id", id);
+        form.AddField("type", 0);
+        WWW w = new WWW(CU.ParsePath(UPDATE_PLAYERINFO_FILE_PATH), form);
+        CU.ShowConnectingUI();
+        yield return w;
+        CU.HideConnectingUI();
+        if (CU.IsPostSucceed(w))
+        {
+            string jsonText = w.text;
+            tempPlayerAttri = JsonUtility.FromJson<TempPlayerAttribute>(jsonText);
+
+            //如果onlinekey不对，则强制退出游戏
+            if (tempPlayerAttri.onlineKey != OnlineKey && !DebugMode)
+            {
+                MessageBox.Show("您的账号已在别的地方登陆，本地将会下线。", "提示", (result) =>
+                {
+                    StartCoroutine(GameSceneManager.Instance.ReturnLoginWindow());
+                }, MessageBoxButtons.OK);
+                yield break;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Failed");
+            CU.ShowConnectFailed();
+            CU.HideConnectingUI();
+            yield break;
+        }
+        yield return ComputePlayerInfo(tempPlayerAttri);
+    }
     /// <summary>
     /// 计算当前人物信息。
     /// </summary>
@@ -248,26 +319,28 @@ public class PlayerInfoInGame : MonoBehaviour
         VIP_Level = tempPlayerAttr.vipLevel;
         //称号获取
         int[] designArray;
-        DesignationManager.ParseDesignData(tempPlayerAttr.designData, out Design_NowEquipped, out designArray);
+        int designNowEquipped;
+        DesignationManager.ParseDesignData(tempPlayerAttr.designData, out designNowEquipped, out designArray);
+        Design_NowEquipped = designNowEquipped;
         Design_Ids = new List<int>(designArray);
-        sourceAttrs.SetValues(tempPlayerAttr);
         //初始化动态词典
+        sourceAttrs.SetValues(tempPlayerAttr);
         dynamicAttrs.SetValues(tempPlayerAttr);
         //设置装备动态词典
-        for (int i = 0; i < Now_Items.Count; i++)
+        for (int i = 0; i < CurrentItems.Count; i++)
         {
-            if (Now_Items[i] is EquipmentBase)
+            if (CurrentItems[i] is EquipmentBase)
             {
-                EquipmentBase equipment = (EquipmentBase)Now_Items[i];
-                if (equipment.IsEquipped())
+                EquipmentBase equipment = (EquipmentBase)CurrentItems[i];
+                if (equipment.IsEquipped)
                 {
-                    EquipmentValue value = equipment.GetAttrs();
-                    dynamicAttrs += value.values;
+                    var attrColl = equipment.GetActualAttrs();
+                    dynamicAttrs += attrColl;
                 }
             }
         }
         //设置称号给予的加成
-        CalculatePropertiesByDesignation();
+        CalculateAttrsByDesignation();
         MakePropertyDirty();
         yield return 0;
     }
@@ -275,7 +348,7 @@ public class PlayerInfoInGame : MonoBehaviour
     /// <summary>
     /// 计算称号给予的属性加成
     /// </summary>
-    void CalculatePropertiesByDesignation()
+    void CalculateAttrsByDesignation()
     {
         if (Design_NowEquipped == Designations.NOTHING)
         {
@@ -287,7 +360,6 @@ public class PlayerInfoInGame : MonoBehaviour
             return;
         }
         dynamicAttrs.MultValues(data);
-        //SetPropertyValue(PROPERTY_TYPE.ATK)
     }
     /// <summary>
     /// 更新人物状态，从数据库拿取人物的原始属性。
@@ -295,8 +367,7 @@ public class PlayerInfoInGame : MonoBehaviour
     /// <returns></returns>
     IEnumerator UpdatePlayerInfo()
     {
-        bool needRefreshMoneyAndItem = false;
-        //更新成就获取
+        /*更新成就获取
         bool updateDesign = false;
         if (DesignationManager.DesignToGets.Count > 0)
         {
@@ -306,59 +377,26 @@ public class PlayerInfoInGame : MonoBehaviour
             }
             updateDesign = true;
             DesignationManager.DesignToGets.Clear();
-        }
+        }*/
         //先更新人物拥有道具
         yield return PlayerRequestBundle.RequestUpdateItemsInPack();
         //更新人物状态
-        TempPlayerAttribute tempPlayerAttri = null;
-        WWWForm form = new WWWForm();
-        form.AddField("id", id);
-        form.AddField("type", 0);
-        WWW w = new WWW(ConnectUtils.ParsePath(UPDATE_PLAYERINFO_FILE_PATH), form);
-        ConnectUtils.ShowConnectingUI();
-        yield return w;
-        if (ConnectUtils.IsPostSucceed(w))
-        {
-            string jsonText = w.text;
-            tempPlayerAttri = JsonUtility.FromJson<TempPlayerAttribute>(jsonText);
-            Currency money = tempPlayerAttri.money;
-            //超过5亿则开始
-            if (money >= 500000000)
-            {
-                needRefreshMoneyAndItem = true;
-            }
-            //如果onlinekey不对，则强制退出游戏
-            if (tempPlayerAttri.onlineKey != OnlineKey && !DebugMode)
-            {
-                //Debug.LogError(tempPlayerAttri.onlineKey + ":" + OnlineKey);
-                //autoUpdate = false;
-                MessageBox.Show("您的账号已在别的地方登陆，本地将会下线。", "提示", (result) =>
-                {
-                    StartCoroutine(GameSceneManager.Instance.ReturnLoginWindow());
-                }, MessageBoxButtons.OK);
-                yield break;
-            }
-        }
-        else
-        {
-            Debug.LogWarning("Failed");
-            ConnectUtils.ShowConnectFailed();
-            ConnectUtils.HideConnectingUI();
-            yield break;
-        }
-        yield return StartCoroutine(ComputePlayerInfo(tempPlayerAttri));
+        yield return _OnlyUpdatePlayerAttrs();
         //然后更新人物技能
         yield return PlayerRequestBundle.RequestGetSkillDatas();
+        //更新UI下方信息
         MoneyShower.RefreshMoneyShower();
-        ConnectUtils.HideConnectingUI();
-        if (needRefreshMoneyAndItem)
+        DesignationManager.CheckPlayerInfo();
+        if (GetMoney() > 500000000)
         {
             var tempattr = new TempPlayerAttribute();
             tempattr.money -= 100000000;
-            IIABinds binds = new IIABinds(new string[] { Items.MONEY_CHEST }, new Currency[] { 1 });
-            yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, binds, tempattr, null);
+            SyncRequest.AppendRequest(Requests.PLAYER_DATA, tempattr);
+            IIABinds binds = new IIABinds(Items.MONEY_CHEST, 1);
+            SyncRequest.AppendRequest(Requests.ITEM_DATA, binds.ToJson(false));
+            yield return PlayerRequestBundle.RequestSyncUpdate();
         }
-        if (updateDesign) OCManager.Refresh();
+        //if (updateDesign) OCManager.Refresh();
         //System.GC.Collect();
     }
 
@@ -379,7 +417,7 @@ public class PlayerInfoInGame : MonoBehaviour
 
     public float GetSourceAttrValue(Attr type)
     {
-        return dynamicAttrs.GetValue(type);
+        return sourceAttrs.GetValue(type);
     }
     #endregion
 
@@ -396,7 +434,7 @@ public class PlayerInfoInGame : MonoBehaviour
     /// </summary>
     public void ClearAllItems()
     {
-        Now_Items.Clear();
+        CurrentItems.Clear();
     }
     /// <summary>
     /// 更新PropertyWindow中人物属性。
@@ -408,29 +446,39 @@ public class PlayerInfoInGame : MonoBehaviour
 
     public void TestGainItem(ItemBase item)
     {
-        Now_Items.Add(item);
+        CurrentItems.Add(item);
     }
 
 
     /// <summary>
-    /// 得到当前的所有装备，是否包含已装备的装备
+    /// 得到当前的所有装备，是否包含已装备的装备（默认没有仓库内装备，可返回只包含仓库装备）
     /// </summary>
     /// <returns></returns>
-    public static List<EquipmentBase> GetAllEquipments(bool equiped)
+    public static List<EquipmentBase> GetAllEquipments(bool equiped, bool onlyIncludeStorage = false)
     {
         List<EquipmentBase> equips = new List<EquipmentBase>();
-        foreach (ItemBase item in Now_Items)
+        foreach (ItemBase item in CurrentItems)
         {
             if (item is EquipmentBase)
             {
                 EquipmentBase equip = item as EquipmentBase;
-                if (equiped)
+                if (onlyIncludeStorage)
                 {
-                    equips.Add(item as EquipmentBase);
+                    if (equip.IsInStorage)
+                    {
+                        equips.Add(equip);
+                    }
                 }
-                else if (!equip.IsEquipped())
+                else
                 {
-                    equips.Add(item as EquipmentBase);
+                    if (equiped)
+                    {
+                        if (!equip.IsInStorage) equips.Add(equip);
+                    }
+                    else if (!equip.IsEquipped)
+                    {
+                        if (!equip.IsInStorage) equips.Add(equip);
+                    }
                 }
             }
         }
@@ -440,14 +488,21 @@ public class PlayerInfoInGame : MonoBehaviour
     /// 返回当前装备的数量。
     /// </summary>
     /// <returns></returns>
-    public static int GetEquipmentAmount()
+    public static int GetEquipmentAmount(bool includeStorage = false)
     {
         int amount = 0;
-        for (int i = 0; i < Now_Items.Count; i++)
+        for (int i = 0; i < CurrentItems.Count; i++)
         {
-            if (Now_Items[i] is EquipmentBase)
+            if (CurrentItems[i] is EquipmentBase)
             {
-                amount++;
+                if (includeStorage)
+                {
+                    amount++;
+                }
+                else if (!(CurrentItems[i] as EquipmentBase).IsInStorage)
+                {
+                    amount++;
+                }
             }
         }
         return amount;
@@ -459,7 +514,7 @@ public class PlayerInfoInGame : MonoBehaviour
     public static List<ItemBase> GetAllItems()
     {
         List<ItemBase> items = new List<ItemBase>();
-        foreach (ItemBase item in Now_Items)
+        foreach (ItemBase item in CurrentItems)
         {
             if (!(item is EquipmentBase))
             {
@@ -505,8 +560,6 @@ public class TempPlayerAttribute : BaseAttribute
     public int vipLevel;//玩家vip等级
     public long exp;
     public long nextExp;
-    public float nhp;
-    public float nmp;
     public string onlineKey;
     public string designData;//玩家称号
 }

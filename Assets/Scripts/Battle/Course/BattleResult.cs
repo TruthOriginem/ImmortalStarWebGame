@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using SerializedClassForJson;
 using System.Linq;
 using System.Text;
-using UnityEngine.UI;
 using GameId;
+using MachineMatchJson;
 
 /// <summary>
 /// 战斗结束后生成的结算类，用于记载各种数据
@@ -59,10 +59,32 @@ public class BattleResult
             EnemySpawnData data = grid.enemys.GetActualData(grid.sId);
             long totalExp;//经验总计
             int money;//金钱统计
-            Dictionary<string, Currency> idsToAmount = GenerateResultsDict(data, true, true, 1, out money, out totalExp);
+            Dictionary<string, lint> idsToAmount = GenerateResultsDict(data, true, true, 1, out money, out totalExp);
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(TextUtils.GetSizedString("结算:", 20));
-
+            sb.AppendLine(TextUtils.GetSizedString("结算:", 16));
+            requests = grid.eqDrop.CreateSpecRequests(1, BattleAwardMult.GetDropMult());
+            if (requests != null)
+            {
+                for (int i = 0; i < requests.Length; i++)
+                {
+                    sb.Append("获得了灵基为");
+                    sb.Append(requests[i].value.ToString("0.0"));
+                    sb.Append("的");
+                    sb.AppendLine(EquipmentBase.GetEqTypeNameByType((EQ_TYPE)requests[i].eqType));
+                }
+                SyncRequest.AppendRequest(Requests.RND_EQ_GENA_DATA, TempRandEquipRequest.GenerateJsonArray(requests));
+            }
+            var genData = ChipManager.GenerateRandomDataByBattle(grid, data);
+            //ChipUIManager.rawDatas.Add(gen)
+            if (genData != null)
+            {
+                if (genData.starRarity > 0)
+                {
+                    sb.AppendFormat("获得了一个稀有度为T{0}的芯片！", genData.starRarity);
+                    sb.AppendLine();
+                }
+                SyncRequest.AppendRequest(Requests.CHIP_HANDLER_DATA, genData);
+            }
             //双倍卡
             if (ItemDataManager.GetItemAmount(Items.CARD_EXP_DOUBLE) >= 1)
             {
@@ -73,7 +95,7 @@ public class BattleResult
             }
             if (ItemDataManager.GetItemAmount(Items.CARD_DROP_DOUBLE) >= 1)
             {
-                var temp = new Dictionary<string, Currency>(idsToAmount);
+                var temp = new Dictionary<string, lint>(idsToAmount);
                 foreach (var key in temp.Keys)
                 {
                     idsToAmount[key] = temp[key] * 2;
@@ -82,10 +104,10 @@ public class BattleResult
                 sb.Append("使用了");
                 sb.AppendLine(ItemDataManager.GetItemName(Items.CARD_DROP_DOUBLE));
             }
-            sb.AppendLine("获得星币 " + money);
-            sb.AppendLine("获得经验 " + totalExp);
+            sb.AppendLine("获得星币 " + TextUtils.GetMoneyText(money));
+            sb.AppendLine("获得经验 " + TextUtils.GetExpText(totalExp));
             string[] items_ids = idsToAmount.Keys.ToArray();//里面不存在，在更新道具的时候
-            Currency[] amounts = idsToAmount.Values.ToArray();
+            lint[] amounts = idsToAmount.Values.ToArray();
             for (int i = 0; i < items_ids.Length; i++)
             {
                 if (amounts[i] > 0) sb.AppendLine(ItemDataManager.GetItemName(items_ids[i]) + " x " + amounts[i]);
@@ -98,33 +120,27 @@ public class BattleResult
             record.lig_id = grid.id;
             record.lig_lostTime = lostTime;
             record.SetHangFinish();
-            requests = grid.eqDrop.CreateSpecRequests(1, BattleAwardMult.GetDropMult());
-            if (requests != null)
-            {
-                for (int i = 0; i < requests.Length; i++)
-                {
-                    sb.Append("获得了灵基为");
-                    sb.Append(requests[i].value.ToString("0.0"));
-                    sb.Append("的");
-                    sb.AppendLine(EquipmentBase.GetEqTypeNameByType((EQ_TYPE)requests[i].eqType));
-                }
-                //sb.AppendLine("您的背包已满，不能再获得装备了");
-            }
 
-            BattleManager.ResultString = sb.ToString();
+
             //
             //如果不是能无限攻击的关卡，则不会记录在数据库最record里
             if (grid.limit.attackTimesPerDay != -1)
             {
                 record.lig_dontRecord = true;
             }
+            SyncRequest.AppendRequest(Requests.RECORD_DATA, record);
+            SyncRequest.AppendRequest(Requests.ITEM_DATA, binds.ToJson(false));
+            SyncRequest.AppendRequest(Requests.PLAYER_DATA, pattr);
+
+
+            BattleManager.ResultString = sb.ToString();
         }
         else
         {
             BattleManager.ResultString = "失败。";
         }
 
-        yield return PlayerRequestBundle.RequestUpdateRecord(record, binds, pattr, requests);
+        yield return PlayerRequestBundle.RequestSyncUpdate();
         yield return BattleInstanceManager.Instance.RefreshAllGrids();
     }
     IEnumerator GainResultCor(bool win)
@@ -145,12 +161,12 @@ public class BattleResult
             {
                 EnemySpawnData data = info.enemySpawnData;
                 //掉落
-                Dictionary<string, Currency> idsToAmount = GenerateExpeditionResultsDict(data, info);
+                Dictionary<string, lint> idsToAmount = GenerateExpeditionResultsDict(data, info);
 
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(TextUtils.GetSizedString("结算:", 20));
                 string[] items_ids = idsToAmount.Keys.ToArray();//里面不存在，在更新道具的时候
-                Currency[] amounts = idsToAmount.Values.ToArray();
+                lint[] amounts = idsToAmount.Values.ToArray();
                 for (int i = 0; i < items_ids.Length; i++)
                 {
                     if (amounts[i] > 0) sb.AppendLine(ItemDataManager.GetItemName(items_ids[i]) + " x " + amounts[i]);
@@ -169,7 +185,7 @@ public class BattleResult
             else
             {
                 BattleManager.ResultString = "失败";
-                pattr.money -= info.targetLightYear;
+                pattr.money -= info.moneyToBePaied;
                 TempPlayerExpeditionInfo expeInfo = new TempPlayerExpeditionInfo();
                 expeInfo.nowLightYear = 0;
                 expeInfo.maxLightYear = info.nowMaxLightYear;
@@ -177,8 +193,16 @@ public class BattleResult
             }
         }
         #endregion
-
-
+        if (linkedInfo is MachineMatchManager)
+        {
+            BattleManager.ResultString = win ? "胜利。" : "失败。";
+            TempMMSyncInfo info = new TempMMSyncInfo();
+            info.addScore = win ? 3 : 1;
+            info.addChall = 1;
+            SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(Items.MM_TICKET, -1).ToJson(false));
+            SyncRequest.AppendRequest(Requests.MACHINE_MATCH_DATA, info);
+            yield return PlayerRequestBundle.RequestSyncUpdate();
+        }
     }
 
 
@@ -192,7 +216,7 @@ public class BattleResult
     /// <param name="money"></param>
     /// <param name="exp"></param>
     /// <returns></returns>
-    public static Dictionary<string, Currency> GenerateResultsDict(EnemySpawnData data, bool doRandom, bool countMult, int times, out int money, out long exp)
+    public static Dictionary<string, lint> GenerateResultsDict(EnemySpawnData data, bool doRandom, bool countMult, int times, out int money, out long exp)
     {
         if (data == null)
         {
@@ -200,7 +224,7 @@ public class BattleResult
             money = 0;
             return null;
         }
-        Dictionary<string, Currency> idsToAmount = new Dictionary<string, Currency>();
+        Dictionary<string, lint> idsToAmount = new Dictionary<string, lint>();
         exp = 0;//经验总计
         foreach (EnemyGroup group in data.enemyGroups)
         {
@@ -261,10 +285,10 @@ public class BattleResult
     /// </summary>
     /// <param name="data">怪物组</param>
     /// <returns></returns>
-    public static Dictionary<string, Currency> GenerateExpeditionResultsDict(EnemySpawnData data, ExpeditionBattleInfo info)
+    public static Dictionary<string, lint> GenerateExpeditionResultsDict(EnemySpawnData data, ExpeditionBattleInfo info)
     {
 
-        Dictionary<string, Currency> idsToAmount = new Dictionary<string, Currency>();
+        Dictionary<string, lint> idsToAmount = new Dictionary<string, lint>();
         foreach (EnemyGroup group in data.enemyGroups)
         {
             int e_amount = group.amount;
@@ -300,6 +324,7 @@ public class BattleResult
             }
         }
         ExpeditionManager.AddExepSpecItemsToDict(idsToAmount, info);
+        if (idsToAmount.ContainsKey(Items.MONEY)) idsToAmount.Remove(Items.MONEY);
         return idsToAmount;
     }
 }

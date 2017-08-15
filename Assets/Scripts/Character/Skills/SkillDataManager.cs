@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class SkillDataManager : MonoBehaviour
 {
-    public static Dictionary<string, BaseSkill> IDS_TO_SKILLS = new Dictionary<string, BaseSkill>();
+    public static readonly Dictionary<string, BaseSkill> IDS_TO_SKILLS = new Dictionary<string, BaseSkill>();
     public static List<BaseSkill> SKILLS_LIST = new List<BaseSkill>();
     public static SkillDataManager Instance { get; set; }
 
@@ -52,7 +52,7 @@ public class SkillDataManager : MonoBehaviour
         }
         else
         {
-            Instance.StartCoroutine(Instance.RequestLoadTexture(path));
+            if (!SpriteLibrary.IsSpriteDownLoading(path)) Instance.StartCoroutine(Instance.RequestLoadTexture(path));
             return null;
         }
     }
@@ -63,30 +63,27 @@ public class SkillDataManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator RequestLoadTexture(string path)
     {
-        if (!SpriteLibrary.IsSpriteDownLoading(path))
+        SpriteLibrary.SetSpriteDownLoading(path);
+        CU.ShowConnectingUI();
+        WWW w = new WWW(CU.ParsePath(path));
+        yield return w;
+        if (CU.IsDownloadCompleted(w))
         {
-            SpriteLibrary.SetSpriteDownLoading(path);
-            ConnectUtils.ShowConnectingUI();
-            WWW w = new WWW(ConnectUtils.ParsePath(path));
-            yield return w;
-            if (ConnectUtils.IsDownloadCompleted(w))
-            {
-                Texture2D iconTex = w.texture;
-                iconTex.Compress(true);
-                Sprite _icon = Sprite.Create(iconTex, new Rect(0, 0, iconTex.width, iconTex.height), new Vector2(0.5f, 0.5f));
-                ///预加载
-                SpriteLibrary.AddSprite(path, _icon);
-                ///
-                //Debug.Log(path);
-            }
-            else
-            {
-                Debug.LogWarning(w.error);
-                ConnectUtils.ShowConnectFailed();
-            }
-            ConnectUtils.HideConnectingUI();
-            w.Dispose();
+            Texture2D iconTex = w.texture;
+            iconTex.Compress(true);
+            Sprite _icon = Sprite.Create(iconTex, new Rect(0, 0, iconTex.width, iconTex.height), new Vector2(0.5f, 0.5f));
+            ///预加载
+            SpriteLibrary.AddSprite(path, _icon);
+            ///
+            //Debug.Log(path);
         }
+        else
+        {
+            Debug.LogWarning(w.error);
+            CU.ShowConnectFailed();
+        }
+        CU.HideConnectingUI();
+        w.Dispose();
     }
 
     /// <summary>
@@ -186,5 +183,45 @@ public class SkillDataManager : MonoBehaviour
             }
         }
         return skills;
+    }
+    /// <summary>
+    /// 获得玩家当前最多装备技能
+    /// </summary>
+    /// <returns></returns>
+    public static int GetMaxEquippedSkillAmount()
+    {
+        int amount = 2;
+        lint playerLevel = PlayerInfoInGame.Level;
+        lint levelLi = 50;
+        while (playerLevel >= levelLi)
+        {
+            amount++;
+            levelLi *= 2;
+        }
+        lint vipLevel = PlayerInfoInGame.VIP_Level;
+        if (vipLevel > 0) amount++;
+        levelLi = 5;
+        while (vipLevel >= levelLi)
+        {
+            amount++;
+            levelLi *= 2;
+        }
+        return amount;
+    }
+    /// <summary>
+    /// 返回玩家当前装备
+    /// </summary>
+    /// <returns></returns>
+    public static int GetNowEquippedSkillAmount()
+    {
+        int amount = 0;
+        foreach (var skill in SKILLS_LIST)
+        {
+            if (skill.Level > 0 && skill.Equipped)
+            {
+                amount++;
+            }
+        }
+        return amount;
     }
 }

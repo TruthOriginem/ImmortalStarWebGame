@@ -11,7 +11,7 @@ public class ScenarioManager : MonoBehaviour
     private static Dictionary<string, BatInsGridData> gridDict;
     private static Dictionary<string, BatStageData> stageDict;
     private static List<BatStageBundleData> bundleDatas;
-    private static string PATH = "scripts/battle/datas/loadScenarioDatas.php";
+    private static string PATH = "scripts/battle/datas/currentScenarioData.json";
     //private static string STAGE_IMAGE_PATH = "icons/stages/";
     public static ScenarioManager Instance { get; set; }
     void Awake()
@@ -32,11 +32,11 @@ public class ScenarioManager : MonoBehaviour
 
     IEnumerator DownLoadAllScenario()
     {
-        WWW w = new WWW(ConnectUtils.ParsePath(PATH));
-        ConnectUtils.ShowConnectingUI();
+        WWW w = new WWW(CU.ParsePath(PATH));
+        CU.ShowConnectingUI();
         yield return w;
-        ConnectUtils.HideConnectingUI();
-        if (ConnectUtils.IsPostSucceed(w))
+        CU.HideConnectingUI();
+        if (CU.IsPostSucceed(w))
         {
             BatStageBundleData[] bundles = JsonHelper.GetJsonArray<BatStageBundleData>(w.text);
             bundleDatas = new List<BatStageBundleData>(bundles);
@@ -88,7 +88,7 @@ public class ScenarioManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
             yield break;
         }
     }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 /// <summary>
-/// 应与Propertytype相对应。
+/// 属性字段基类，所有有属性的功能应该从这里继承。
 /// </summary>
 [System.Serializable]
 public class BaseAttribute

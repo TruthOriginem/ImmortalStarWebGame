@@ -47,10 +47,10 @@ public class ExpeditionManager : MonoBehaviour
         yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
         WWWForm form = new WWWForm();
         form.AddField("player_id", PlayerInfoInGame.Id);
-        WWW w = new WWW(ConnectUtils.ParsePath(GET_DATA_PATH), form);
-        ConnectUtils.ShowConnectingUI();
+        WWW w = new WWW(CU.ParsePath(GET_DATA_PATH), form);
+        CU.ShowConnectingUI();
         yield return w;
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
         if (w.text != "failed")
         {
             expeInfo = JsonUtility.FromJson<TempPlayerExpeditionInfo>(w.text);
@@ -61,7 +61,7 @@ public class ExpeditionManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
             yield break;
         }
     }
@@ -128,7 +128,7 @@ public class ExpeditionManager : MonoBehaviour
         sb.Append("/");
         sb.Append(toPay[2]);
 
-        int nowMoney = PlayerInfoInGame.GetMoney();
+        lint nowMoney = PlayerInfoInGame.GetMoney();
         if (nowMoney < toPay[0])
         {
             expeditionOptionButtons[0].interactable = false;
@@ -167,7 +167,7 @@ public class ExpeditionManager : MonoBehaviour
     IEnumerator GetRankListCor()
     {
         WWWForm form = RankListManager.Instance.GenerateRefreshForm(1, RankListManager.RANK_TYPE.EXPEDITION, 5);
-        WWW w = new WWW(ConnectUtils.ParsePath(RankListManager.RANK_PATH), form);
+        WWW w = new WWW(CU.ParsePath(RankListManager.RANK_PATH), form);
         yield return w;
         if (w.text != null)
         {
@@ -290,7 +290,7 @@ public class ExpeditionManager : MonoBehaviour
     /// BattleResult调用函数，用于生成特殊掉落
     /// </summary>
     /// <param name="items"></param>
-    public static void AddExepSpecItemsToDict(Dictionary<string, Currency> items, ExpeditionBattleInfo info)
+    public static void AddExepSpecItemsToDict(Dictionary<string, lint> items, ExpeditionBattleInfo info)
     {
         float mult = BattleAwardMult.GetExpeditionDropMult();
         float baseChance = info.targetLightYear * 0.03f;

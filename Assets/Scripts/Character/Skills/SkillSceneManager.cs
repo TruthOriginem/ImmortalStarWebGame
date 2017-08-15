@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SkillSceneManager : MonoBehaviour
 {
     public Text LeftSkillPointText;
+    public Text EquipmentHeaderText;
     public Transform SkillMainScene;
     public Transform SkillEquipViewContent;//玩家装备技能的改变
     public static SkillSceneManager Instance { get; set; }
@@ -23,6 +24,7 @@ public class SkillSceneManager : MonoBehaviour
         isDirty = true;
         LinkSkillButton[] buttons = SkillMainScene.GetComponentsInChildren<LinkSkillButton>();
         SkillGroup[] groups = SkillMainScene.GetComponentsInChildren<SkillGroup>();
+        int nowEquipAmount = 0;
         foreach (LinkSkillButton button in buttons)
         {
             if (button.transform.parent == SkillEquipViewContent)
@@ -35,11 +37,13 @@ public class SkillSceneManager : MonoBehaviour
                 if (button.GetLinkedSkill().Equipped)
                 {
                     Instantiate(button.gameObject, SkillEquipViewContent);
+                    nowEquipAmount++;
                 }
                 button.MakeDirty();
             }
         }
-        foreach (var group  in groups)
+        EquipmentHeaderText.text = string.Format("你现在所装备的技能：{0}/{1}", nowEquipAmount, SkillDataManager.GetMaxEquippedSkillAmount());
+        foreach (var group in groups)
         {
             group.MakeDirty();
         }

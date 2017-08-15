@@ -33,9 +33,17 @@ public class Battle
     private Dictionary<string, int> enemyCount = new Dictionary<string, int>();
 
 
-    public Battle()
+    public Battle(object enemyData)
     {
-
+        if (enemyData is EnemySpawnData)
+        {
+            enemySpawnData = enemyData as EnemySpawnData;
+            GenerateWholeBattle();
+        }
+        if (enemyData is MachineMatchManager)
+        {
+            InitMachineMatchPVPUnits(MachineMatchManager.CurrentTarget);
+        }
     }
     public Battle(EnemySpawnData data)
     {
@@ -88,7 +96,20 @@ public class Battle
             }
         }
     }
-
+    private void InitMachineMatchPVPUnits(PlayerUnit enemy)
+    {
+        #region 初始化玩家单位
+        TempPropertyRecord playerRecord = new TempPropertyRecord(PlayerInfoInGame.Instance.GetDynamicAttrs());
+        //战前技能属性调整
+        UnitModifyManager.ModifyRecordBeforeBattle(SkillDataManager.GetPlayersBeforeBattleSkill(), playerRecord);
+        BattleUnit playerUnit = new BattleUnit(PlayerInfoInGame.Id, PlayerInfoInGame.NickName, PlayerInfoInGame.Level, BattleUnit.SIDE.PLAYER, playerRecord);
+        playerRecord.hp = playerRecord.GetValue(Attrs.MHP);
+        playerRecord.mp = playerRecord.GetValue(Attrs.MMP);
+        playerUnit.SetSkills(SkillDataManager.GetPlayersDuringBattleSkill());
+        playerUnits.Add(playerUnit);
+        #endregion
+        enemyUnits.Add(enemy.CreateBattleUnit(BattleUnit.SIDE.ENEMY));
+    }
     /// <summary>
     /// 如果死的敌人=所有敌人或者死的玩家=所有玩家则表示应该结束了。
     /// </summary>

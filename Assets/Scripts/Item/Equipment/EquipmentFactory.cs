@@ -5,6 +5,7 @@ using SerializedClassForJson;
 using System.Text;
 using System.IO;
 using GameId;
+using System;
 
 public class EquipmentFactory
 {
@@ -81,11 +82,12 @@ public class EquipmentFactory
             affixSb.Append(baseName.description);
             nameSb.Append(baseName.name);
         }
-        EquipmentBase result = new EquipmentBase(temp.item_id, nameSb.ToString(), affixSb.ToString(), baseName.iconFileName,
+        EquipmentBase result = new EquipmentBase(temp.item_id.ToString(), nameSb.ToString(), affixSb.ToString(), baseName.iconFileName,
             temp.spb, temp.price, (EQ_QUALITY)temp.eqQuality, (EQ_TYPE)temp.eqType, values);
         result.SetEquipped(temp.isEquipped);
         result.SetIndexInPack(temp.indexInPack);
         result.SetAffixIds(temp.affixList);
+        result.IsInStorage = temp.isInStorage;
         int[] levels = { temp.eha_level, temp.eha_reha, temp.eha_rebuild };
         result.SetEhaLevels(levels);
         return result;
@@ -240,5 +242,12 @@ public class BaseEquipMod : EquipModification
     public EQ_TYPE GetEqType()
     {
         return (EQ_TYPE)eqType;
+    }
+}
+public class EquipmentLevelSorter : IComparer<EquipmentBase>
+{
+    public int Compare(EquipmentBase x, EquipmentBase y)
+    {
+        return x.GetAllocatedLevel().CompareTo(y.GetAllocatedLevel());
     }
 }

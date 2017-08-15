@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using PathologicalGames;
 
 public class PackGridPanelUI : MonoBehaviour {
     // [SerializeField]
@@ -15,7 +16,8 @@ public class PackGridPanelUI : MonoBehaviour {
     private List<Transform> eq_grids;
     [SerializeField]
     private string gridName;
-    
+    [SerializeField]
+    private SpawnPool managerSpawnPool;
 
 
     public Transform GetEmptyGrid()
@@ -35,7 +37,9 @@ public class PackGridPanelUI : MonoBehaviour {
         {
             if (grids[i].childCount != 0)
             {
-                Destroy(grids[i].GetChild(0).gameObject);
+                var trans = grids[i].GetChild(0);
+                trans.SetParent(managerSpawnPool.transform);
+                managerSpawnPool.Despawn(trans);
             }
         }
         
@@ -43,7 +47,9 @@ public class PackGridPanelUI : MonoBehaviour {
         {
             if (eq_grids[i].childCount != 0)
             {
-                Destroy(eq_grids[i].GetChild(0).gameObject);
+                var trans = eq_grids[i].GetChild(0);
+                trans.SetParent(managerSpawnPool.transform);
+                managerSpawnPool.Despawn(trans);
             }
         }
     }
@@ -70,7 +76,7 @@ public class PackGridPanelUI : MonoBehaviour {
         {
             Transform grid = grids[index];
             grids.Remove(grid);
-            Destroy(grid.gameObject);
+            managerSpawnPool.Despawn(grid);
         }
     }
     public Transform GetEmptyGrid(int index,bool isEquipment)
@@ -153,8 +159,8 @@ public class PackGridPanelUI : MonoBehaviour {
     //创造新的格子
     Transform CreateNewGrid()
     {
-        GameObject gridGo = GameObject.Instantiate(gridPrefab);
-        Transform grid = gridGo.transform;
+        //GameObject gridGo = GameObject.Instantiate(gridPrefab);
+        Transform grid = managerSpawnPool.Spawn(gridPrefab);
         grid.SetParent(grids[0].parent);
         grid.localScale = grids[0].localScale;
         grid.localPosition = grids[0].localPosition;

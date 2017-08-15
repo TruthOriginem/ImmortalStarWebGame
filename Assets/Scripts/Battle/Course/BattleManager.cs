@@ -11,6 +11,7 @@ public class BattleManager : MonoBehaviour
     {
         NORMAL,//普通剧本的战斗
         EXPEDITION,//远征
+        MACHINEMATCH
     }
     public CanvasGroup battleCanvas;
     /// <summary>
@@ -19,7 +20,7 @@ public class BattleManager : MonoBehaviour
     public Dropdown enemyList;
 
     public Scrollbar courseScrollBar;
-    public ScrollRect courseRect;
+    public RectTransform courseRect;
 
     public Slider enemyHp;
     public Slider enemyMp;
@@ -33,11 +34,12 @@ public class BattleManager : MonoBehaviour
     public Text playerName;
     public Text playerProperty;
 
-    public Transform courseContent;
+    public RectTransform courseContent;
     public Text resultText;
     public Text countDownText;
 
     public Toggle autoBattleToggle;
+
 
     //private bool versusPlayer = false;
     /// <summary>
@@ -150,11 +152,9 @@ public class BattleManager : MonoBehaviour
             #endregion
             playerProperty.text = nowPlayer.GetPropertyDescription();
             enemyProperty.text = nowEnemy.GetPropertyDescription();
-            RectTransform rectT = courseContent.GetComponent<RectTransform>();
-            //RectTransform rectP = courseContent.GetComponentInParent<RectTransform>();
-            //Debug.Log(rectT.rect.height - rectP.rect.height);
-            rectT.localPosition = new Vector3(0f, 0f, 0f);
-            rectT.localPosition = new Vector3(0f, rectT.rect.height - 240, 0f);
+            //courseContent.anchoredPosition = new Vector2(0f, 0f);
+            var height = courseContent.rect.height;
+            courseContent.anchoredPosition = new Vector2(0f, height);
             //courseScrollBar.value = 0f;
             //courseRect.;
             isTextBoxDirty = false;
@@ -191,7 +191,14 @@ public class BattleManager : MonoBehaviour
         battleResult.SetLinkedInfo(info);
         return StartCoroutine(InitBattleCor(info.enemySpawnData));
     }
-
+    public Coroutine InitBattle(MachineMatchManager manager)
+    {
+        nowBattleType = BATTLE_TYPE.MACHINEMATCH;
+        autoBattleToggle.gameObject.SetActive(false);
+        battleResult = new BattleResult();
+        battleResult.SetLinkedInfo(manager);
+        return StartCoroutine(InitBattleCor(manager));
+    }
     /// <summary>
     /// 再次战斗
     /// </summary>
@@ -200,12 +207,12 @@ public class BattleManager : MonoBehaviour
         InitBattle(linkedInstanceGridData);
     }
 
-    IEnumerator InitBattleCor(EnemySpawnData enemySpawnData)
+    IEnumerator InitBattleCor(object enemyData)
     {
         //Debug.Log(JsonUtility.ToJson(enemySpawnData));
         //battle.courses.Clear();
         battle = null;
-        ResultString = TextUtils.GetSizedString("结算:", 20);
+        ResultString = TextUtils.GetSizedString("结算:", 16);
         resultText.text = ResultString;
         fastBattle = false;
         resultText.transform.localPosition = new Vector3(0f, 0f, 0f);
@@ -214,10 +221,9 @@ public class BattleManager : MonoBehaviour
         //更新玩家属性
         yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
         //初始化战斗
-        battle = new Battle(enemySpawnData);
+        battle = new Battle(enemyData);
         //下拉菜单加入敌人选项
         AddEnemyList();
-
 
         //设置当前玩家、当前敌人，界面调整
         nowPlayer = battle.playerUnits[0];
@@ -275,9 +281,11 @@ public class BattleManager : MonoBehaviour
             case BATTLE_TYPE.EXPEDITION:
                 battleResult.GainResultByLinkedInfo(win);
                 break;
+            case BATTLE_TYPE.MACHINEMATCH:
+                battleResult.GainResultByLinkedInfo(win);
+                break;
             default:
                 break;
-
         }
         battleResult = null;
         PlayerCourses();
@@ -334,6 +342,9 @@ public class BattleManager : MonoBehaviour
             case BATTLE_TYPE.EXPEDITION:
                 HandleExpedtionBattleEnd();
                 break;
+            case BATTLE_TYPE.MACHINEMATCH:
+                HandleExpedtionBattleEnd();
+                break;
             default:
                 break;
         }
@@ -369,6 +380,9 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// 不能重复击败的改动
+    /// </summary>
     void HandleExpedtionBattleEnd()
     {
         SetRebattleButton(false);
@@ -472,7 +486,11 @@ public class BattleManager : MonoBehaviour
         foreach (BattleUnit unit in battle.enemyUnits)
         {
             var enemy = EnemyDataManager.AskForEnemyAttribute(unit.id);
-            Sprite sprite = enemy.GetIconSprite();
+            Sprite sprite = null;
+            if (enemy != null)
+            {
+                sprite = enemy.GetIconSprite();
+            }
             string name = unit.name;
             Dropdown.OptionData optionData = new Dropdown.OptionData(name, sprite);
             optionDatas.Add(optionData);
@@ -511,7 +529,7 @@ public class BattleManager : MonoBehaviour
     {
         if (nowCourse <= RECORD_MAXCOURSE)
         {
-            tempText.text += text + "\n";
+            tempText.text += string.Format("{0}{1}", text, (nowCourse != RECORD_MAXCOURSE ? "\n" : ""));
             nowCourse++;
         }
         else

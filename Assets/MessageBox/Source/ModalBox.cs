@@ -28,17 +28,18 @@ public abstract class ModalBox : MonoBehaviour
     /// </summary>
     [Tooltip("The RectTransform of the panel that contains the frame of the dialog window. This is needed so that it can be centered correctly after it's size is adjusted to the dialogs contents.")]
     public RectTransform Panel;
+    public CanvasGroup group;
 
     Transform buttonParent;
     bool isSetup;
 
     // This code has to be run here so that layout has already happened and preferredHeights have been calculated.
-    void FixedUpdate()
+    void Update()
     {
         if (!isSetup)
         {
+            StartCoroutine(_Show());
             isSetup = true;
-
             if (Title != null)
             {
                 var layoutElement = Title.GetComponent<LayoutElement>();
@@ -75,14 +76,35 @@ public abstract class ModalBox : MonoBehaviour
                 Panel.sizeDelta = new Vector2(Panel.sizeDelta.x, group.preferredHeight);
             }
         }
-    }
 
+    }
+    IEnumerator _Show()
+    {
+        while (group.alpha <= 0.99f)
+        {
+            var alpha = Mathf.Lerp(group.alpha, 1f, Time.deltaTime * 25f);
+            group.alpha = alpha;
+            yield return 0;
+        }
+        group.alpha = 1;
+    }
+    IEnumerator _Close()
+    {
+        while (group.alpha >= 0.01f)
+        {
+            var alpha = Mathf.Lerp(group.alpha, 0f, Time.deltaTime * 25f); 
+            group.alpha = alpha;
+            yield return 0;
+        }
+        Destroy(gameObject);
+    }
     /// <summary>
     /// Closes the dialog.
     /// </summary>
     public virtual void Close()
     {
-        Destroy(gameObject);
+        group.blocksRaycasts = false;
+        StartCoroutine(_Close());
     }
 
     protected void SetText(string message, string title)
@@ -92,7 +114,7 @@ public abstract class ModalBox : MonoBehaviour
 
         if (Title != null)
         {
-            if (!String.IsNullOrEmpty(title))
+            if (!string.IsNullOrEmpty(title))
             {
                 Title.text = MessageBox.LocalizeTitleAndMessage ? MessageBox.Localize(title) : title;
             }
@@ -105,7 +127,7 @@ public abstract class ModalBox : MonoBehaviour
 
         if (Message != null)
         {
-            if (!String.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message))
             {
                 Message.text = MessageBox.LocalizeTitleAndMessage ? MessageBox.Localize(message) : message;
             }

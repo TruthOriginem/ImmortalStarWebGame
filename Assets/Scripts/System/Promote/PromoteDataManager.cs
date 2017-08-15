@@ -50,10 +50,10 @@ public class PromoteDataManager : MonoBehaviour
 
     IEnumerator LoadAllPromoters()
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         WWWForm form = new WWWForm();
         form.AddField("id", PlayerInfoInGame.Id);
-        WWW w = new WWW(ConnectUtils.ParsePath(GET_PROMOTERS_PATH), form);
+        WWW w = new WWW(CU.ParsePath(GET_PROMOTERS_PATH), form);
         yield return w;
         if (w.isDone && w.text != "nothing")
         {
@@ -85,14 +85,14 @@ public class PromoteDataManager : MonoBehaviour
         {
             DrawMoneyButton.gameObject.SetActive(false);
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
     IEnumerator DrawDivides()
     {
         WWWForm form = new WWWForm();
         form.AddField("id", PlayerInfoInGame.Id);
         form.AddField("uid", PlayerInfoInGame.uid);
-        WWW w = new WWW(ConnectUtils.ParsePath(UPDATE_DIVIDES_PATH), form);
+        WWW w = new WWW(CU.ParsePath(UPDATE_DIVIDES_PATH), form);
         yield return w;
         yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
         Init();

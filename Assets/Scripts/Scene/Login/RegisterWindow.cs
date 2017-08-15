@@ -9,13 +9,4 @@ public class RegisterWindow : MonoBehaviour {
     public InputField inputLeaderUIDField;
     public Button registerButton;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

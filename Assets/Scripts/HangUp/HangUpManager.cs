@@ -96,7 +96,7 @@ public class HangUpManager : MonoBehaviour
         TempLigRecord record = PlayerRequestBundle.record as TempLigRecord;
         if (record == null)
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
             yield break;
         }
         if (record.lig_id == null || record.lig_id == "")
@@ -157,7 +157,7 @@ public class HangUpManager : MonoBehaviour
             int money;
             long exp;
 
-            Dictionary<string, Currency> resultsDic =
+            Dictionary<string, lint> resultsDic =
             BattleResult.GenerateResultsDict(grid.enemys, false, true, times, out money, out exp);
             money = Mathf.RoundToInt(money * HANG_UP_MONEY_MULT);
             exp = (long)(exp * HANG_UP_EXP_MULT);
@@ -194,7 +194,7 @@ public class HangUpManager : MonoBehaviour
             sb.AppendLine();
             sb.AppendLine(TextUtils.GetColoredText("<size=17>大概掉落:</size>", Color.cyan));
             string[] item_ids = resultsDic.Keys.ToArray();
-            Currency[] amounts = resultsDic.Values.ToArray();
+            lint[] amounts = resultsDic.Values.ToArray();
 
             for (int i = 0; i < item_ids.Length; i++)
             {

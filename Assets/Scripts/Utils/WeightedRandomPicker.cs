@@ -34,7 +34,7 @@ public class WeightedRandomPicker<T>
         total = 0;
     }
 
-    public void addAll(List<T> items)
+    public void AddAll(List<T> items)
     {
         foreach (T item in items)
         {

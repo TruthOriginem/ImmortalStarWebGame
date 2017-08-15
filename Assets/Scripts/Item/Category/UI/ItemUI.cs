@@ -8,6 +8,7 @@ public class ItemUI : MonoBehaviour
     public Text itemText;
     public Image itemImage;
     private bool isHighlight = false;
+    private bool breakHighlight = false;
     private Sprite icon = null;
     public void LinkItem(ItemBase item)
     {
@@ -31,6 +32,7 @@ public class ItemUI : MonoBehaviour
         if (!isHighlight)
         {
             isHighlight = true;
+            breakHighlight = false;
             StartCoroutine(HighLight());
         }
     }
@@ -38,9 +40,16 @@ public class ItemUI : MonoBehaviour
     {
         isHighlight = false;
     }
+    void OnDespawned()
+    {
+        breakHighlight = true;
+        var rects = itemImage.rectTransform;
+        float sizes = 70;
+        rects.sizeDelta = new Vector2(sizes, sizes);
+    }
     IEnumerator HighLight()
     {
-        while (true)
+        while (!breakHighlight)
         {
             if (isHighlight)
             {
@@ -61,6 +70,10 @@ public class ItemUI : MonoBehaviour
                 yield return 0;
             }
         }
+        var rects = itemImage.rectTransform;
+        float sizes = 70;
+        rects.sizeDelta = new Vector2(sizes, sizes);
+        breakHighlight = false;
     }
     public ItemBase GetLinkedItem()
     {

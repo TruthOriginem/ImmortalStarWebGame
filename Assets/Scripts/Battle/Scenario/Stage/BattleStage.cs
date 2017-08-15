@@ -89,14 +89,14 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
         else
         {
-            ConnectUtils.ShowConnectingUI();
-            WWW w = new WWW(ConnectUtils.ParsePath(path));
+            CU.ShowConnectingUI();
+            WWW w = new WWW(CU.ParsePath(path));
             yield return w;
-            ConnectUtils.HideConnectingUI();
-            if (ConnectUtils.IsDownloadCompleted(w))
+            CU.HideConnectingUI();
+            if (CU.IsDownloadCompleted(w))
             {
                 Texture2D texture = w.texture;
-                texture.Compress(true);
+                //texture.Compress(true);
                 Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                 SpriteLibrary.AddSprite(path, sprite);
                 stageImage.sprite = sprite;
@@ -124,6 +124,11 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             optionContents.Add("使用 <color=red>极限水晶Lv.1</color> (+1极限等级)");
             optionActions.Add(() => { PlayerInfoInGame._StartCoroutine(_UpgradeExtremeLevel(Items.EXTREME_CRYSTAL_LV1)); });
+        }
+        if (ItemDataManager.GetItemAmount(Items.EXTREME_CRYSTAL_LV2) > 0)
+        {
+            optionContents.Add("使用 <color=red>极限水晶Lv.2</color> (+2极限等级)");
+            optionActions.Add(() => { PlayerInfoInGame._StartCoroutine(_UpgradeExtremeLevel(Items.EXTREME_CRYSTAL_LV2)); });
         }
         if (optionContents.Count == 0 && optionActions.Count == 0)
         {
@@ -158,9 +163,13 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             exdata.levelToAdd = 1;
         }
+        if (itemId == Items.EXTREME_CRYSTAL_LV2)
+        {
+            exdata.levelToAdd = 2;
+        }
         IIABinds bind = new IIABinds(itemId, -1);
         SyncRequest.AppendRequest(Requests.EX_LEVEL_DATA, exdata);
-        SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.GenerateJsonString(false));
+        SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.ToJson(false));
         yield return PlayerRequestBundle.RequestSyncUpdate();
         BattleLayerManager.Instance.Init();
     }

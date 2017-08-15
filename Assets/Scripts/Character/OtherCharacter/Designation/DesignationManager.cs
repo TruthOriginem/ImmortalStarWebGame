@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 /// <summary>
 /// 管理称号的类。
 /// </summary>
@@ -21,9 +22,18 @@ public class DesignationManager : MonoBehaviour
     public Dropdown designDropdown;
     public Text designDescription;
     public Button applyButton;
+    static bool isAddingDesign = false;
     void Awake()
     {
         Instance = this;
+    }
+    private void Update()
+    {
+        if (!isAddingDesign && DesignToGets.Count != 0)
+        {
+            isAddingDesign = true;
+            StartCoroutine(RequestAddDesigns());
+        }
     }
 
     public void ToggleThis(bool toggle)
@@ -39,6 +49,7 @@ public class DesignationManager : MonoBehaviour
     void InitOrRefresh()
     {
         designDropdown.ClearOptions();
+        PlayerInfoInGame.Design_Ids.Sort(new DesignSorter());
         if (PlayerInfoInGame.Design_Ids.Count == 0)
         {
             applyButton.interactable = false;
@@ -65,7 +76,10 @@ public class DesignationManager : MonoBehaviour
         var id = PlayerInfoInGame.Design_Ids[index];
         var data = GetDesignationData(id);
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine(data.description);
+        sb.Append(data.description);
+        sb.AppendLine();
+        sb.AppendFormat("<color=grey><size=10> {0} </size></color>", data.remark);
+        sb.AppendLine();
         sb.AppendLine();
         sb.Append(data.GetPlusDescription());
         designDescription.text = sb.ToString();
@@ -93,11 +107,11 @@ public class DesignationManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator InitDesignationDatasCor()
     {
-        WWW w = new WWW(ConnectUtils.ParsePath(DATA_PATH));
-        ConnectUtils.ShowConnectingUI();
+        WWW w = new WWW(CU.ParsePath(DATA_PATH));
+        CU.ShowConnectingUI();
         yield return w;
-        ConnectUtils.HideConnectingUI();
-        if (ConnectUtils.IsPostSucceed(w))
+        CU.HideConnectingUI();
+        if (CU.IsPostSucceed(w))
         {
             designDatas.Clear();
             DesignationData[] data = JsonHelper.GetJsonArray<DesignationData>(w.text);
@@ -109,7 +123,7 @@ public class DesignationManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
             yield break;
         }
     }
@@ -153,6 +167,18 @@ public class DesignationManager : MonoBehaviour
         }
     }
     #endregion
+
+    IEnumerator RequestAddDesigns()
+    {
+        for (int i = 0; i < DesignToGets.Count; i++)
+        {
+            yield return PlayerRequestBundle.RequestAddDesignation(DesignToGets[i]);
+            PlayerInfoInGame.Design_Ids.Add(DesignToGets[i]);
+        }
+        DesignToGets.Clear();
+        OCManager.Refresh();
+        isAddingDesign = false;
+    }
     /// <summary>
     /// 检查玩家当前是否拥有某称号
     /// </summary>
@@ -190,7 +216,7 @@ public class DesignationManager : MonoBehaviour
     public static string GetDesignationName(int id)
     {
         var data = GetDesignationData(id);
-        return data != null ? data.name : "无";
+        return data != null ? string.Format("<color={0}>{1}</color>", data.color, data.name) : "无称号";
     }
     /// <summary>
     /// 检查所有和“完成关卡”有关的成就获取
@@ -242,9 +268,43 @@ public class DesignationManager : MonoBehaviour
     }
     public static void CheckExtremeLevelDesign(TempStageExLevelRecord[] exRec)
     {
-        if (exRec != null && exRec.Length != 0)
+        if (!EArray.IsNullOrEmpty(exRec))
         {
             CheckAndTryGetDesign(Designations.JXTXZ);
+            if (exRec.Length >= 3)
+            {
+                CheckAndTryGetDesign(Designations.JXYJZ);
+            }
+        }
+    }
+    /// <summary>
+    /// 检查玩家属性来达成成就
+    /// </summary>
+    public static void CheckPlayerInfo()
+    {
+        var money = PlayerInfoInGame.GetMoney();
+        if (money > 1000000)
+        {
+            CheckAndTryGetDesign(Designations.JZZ);
+            if (money > 50000000)
+            {
+                CheckAndTryGetDesign(Designations.SYJ);
+            }
+        }
+        var chipCount = PlayerInfoInGame.CurrentChips.Count;
+        if (chipCount > 0)
+        {
+            CheckAndTryGetDesign(Designations.XZCS);
+        }
+    }
+    private class DesignSorter : IComparer<int>
+    {
+        public int Compare(int x, int y)
+        {
+            var dataX = GetDesignationData(x);
+            var dataY = GetDesignationData(y);
+            if (dataX == null || dataY == null) return 0;
+            return dataX.sort.CompareTo(dataY.sort);
         }
     }
 }
@@ -254,5 +314,7 @@ public class DesignationManager : MonoBehaviour
 [System.Serializable]
 public class DesignationData : BaseModification
 {
-
+    public string color;
+    public string remark;
+    public int sort;
 }

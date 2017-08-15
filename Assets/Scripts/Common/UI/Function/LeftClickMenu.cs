@@ -15,6 +15,7 @@ public class LeftClickMenu : MonoBehaviour
     public Button sellButton;
     public Button dropButton;
     public Button destoryButton;
+    public Button saveButton;
 
     private bool isShowing = false;
 
@@ -69,10 +70,22 @@ public class LeftClickMenu : MonoBehaviour
         {
             ItemBase item = ItemModal.GetItemUI(gridTransfrom.name).GetLinkedItem();
             List<Button> buttons = new List<Button>();
-            buttons.Add(item.CanBeSold() ? sellButton : dropButton);
             if (item is EquipmentBase)
             {
-                buttons.Add(destoryButton);
+                if (item.CanBeSold())
+                {
+                    buttons.Add(sellButton);
+                    buttons.Add(destoryButton);
+                }
+                else
+                {
+                    return;
+                }
+                buttons.Add(saveButton);
+            }
+            else
+            {
+                buttons.Add(item.CanBeSold() ? sellButton : dropButton);
             }
             ClickInit(buttons.ToArray());
             //    Debug.Log(item.GetAmount());
@@ -136,10 +149,16 @@ public class LeftClickMenu : MonoBehaviour
                   {
                       if (result == DialogResult.Yes)
                       {
-                          IIABinds binds = new IIABinds(new string[] { Items.SPB_PIECE }, new Currency[] { pieceAmount }, new string[] { equip.item_id });
+                          IIABinds binds = new IIABinds(new string[] { Items.SPB_PIECE }, new lint[] { pieceAmount }, new string[] { equip.item_id });
                           PlayerInfoInGame.Instance.StartCoroutine(OnGridClickInCategoryCor(binds));
                       }
                   }, MessageBoxButtons.YesNo);
+                Disable();
+            });
+            saveButton.onClick.AddListener(() =>
+            {
+                EquipmentBase equip = item as EquipmentBase;
+                PlayerInfoInGame.Instance.StartCoroutine(OnGridClickInReCor(equip));
                 Disable();
             });
         }
@@ -154,14 +173,18 @@ public class LeftClickMenu : MonoBehaviour
         }
         else
         {
-            yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(new string[] { item.item_id }, new Currency[] { -amount }), price <= 0 ? null : attr, null);
+            yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(new string[] { item.item_id }, new lint[] { -amount }), price <= 0 ? null : attr, null);
         }
         yield return CategoryManager.Instance.RequestLoad();
     }
     IEnumerator OnGridClickInCategoryCor(IIABinds binds)
     {
-        TempPlayerAttribute attr = new TempPlayerAttribute();
         yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, binds, null, null);
+        yield return CategoryManager.Instance.RequestLoad();
+    }
+    IEnumerator OnGridClickInReCor(EquipmentBase equip)
+    {
+        yield return PlayerRequestBundle.MakeEquipToStorage(equip);
         yield return CategoryManager.Instance.RequestLoad();
     }
     /// <summary>

@@ -12,7 +12,8 @@ public class RankListManager : MonoBehaviour
     {
         MONEY, //星币排行榜
         LEVEL,
-        EXPEDITION
+        EXPEDITION,
+        MACHINEMATCH
     }
 
     public Text totalPageText;
@@ -57,11 +58,11 @@ public class RankListManager : MonoBehaviour
     }
     IEnumerator RefreshRankContentCor()
     {
-        ConnectUtils.ShowConnectingUI();
+        CU.ShowConnectingUI();
         WWWForm form = GenerateRefreshForm(currPage,rankType,PLAYERS_PER_PAGE);
-        WWW w = new WWW(ConnectUtils.ParsePath(RANK_PATH), form);
+        WWW w = new WWW(CU.ParsePath(RANK_PATH), form);
         yield return w;
-        if (w.isDone && w.error == null & w.text != "failed")
+        if (CU.IsPostSucceed(w))
         {
             TempRankInfoBundle bundle = JsonUtility.FromJson<TempRankInfoBundle>(w.text);
             totalPages = bundle.totalPage;
@@ -89,10 +90,10 @@ public class RankListManager : MonoBehaviour
         }
         else
         {
-            ConnectUtils.ShowConnectFailed();
+            CU.ShowConnectFailed();
             yield break;
         }
-        ConnectUtils.HideConnectingUI();
+        CU.HideConnectingUI();
     }
     public void NextPage()
     {
@@ -154,6 +155,15 @@ public class RankListManager : MonoBehaviour
         {
             rankType = RANK_TYPE.EXPEDITION;
             rankTitleArg3.text = "远征里程(/光年)";
+            ResetRankList();
+        }
+    }
+    public void TurnToMachineMatchRank(bool turn)
+    {
+        if (turn)
+        {
+            rankType = RANK_TYPE.MACHINEMATCH;
+            rankTitleArg3.text = "擂台积分";
             ResetRankList();
         }
     }

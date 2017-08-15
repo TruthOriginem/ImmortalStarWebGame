@@ -11,8 +11,12 @@ public class SceneWindow : MonoBehaviour
     [Tooltip("初始化后就禁用掉。")]
     public bool isDisable;
     public UnityEvent OnSceneShowed;
-
-
+    public UnityEvent OnSceneHided;
+    private CanvasGroup canvasGroup;
+    private void Awake()
+    {
+        canvasGroup = GetComponent<CanvasGroup>();
+    }
     void Start()
     {
         //window = GetComponent<UIWindow>();
@@ -45,6 +49,10 @@ public class SceneWindow : MonoBehaviour
         }
         else
         {
+            if (OnSceneHided != null)
+            {
+                OnSceneHided.Invoke();
+            }
             window.Hide();
             StartCoroutine(HideWindow(window));
             //window.gameObject.SetActive(false);
@@ -53,6 +61,7 @@ public class SceneWindow : MonoBehaviour
     }
     IEnumerator HideWindow(UIWindow window)
     {
+        canvasGroup.blocksRaycasts = false;
         int waitFrame = 0;//6秒（360帧）缓冲，如果超过则取消这个
         while (true)
         {

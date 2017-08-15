@@ -12,7 +12,7 @@ public class EquipmentDropBundle
     /// <summary>
     /// 用于显示掉落的字符串
     /// </summary>
-    public string GetDropInfoToolTip()
+    public string GetDropInfo()
     {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine(TextUtils.GetSizedString("特殊掉落", 18));

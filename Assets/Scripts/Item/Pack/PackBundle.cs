@@ -26,7 +26,7 @@ public partial class ItemPack
         }
     }
 
-    public Dictionary<string, Currency> GetItemToAmounts()
+    public Dictionary<string, lint> GetItemToAmounts()
     {
         int level = GetPackLevel();
         int sqrtPlayerLevel = (int)Mathf.Sqrt(PlayerInfoInGame.Level);
@@ -36,6 +36,7 @@ public partial class ItemPack
             case ItemPacks.SIGN_IN:
                 itemToAmounts.Add(Items.MONEY, (5000 + 15000 * level) * sqrtPlayerLevel);
                 itemToAmounts.Add(Items.SPB_PIECE, (50 + 50 * level) * sqrtPlayerLevel);
+                itemToAmounts.Add(Items.MM_TICKET, 15);
                 itemToAmounts.Add(Items.CARD_DROP_DOUBLE, 10 + 2 * level);
                 itemToAmounts.Add(Items.CARD_EXP_DOUBLE, 20 + 4 * level);
                 if (level == 7)

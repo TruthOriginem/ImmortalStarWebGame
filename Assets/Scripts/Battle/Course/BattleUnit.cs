@@ -152,4 +152,12 @@ public class BattleUnit
     {
         return tempRecord.mp;
     }
+    /// <summary>
+    /// 将当前属性记录替换为指定属性记录，主要用于播放回合时使用。
+    /// </summary>
+    /// <param name="record"></param>
+    public void ChangeToRecord(TempPropertyRecord record)
+    {
+        this.tempRecord = record;
+    }
 }

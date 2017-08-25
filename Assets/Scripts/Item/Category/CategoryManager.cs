@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using SerializedClassForJson;
 using System.Text;
 using PathologicalGames;
+using GameId;
 
 public class CategoryManager : MonoBehaviour
 {
@@ -461,6 +462,7 @@ public class CategoryManager : MonoBehaviour
     public void SortItems(int type)
     {
         List<ItemBase> items = PlayerInfoInGame.GetAllItems();
+        items.Sort((x, y) => { return x.sort.CompareTo(y.sort); });
         List<EquipmentBase> equips = PlayerInfoInGame.GetAllEquipments(false);
         //最终完成排序的List，需要上传
         Dictionary<ItemBase, int> sortedItems = new Dictionary<ItemBase, int>();
@@ -497,6 +499,44 @@ public class CategoryManager : MonoBehaviour
                 break;
         }
         StartCoroutine(SortCor(sortedItems));
+    }
+    public void QuickDestoryEquipments()
+    {
+        InputIntBox.Show("指定一个灵基值，摧毁该灵基值及以下的装备。（不包括已被装备的）", "温馨提示", int.MaxValue, (result, value) =>
+        {
+            if (result == DialogResult.OK)
+            {
+                List<string> eqToDestory = new List<string>();
+                lint spbPieces = 0;
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("<size=10>");
+                foreach (var item in PlayerInfoInGame.GetAllEquipments(false))
+                {
+                    EquipmentBase equip = (EquipmentBase)item;
+                    if (equip.GetSpb() <= value)
+                    {
+                        eqToDestory.Add(equip.item_id);
+                        spbPieces += equip.GetSpbPieceAmount();
+                        sb.AppendLine(equip.GetModifyiedName());
+                    }
+                }
+                sb.Append("</size>");
+                if (eqToDestory.Count != 0)
+                {
+                    MessageBox.Show("您是否确定摧毁灵基值在" + value + "及以下的装备？你将摧毁以下" + eqToDestory.Count + "件装备并获得" + spbPieces + "灵基碎片。" + sb.ToString(), "警告", (result2) =>
+                    {
+                        if (result2 == DialogResult.Yes)
+                        {
+                            StartCoroutine(_QuickDestoryEquipments(eqToDestory.ToArray(), spbPieces));
+                        }
+                    }, MessageBoxButtons.YesNo);
+                }
+                else
+                {
+                    MessageBox.Show("没有装备符合你的标准。", "提示", (result3) => { }, MessageBoxButtons.OK);
+                }
+            }
+        }, MessageBoxButtons.OKCancel);
     }
     /// <summary>
     /// 快捷出售指定灵基以下的武器。
@@ -547,6 +587,13 @@ public class CategoryManager : MonoBehaviour
         TempPlayerAttribute attr = new TempPlayerAttribute();
         attr.money = price;
         yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(null, null, equipids), price <= 0 ? null : attr, null);
+        yield return RequestLoad();
+    }
+    IEnumerator _QuickDestoryEquipments(string[] equipids, int spbPieces)
+    {
+        SyncRequest.AppendRequest(Requests.EQ_TO_DELETE_DATA, new IIABinds(null, null, equipids).ToJson(true));
+        SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(Items.SPB_PIECE, spbPieces));
+        yield return PlayerRequestBundle.RequestSyncUpdate(false);
         yield return RequestLoad();
     }
     IEnumerator SortCor(Dictionary<ItemBase, int> sortedItems)

@@ -59,7 +59,7 @@ public class RankListManager : MonoBehaviour
     IEnumerator RefreshRankContentCor()
     {
         CU.ShowConnectingUI();
-        WWWForm form = GenerateRefreshForm(currPage,rankType,PLAYERS_PER_PAGE);
+        WWWForm form = GenerateRefreshForm(currPage, rankType, PLAYERS_PER_PAGE);
         WWW w = new WWW(CU.ParsePath(RANK_PATH), form);
         yield return w;
         if (CU.IsPostSucceed(w))
@@ -68,7 +68,7 @@ public class RankListManager : MonoBehaviour
             totalPages = bundle.totalPage;
             for (int i = 0; i < bundle.infos.Length; i++)
             {
-                PlayerRankInfo rankInfo = Instantiate(rankInfoPrefab, rankContent,false).GetComponent<PlayerRankInfo>();
+                PlayerRankInfo rankInfo = Instantiate(rankInfoPrefab, rankContent, false).GetComponent<PlayerRankInfo>();
                 rankInfo.SetInfo(bundle.infos[i]);
             }
             nextPage.interactable = true;
@@ -122,7 +122,7 @@ public class RankListManager : MonoBehaviour
     /// </summary>
     /// <param name="page">查询页数</param>
     /// <returns></returns>
-    public WWWForm GenerateRefreshForm(int page,RANK_TYPE rankType,int maxItems)
+    public WWWForm GenerateRefreshForm(int page, RANK_TYPE rankType, int maxItems)
     {
         WWWForm form = new WWWForm();
         form.AddField("rankType", (int)rankType);

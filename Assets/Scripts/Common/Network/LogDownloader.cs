@@ -11,6 +11,7 @@ public class LogDownloader : MonoBehaviour
     [Header("教程内容")]
     public Text characterCont;
     public Text itemCont;
+    public Text enhanceCont;
     public static LogDownloader Instance { get; set; }
     private static string PATH = "scripts/logs/";
     void Start()
@@ -18,6 +19,7 @@ public class LogDownloader : MonoBehaviour
         StartCoroutine(DownloadLog(announcement,PATH + "updateLog.log"));
         StartCoroutine(DownloadLog(characterCont, PATH + "characterCont.txt"));
         StartCoroutine(DownloadLog(itemCont, PATH + "itemCont.txt"));
+        StartCoroutine(DownloadLog(enhanceCont, PATH + "enhanceCont.txt"));
     }
     IEnumerator DownloadLog(Text uiText,string path)
     {

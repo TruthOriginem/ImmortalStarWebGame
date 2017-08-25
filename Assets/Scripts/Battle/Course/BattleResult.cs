@@ -83,7 +83,11 @@ public class BattleResult
                     sb.AppendFormat("获得了一个稀有度为T{0}的芯片！", genData.starRarity);
                     sb.AppendLine();
                 }
-                SyncRequest.AppendRequest(Requests.CHIP_HANDLER_DATA, genData);
+                //如果没有获得芯片且当前玩家不存在芯片的话，那么就不发送这次的信息了
+                if (!(genData.starRarity == 0 && PlayerInfoInGame.CurrentChips.Count == 0))
+                {
+                    SyncRequest.AppendRequest(Requests.CHIP_HANDLER_DATA, genData);
+                }
             }
             //双倍卡
             if (ItemDataManager.GetItemAmount(Items.CARD_EXP_DOUBLE) >= 1)

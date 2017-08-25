@@ -248,7 +248,7 @@ public class EnhanceManager : MonoBehaviour
                 string name = ItemDataManager.GetItemName(demand.item_id);
                 if (type != 0)
                 {
-                    amount = (int)(amount * amountMult);
+                    amount = demand.canBeReduced ? (int)(amount * amountMult) : amount;
                     amount = amount == 0 ? 1 : amount;
                 }
                 needSb.Append(name);
@@ -355,7 +355,7 @@ public class EnhanceManager : MonoBehaviour
             int amount = demand.baseAmount + (int)((equipment.GetAllocatedLevel() - demand.needLevel) * demand.amountPerLevel);
             if (type != 0)
             {
-                amount = (int)(amount * amountMult);
+                amount = demand.canBeReduced ? (int)(amount * amountMult) : amount;
                 amount = amount == 0 ? 1 : amount;
             }
             int diff = ItemDataManager.GetItemAmount(demand.item_id) - amount;

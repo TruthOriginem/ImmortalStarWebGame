@@ -139,7 +139,7 @@ public class LeftClickMenu : MonoBehaviour
             destoryButton.onClick.AddListener(() =>
             {
                 EquipmentBase equip = item as EquipmentBase;
-                int pieceAmount = GetSpbPiecesAmount((int)equip.GetSpb());
+                int pieceAmount = equip.GetSpbPieceAmount();
                 StringBuilder sb = new StringBuilder();
                 sb.Append("请问您要销毁这个装备吗？销毁此装备将获得");
                 sb.Append(pieceAmount);
@@ -186,15 +186,6 @@ public class LeftClickMenu : MonoBehaviour
     {
         yield return PlayerRequestBundle.MakeEquipToStorage(equip);
         yield return CategoryManager.Instance.RequestLoad();
-    }
-    /// <summary>
-    /// 原灵碎片的兑换公式
-    /// </summary>
-    /// <param name="spb"></param>
-    /// <returns></returns>
-    int GetSpbPiecesAmount(int spb)
-    {
-        return spb >= 10 ? spb / 10 : 1;
     }
     /// <summary>
     /// 点击相应东西后会触发的内容

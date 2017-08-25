@@ -201,8 +201,20 @@ public class BaseEquipMod : EquipModification
             demands.Add(new EhaDemand(Items.REHANCE_STONE, equip.eha_reha + 1));
             if ((int)equip.GetEquipmentQuality() >= 1 && equip.eha_reha >= 5)
             {
-                demands.Add(new EhaDemand(Items.REHANCE_SPAR, (equip.eha_reha - 4) * 2));
+                demands.Add(new EhaDemand(Items.REHANCE_SPAR, (equip.eha_reha - 4) * 2, false));
             }
+        }
+        if (equip.eha_reha <= 3)
+        {
+            demands.Add(new EhaDemand(Items.ENH(1), 1 + equip.eha_reha, false));
+        }
+        else if (equip.eha_reha <= 6)
+        {
+            demands.Add(new EhaDemand(Items.ENH(2), equip.eha_reha - 3, false));
+        }
+        else if (equip.eha_reha <= 9)
+        {
+            demands.Add(new EhaDemand(Items.ENH(3), equip.eha_reha - 6, false));
         }
         return demands;
     }
@@ -217,15 +229,17 @@ public class BaseEquipMod : EquipModification
         public int stopLevel;
         public int baseAmount;
         public float amountPerLevel;
-        public EhaDemand(string item_id, int needLevel, int stopLevel, int baseAmount, float amountPerLevel)
+        public bool canBeReduced = true;
+        public EhaDemand(string item_id, int needLevel, int stopLevel, int baseAmount, float amountPerLevel, bool canBeReduced = true)
         {
             this.item_id = item_id;
             this.needLevel = needLevel;
             this.stopLevel = stopLevel;
             this.baseAmount = baseAmount;
             this.amountPerLevel = amountPerLevel;
+            this.canBeReduced = canBeReduced;
         }
-        public EhaDemand(string item_id, int baseAmount) : this(item_id, 1, 0, baseAmount, 0)
+        public EhaDemand(string item_id, int baseAmount, bool canBeReduced = true) : this(item_id, 1, 0, baseAmount, 0, canBeReduced)
         {
 
         }

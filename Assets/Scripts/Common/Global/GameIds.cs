@@ -15,6 +15,11 @@ namespace GameId
     {
         public const string MONEY = "money";
         public const string DIMEN = "dimen";
+        public static string ENH(int level)
+        {
+            return "enh_l" + level;
+        }
+
         /// <summary>
         /// 再塑秘石
         /// </summary>

@@ -16,9 +16,9 @@ public class EquipmentBase : ItemBase
     private int[] prefixMod_ids;//词缀
     private int baseMod_id;//基本名
     private List<ChipData> linkedChips = new List<ChipData>();
-    public int eha_level;//强化等级
-    public int eha_reha;//再塑等级
-    public int eha_rebuild;//重构等级
+    public int eha_level = 0;//强化等级
+    public int eha_reha = 0;//再塑等级
+    public int eha_rebuild = 0;//重构等级
 
     private static readonly Dictionary<EQ_TYPE, string> typeToNames = new Dictionary<EQ_TYPE, string>();
     private static readonly Dictionary<EQ_QUALITY, string> qualityToNames = new Dictionary<EQ_QUALITY, string>();
@@ -345,6 +345,14 @@ public class EquipmentBase : ItemBase
     public static int GetRealLevel(int reha, int level)
     {
         return reha * 10 + level;
+    }
+    /// <summary>
+    /// 该装备换算成灵基碎片的数量。
+    /// </summary>
+    /// <returns></returns>
+    public int GetSpbPieceAmount()
+    {
+        return (int)(spb >= 10 ? spb / 10 : 1);
     }
 }
 /// <summary>

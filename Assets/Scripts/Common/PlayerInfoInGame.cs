@@ -106,8 +106,9 @@ public class PlayerInfoInGame : MonoBehaviour
     private static string username;
     private string temp_pw;
 
-    public static lint m_money;//星币
-    public static lint m_dimenCoin;//次元币（氪金要素
+    private static lint m_money;//星币
+    private static lint m_dimenCoin;//次元币（氪金要素
+    private static lint m_volume;//共鸣点
     public static int VIP_Level;//玩家vip等级
     public static int SkillPoint;//技能点
     public static string OnlineKey;
@@ -314,6 +315,7 @@ public class PlayerInfoInGame : MonoBehaviour
         NextExp = tempPlayerAttr.nextExp;
         Level = tempPlayerAttr.level;
         m_money = tempPlayerAttr.money;
+        m_volume = tempPlayerAttr.volume;
         m_dimenCoin = tempPlayerAttr.dimenCoin;
         SkillPoint = tempPlayerAttr.skillPoint;
         VIP_Level = tempPlayerAttr.vipLevel;
@@ -557,6 +559,7 @@ public class TempPlayerAttribute : BaseAttribute
     public int skillPoint;//技能点
     public long money;
     public long dimenCoin;
+    public long volume;
     public int vipLevel;//玩家vip等级
     public long exp;
     public long nextExp;

@@ -15,10 +15,11 @@ public class ItemBase
     /// 物品描述
     /// </summary>
     public string description;
-    protected bool canBeSold;//是否可以出售
+    public bool canBeSold;//是否可以出售
     public int indexInPack = -1;
     public int price;
     public int dimen;
+    public int sort;
     public string[] compItems = null;
     public int[] compAmount = null;
     public int compPrice;

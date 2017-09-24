@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public static class SpriteLibrary
 {
-    //public const Sprite LOADING = null;
+    public static Sprite EMPTY() { return GetSprite("icons/empty.png"); }
     public static Dictionary<string, Sprite> pathToSprites = new Dictionary<string, Sprite>();
     /// <summary>
     /// 往指定路径里保存Sprite。会覆盖之前的Sprite。

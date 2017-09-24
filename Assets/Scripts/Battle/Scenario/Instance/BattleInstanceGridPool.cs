@@ -56,7 +56,7 @@ public class BattleInstanceGridPool : MonoBehaviour
         stageNameText.text = stageData.GetModifiedName();
     }
     /// <summary>
-    /// 设置指定对象的信息。
+    /// 设置指定关卡的信息。
     /// </summary>
     /// <param name="data"></param>
     /// <param name="index"></param>

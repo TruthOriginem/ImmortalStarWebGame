@@ -9,13 +9,13 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: 
+  fontName: Microsoft YaHei
   fontNames:
   - msyh
   fallbackFontReferences:
   - {fileID: 12800000, guid: 20ad6490b3307f7438ab777cc8c5aa18, type: 3}
   customCharacters: 
-  fontRenderingMode: 0
+  fontRenderingMode: 1
   ascentCalculationMode: 1
   userData: 
   assetBundleName: 

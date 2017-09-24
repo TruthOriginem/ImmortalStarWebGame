@@ -39,6 +39,7 @@ public partial class ItemPack
                 itemToAmounts.Add(Items.MM_TICKET, 15);
                 itemToAmounts.Add(Items.CARD_DROP_DOUBLE, 10 + 2 * level);
                 itemToAmounts.Add(Items.CARD_EXP_DOUBLE, 20 + 4 * level);
+                itemToAmounts.Add(Items.CARD_DM_DOUBLE, 1 + (int)(0.5 * level));
                 if (level == 7)
                 {
                     itemToAmounts.Add(Items.DIMEN, 5000);
@@ -52,6 +53,9 @@ public partial class ItemPack
                 itemToAmounts.Add(Items.REHANCE_SPAR, level);
                 itemToAmounts.Add(Items.CARD_DROP_DOUBLE, 10 + 5 * level);
                 itemToAmounts.Add(Items.CARD_EXP_DOUBLE, 10 + 5 * level);
+                itemToAmounts.Add(Items.BOSS_RESET_POWDER, 10 + 5 * level);
+                itemToAmounts.Add(Items.CARD_DM_DOUBLE, 2 + 5 * level);
+                itemToAmounts.Add("dm_resetcard", 1 + (int)(0.25 * level));
                 break;
             default:
                 break;
@@ -64,13 +68,13 @@ public partial class ItemPack
         var itas = GetItemToAmounts();
         foreach (var item in itas)
         {
+            sb.AppendLine();
             sb.Append(" · ");
             sb.Append(ItemDataManager.GetItemName(item.Key));
             sb.Append(" x ");
             sb.Append(item.Value);
-            sb.AppendLine();
         }
-        sb.Remove(sb.Length - 2, 2);
+        //sb.Remove(sb.Length - 2, 2);
         return sb.ToString();
     }
 }

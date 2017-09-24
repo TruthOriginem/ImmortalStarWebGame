@@ -45,7 +45,7 @@ public class ItemDataManager : MonoBehaviour
     /// 请求更新指定道具玩家所拥有的数量和道具位置
     /// </summary>
     /// <param name="item"></param>
-    public static Coroutine GetItemsAmount()
+    public static Coroutine RequestGetItemsAmount()
     {
         return Instance.StartCoroutine(Instance.GetItemAmountCor());
     }
@@ -110,6 +110,31 @@ public class ItemDataManager : MonoBehaviour
                     temp.GenarateCompoundData();
                     yield return StartCoroutine(RequestLoadTexture(temp));
                 }
+            }
+            string path = "icons/empty.png";
+            if (!SpriteLibrary.IsSpriteDownLoading(path))
+            {
+                SpriteLibrary.SetSpriteDownLoading(path);
+                WWW w = new WWW(CU.ParsePath(path));
+                CU.ShowConnectingUI();
+                yield return w;
+                CU.HideConnectingUI();
+                if (CU.IsDownloadCompleted(w))
+                {
+                    Texture2D iconTex = w.texture;
+                    iconTex.Compress(true);
+                    Sprite _icon = Sprite.Create(iconTex, new Rect(0, 0, iconTex.width, iconTex.height), new Vector2(0.5f, 0.5f));
+                    ///预加载
+                    SpriteLibrary.AddSprite(path, _icon);
+                    ///
+                }
+                else
+                {
+                    Debug.LogWarning(w.error);
+                    CU.ShowConnectFailed();
+                    yield break;
+                }
+                w.Dispose();
             }
         }
         CU.HideConnectingUI();

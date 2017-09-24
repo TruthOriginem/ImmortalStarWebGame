@@ -34,20 +34,11 @@ public class EnemyDataManager : MonoBehaviour
     /// <returns></returns>
     public static IEnumerator InitAllEnemiesInList()
     {
-        //foreach (string id in enemyIds)
-        //{
-        //    if (!idToEnmeyAttribute.ContainsKey(id))
-        //    {
-        //        idToEnmeyAttribute.Add(id, null);
-        //        yield return Instance.StartCoroutine(Instance.DownLoadEnemyAttribute(id));
-        //    }
-        //}
         CU.ShowConnectingUI();
         WWW w = new WWW(CU.ParsePath(LOAD_ENEMIES_PATH));
         yield return w;
         if (CU.IsDownloadCompleted(w))
         {
-            //Debug.Log(w.text);
             TempEnemyAttribute[] attrs = JsonHelper.GetJsonArray<TempEnemyAttribute>(w.text);
             for (int i = 0; i < attrs.Length; i++)
             {
@@ -74,7 +65,7 @@ public class EnemyDataManager : MonoBehaviour
                     yield break;
                 }
                 iconTexture.Compress(true);
-                EnemyAttribute eAttr = new EnemyAttribute(attr.idkey, attr.id, attr.name, baseP, growP, iconTexture, attr.dropItems);
+                EnemyAttribute eAttr = new EnemyAttribute(attr.idkey, attr.id, attr.name,attr.description, baseP, growP, iconTexture, attr.dropItems);
                 idToEnmeyAttribute.Add(attr.id, eAttr);
             }
         }
@@ -186,7 +177,7 @@ public class EnemyDataManager : MonoBehaviour
         }
 
         #endregion
-        EnemyAttribute eAttr = new EnemyAttribute(tempAttr.idkey, id, tempAttr.name, baseP, growP, iconTexture, tempAttr.dropItems);
+        EnemyAttribute eAttr = new EnemyAttribute(tempAttr.idkey, id, tempAttr.name, tempAttr.description,baseP, growP, iconTexture, tempAttr.dropItems);
         idToEnmeyAttribute[id] = eAttr;
         CU.HideConnectingUI();
     }

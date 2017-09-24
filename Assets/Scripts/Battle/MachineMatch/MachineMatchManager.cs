@@ -39,7 +39,7 @@ public class MachineMatchManager : MonoBehaviour
     }
     IEnumerator _InitOrRefresh()
     {
-        yield return ItemDataManager.GetItemsAmount();
+        yield return ItemDataManager.RequestGetItemsAmount();
         CU.ShowConnectingUI();
         WWWForm form = new WWWForm();
         form.AddField("player_id", PlayerInfoInGame.Id);

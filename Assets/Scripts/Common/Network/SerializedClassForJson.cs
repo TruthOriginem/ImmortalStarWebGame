@@ -47,7 +47,7 @@ namespace SerializedClassForJson
         /// 将道具id及字符串转化为json字符串，形式为数组,比如[{"item_id":"","amount":0}]
         /// </summary>
         /// <returns></returns>
-        public string ToJson(bool deleteEq)
+        public string ToJson(bool deleteEq = false)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("[");

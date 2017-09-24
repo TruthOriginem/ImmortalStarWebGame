@@ -212,3 +212,133 @@ public class AttributeCollection
         return newA;
     }
 }
+public class MutableStats
+{
+    private Dictionary<string, float> flatDic = new Dictionary<string, float>();
+    private Dictionary<string, float> percentDic = new Dictionary<string, float>();
+    private Dictionary<string, float> multDic = new Dictionary<string, float>();
+    private float baseValue;
+    private float modifiedValue;
+
+    public float ModifiedValue
+    {
+        get
+        {
+            return modifiedValue;
+        }
+
+    }
+
+    public float BaseValue
+    {
+        get
+        {
+            return baseValue;
+        }
+
+    }
+
+    public MutableStats(float baseValue)
+    {
+        this.baseValue = baseValue;
+    }
+    /// <summary>
+    /// 计算经过调整的值
+    /// </summary>
+    void SyncModifiedValue()
+    {
+        float flat = 0;
+        foreach (var kv in flatDic)
+        {
+            flat += kv.Value;
+        }
+        float percent = 0;
+        bool isPercentMinus = false;
+        foreach (var kv in percentDic)
+        {
+            if (kv.Value > 0)
+            {
+                percent += kv.Value;
+            }
+        }
+        foreach (var kv in percentDic)
+        {
+            if (kv.Value < 0)
+            {
+                if (!isPercentMinus)
+                {
+                    percent += kv.Value;
+                    if (percent < 0)
+                    {
+                        isPercentMinus = true;
+                        percent = (100f + percent) / 100f;
+                    }
+                }
+                else
+                {
+                    percent *= (100f + kv.Value) / 100f;
+                }
+            }
+        }
+        float mult = 0;
+        foreach (var kv in multDic)
+        {
+            if (kv.Value > 0)
+            {
+                mult *= kv.Value;
+            }
+        }
+        modifiedValue = (baseValue * (isPercentMinus ? (percent < 0 ? 0 : percent) : (1f + percent / 100f)) + flat) * mult;
+    }
+    public void ModifyPercent(string id, float value)
+    {
+        if (percentDic.ContainsKey(id))
+        {
+            percentDic[id] = value;
+        }
+        else
+        {
+            percentDic.Add(id, value);
+        }
+        SyncModifiedValue();
+    }
+    public void ModifyFlat(string id, float value)
+    {
+        if (flatDic.ContainsKey(id))
+        {
+            flatDic[id] = value;
+        }
+        else
+        {
+            flatDic.Add(id, value);
+        }
+        SyncModifiedValue();
+    }
+    public void ModifyMult(string id, float value)
+    {
+        if (multDic.ContainsKey(id))
+        {
+            multDic[id] = value;
+        }
+        else
+        {
+            multDic.Add(id, value);
+        }
+        SyncModifiedValue();
+    }
+    public void Unmodify(string id = "")
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            flatDic.Clear();
+            percentDic.Clear();
+            multDic.Clear();
+        }
+        else
+        {
+            flatDic.Remove(id);
+            percentDic.Remove(id);
+            multDic.Remove(id);
+        }
+    }
+}

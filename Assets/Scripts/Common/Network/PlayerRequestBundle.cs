@@ -130,7 +130,7 @@ public class PlayerRequestBundle : MonoBehaviour
         return Instance.StartCoroutine(Instance.ChangeDesignation(id, 1));
     }
     /// <summary>
-    /// 在外部AppendRequest后再进行同步。完成后默认更新玩家信息。
+    /// 在外部AppendRequest后再进行同步。完成后默认更新玩家信息。如果没有需要更新的信息，那么直接更新玩家信息。
     /// </summary>
     /// <returns></returns>
     public static Coroutine RequestSyncUpdate(bool updatePlayerInfo = true)
@@ -215,7 +215,7 @@ public class PlayerRequestBundle : MonoBehaviour
             yield break;
         }
         //刷新道具
-        yield return ItemDataManager.GetItemsAmount();
+        yield return ItemDataManager.RequestGetItemsAmount();
 
         ItemDataManager.AddItemsToPlayerInfo();
         CU.HideConnectingUI();
@@ -275,18 +275,25 @@ public class PlayerRequestBundle : MonoBehaviour
     IEnumerator RequestSyncUpdateCor(bool updatePlayerInfo)
     {
         WWW w = SyncRequest.CreateSyncWWW();
-        CU.ShowConnectingUI();
-        yield return w;
-        CU.HideConnectingUI();
-        if (CU.IsPostSucceed(w))
+        if (w == null)
         {
-            //Debug.Log(w.text);
             if (updatePlayerInfo) yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
         }
         else
         {
-            Debug.LogError(w.text);
-            CU.ShowConnectFailed();
+            CU.ShowConnectingUI();
+            yield return w;
+            CU.HideConnectingUI();
+            if (CU.IsPostSucceed(w))
+            {
+                //Debug.Log(w.text);
+                if (updatePlayerInfo) yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
+            }
+            else
+            {
+                Debug.LogError(w.text);
+                CU.ShowConnectFailed();
+            }
         }
     }
     /// <summary>
@@ -462,16 +469,23 @@ public class SyncRequest
     /// <returns></returns>
     public static WWWForm CompleteRequestForm()
     {
-        WWWForm form = new WWWForm();
-        for (int i = 0; i < requestToUpload.Count; i++)
+        if (requestToUpload.Count != 0)
         {
-            var request = requestToUpload[i];
-            form.AddField(request.requestId, request.requestString);
+            WWWForm form = new WWWForm();
+            for (int i = 0; i < requestToUpload.Count; i++)
+            {
+                var request = requestToUpload[i];
+                form.AddField(request.requestId, request.requestString);
+            }
+            requestToUpload.Clear();
+            form.AddField(Requests.ID, PlayerInfoInGame.Id);
+            form.AddField(Requests.ECKEY, GlobalSettings.GetEncryptKey());
+            return form;
         }
-        requestToUpload.Clear();
-        form.AddField(Requests.ID, PlayerInfoInGame.Id);
-        form.AddField(Requests.ECKEY, GlobalSettings.GetEncryptKey());
-        return form;
+        else
+        {
+            return null;
+        }
     }
     /// <summary>
     /// 通过SyncRequest集合创建WWW通讯类，会合并被清空所有待同步的SyncRequest。
@@ -480,7 +494,8 @@ public class SyncRequest
     /// <returns></returns>
     public static WWW CreateSyncWWW(string path = PlayerRequestBundle.UPDATE_UNIVERSAL_FILEPATH)
     {
-        return new WWW(CU.ParsePath(path), CompleteRequestForm());
+        var form = CompleteRequestForm();
+        return form == null ? null : new WWW(CU.ParsePath(path), form);
     }
 
 }

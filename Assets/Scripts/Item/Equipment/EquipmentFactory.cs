@@ -212,7 +212,7 @@ public class BaseEquipMod : EquipModification
         {
             demands.Add(new EhaDemand(Items.ENH(2), equip.eha_reha - 3, false));
         }
-        else if (equip.eha_reha <= 9)
+        else if (equip.eha_reha <= 10)
         {
             demands.Add(new EhaDemand(Items.ENH(3), equip.eha_reha - 6, false));
         }

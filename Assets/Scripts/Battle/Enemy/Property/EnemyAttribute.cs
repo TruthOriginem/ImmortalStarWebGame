@@ -9,6 +9,7 @@ public class EnemyAttribute{
     public int idkey;
     public string name;
     public string id;
+    public string description;
     public EnemyProperty growth;//怪物成长,包含经验
     public EnemyProperty baseP;//怪物基础属性，包含经验
     public TempItemDrops[] dropItems;//怪物掉落道具，有等级限制
@@ -23,13 +24,14 @@ public class EnemyAttribute{
     /// </summary>
     private static string IMAGE_FILE_SUFFIX = ".png";
 
-    public EnemyAttribute(int idkey,string id,string name,EnemyProperty baseP,EnemyProperty growP,Texture2D iconTexture, TempItemDrops[] dropItems)
+    public EnemyAttribute(int idkey,string id,string name,string description,EnemyProperty baseP,EnemyProperty growP,Texture2D iconTexture, TempItemDrops[] dropItems)
     {
         this.idkey = idkey;
         this.id = id;
         this.name = name;
         this.growth = growP;
         this.baseP = baseP;
+        this.description = description;
         //this.iconTexture = iconTexture;
         this.dropItems = dropItems;
         SpriteLibrary.AddSprite(GetCompletedFilePathById(id), Sprite.Create(iconTexture, new Rect(0, 0, iconTexture.width, iconTexture.height), new Vector2(0.5f, 0.5f)));

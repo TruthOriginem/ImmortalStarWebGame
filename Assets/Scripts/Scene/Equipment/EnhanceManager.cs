@@ -331,7 +331,7 @@ public class EnhanceManager : MonoBehaviour
     /// </summary>
     IEnumerator ConfirmEnhancement()
     {
-        yield return ItemDataManager.GetItemsAmount();
+        yield return ItemDataManager.RequestGetItemsAmount();
         EquipmentBase equipment = GetSelectedEquip();
         Dictionary<string, lint> itemDic = new Dictionary<string, lint>();
         TempPlayerAttribute attr = new TempPlayerAttribute();

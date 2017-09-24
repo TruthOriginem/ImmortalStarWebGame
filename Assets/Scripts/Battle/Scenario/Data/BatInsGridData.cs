@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameId;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
@@ -121,4 +122,31 @@ public class BatInsGridData
     {
         return GetParentStageData().ExtremeLevel > 0;
     }
+    /// <summary>
+    /// 返回是否可以用重置粉末进行额外挑战
+    /// </summary>
+    /// <returns></returns>
+    public bool CanUseResetPowder()
+    {
+        int amount;
+        return CanUseResetPowder(out amount);
+    }
+    /// <summary>
+    /// 返回是否可以用重置粉末进行额外挑战，并且需要几个粉末。
+    /// <para>如果返回false，则说明该关卡不是boss/挑战次数无限/未达到挑战次数上限</para>
+    /// </summary>
+    /// <returns></returns>
+    public bool CanUseResetPowder(out int amount)
+    {
+        amount = 0;
+        if (!isBoss) return false;
+        int attackCount = GetAttackCount();
+        if (limit.attackTimesPerDay == -1 || (limit.attackTimesPerDay > attackCount)) return false;
+        //攻击关卡溢出次数
+        int overflowCount = attackCount - limit.attackTimesPerDay;
+        //每溢出两次，所需粉末数量+1
+        amount = overflowCount / 2 + 1;
+        return true;
+    }
+
 }

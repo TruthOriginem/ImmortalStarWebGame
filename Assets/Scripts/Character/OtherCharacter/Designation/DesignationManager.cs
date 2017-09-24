@@ -23,6 +23,7 @@ public class DesignationManager : MonoBehaviour
     public Text designDescription;
     public Button applyButton;
     static bool isAddingDesign = false;
+    private List<int> currShowedDesignIds = new List<int>();
     void Awake()
     {
         Instance = this;
@@ -49,6 +50,7 @@ public class DesignationManager : MonoBehaviour
     void InitOrRefresh()
     {
         designDropdown.ClearOptions();
+        currShowedDesignIds.Clear();
         PlayerInfoInGame.Design_Ids.Sort(new DesignSorter());
         if (PlayerInfoInGame.Design_Ids.Count == 0)
         {
@@ -65,6 +67,7 @@ public class DesignationManager : MonoBehaviour
                 index = i;
             }
             var optionData = new Dropdown.OptionData(GetDesignationName(id));
+            currShowedDesignIds.Add(id);
             optionDatas.Add(optionData);
         }
         designDropdown.AddOptions(optionDatas);
@@ -73,7 +76,7 @@ public class DesignationManager : MonoBehaviour
     }
     public void ChangeDesignIndex(int index)
     {
-        var id = PlayerInfoInGame.Design_Ids[index];
+        var id = currShowedDesignIds[index];
         var data = GetDesignationData(id);
         StringBuilder sb = new StringBuilder();
         sb.Append(data.description);
@@ -275,6 +278,21 @@ public class DesignationManager : MonoBehaviour
             {
                 CheckAndTryGetDesign(Designations.JXYJZ);
             }
+        }
+    }
+    public static void CheckDeepMemory(TempDeepMemoryData data)
+    {
+        if (data.maxDepth >= 11)
+        {
+            CheckAndTryGetDesign(11);//初入根源
+        }
+        if (data.maxDepth >= 21)
+        {
+            CheckAndTryGetDesign(12);//初入根源
+        }
+        if (data.maxDepth >= 41)
+        {
+            CheckAndTryGetDesign(13);//初入根源
         }
     }
     /// <summary>

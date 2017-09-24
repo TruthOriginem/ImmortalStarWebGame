@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using GameId;
+using SerializedClassForJson;
 
 public class BattleManager : MonoBehaviour
 {
@@ -11,7 +12,8 @@ public class BattleManager : MonoBehaviour
     {
         NORMAL,//普通剧本的战斗
         EXPEDITION,//远征
-        MACHINEMATCH
+        MACHINEMATCH,
+        DEEPMEMORY
     }
     public CanvasGroup battleCanvas;
     /// <summary>
@@ -175,6 +177,7 @@ public class BattleManager : MonoBehaviour
         nowBattleType = BATTLE_TYPE.NORMAL;
         autoBattleToggle.gameObject.SetActive(true);
         battleResult = new BattleResult();
+
         return StartCoroutine(InitBattleCor(instance.enemys.GetActualData(instance.sId)));
     }
     /// <summary>
@@ -199,6 +202,14 @@ public class BattleManager : MonoBehaviour
         battleResult.SetLinkedInfo(manager);
         return StartCoroutine(InitBattleCor(manager));
     }
+    public Coroutine InitBattle(DeepMemoryManager manager)
+    {
+        nowBattleType = BATTLE_TYPE.DEEPMEMORY;
+        autoBattleToggle.gameObject.SetActive(false);
+        battleResult = new BattleResult();
+        battleResult.SetLinkedInfo(manager);
+        return StartCoroutine(InitBattleCor(manager));
+    }
     /// <summary>
     /// 再次战斗
     /// </summary>
@@ -212,14 +223,23 @@ public class BattleManager : MonoBehaviour
         //Debug.Log(JsonUtility.ToJson(enemySpawnData));
         //battle.courses.Clear();
         battle = null;
-        ResultString = TextUtils.GetSizedString("结算:", 16);
+        ResultString = TextUtils.GetSizedString("结算:\n", 16);
+        if (nowBattleType == BATTLE_TYPE.NORMAL && linkedInstanceGridData != null)
+        {
+            int powderAmount;
+            if (linkedInstanceGridData.CanUseResetPowder(out powderAmount))
+            {
+                SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(Items.BOSS_RESET_POWDER, -powderAmount).ToJson());
+                ResultString += "本次挑战您使用了" + powderAmount + "个Boss重置粉末，并且您还剩下" + (ItemDataManager.GetItemAmount(Items.BOSS_RESET_POWDER) - powderAmount) + "个。\n";
+            }
+        }
         resultText.text = ResultString;
         fastBattle = false;
         resultText.transform.localPosition = new Vector3(0f, 0f, 0f);
         courseContent.localPosition = new Vector3(0f, 0f, 0f);
         ClearEnemyList();
         //更新玩家属性
-        yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
+        yield return PlayerRequestBundle.RequestSyncUpdate();
         //初始化战斗
         battle = new Battle(enemyData);
         //下拉菜单加入敌人选项
@@ -278,13 +298,8 @@ public class BattleManager : MonoBehaviour
             case BATTLE_TYPE.NORMAL:
                 battleResult.GainResult(win ? linkedInstanceGridData : null, Mathf.RoundToInt(lostTime));
                 break;
-            case BATTLE_TYPE.EXPEDITION:
-                battleResult.GainResultByLinkedInfo(win);
-                break;
-            case BATTLE_TYPE.MACHINEMATCH:
-                battleResult.GainResultByLinkedInfo(win);
-                break;
             default:
+                battleResult.GainResultByLinkedInfo(win);
                 break;
         }
         battleResult = null;
@@ -324,7 +339,7 @@ public class BattleManager : MonoBehaviour
         //结束
         HandleBattleEndByType(nowBattleType);
         //处理结算
-        resultText.text = ResultString;
+        resultText.text += ResultString;
         //nowEnemy = null;
         //nowPlayer = null;
     }
@@ -339,13 +354,8 @@ public class BattleManager : MonoBehaviour
             case BATTLE_TYPE.NORMAL:
                 HandleNormalBattleEnd();
                 break;
-            case BATTLE_TYPE.EXPEDITION:
-                HandleExpedtionBattleEnd();
-                break;
-            case BATTLE_TYPE.MACHINEMATCH:
-                HandleExpedtionBattleEnd();
-                break;
             default:
+                HandleNoRepeatBattleEnd();
                 break;
         }
     }
@@ -383,7 +393,7 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// 不能重复击败的改动
     /// </summary>
-    void HandleExpedtionBattleEnd()
+    void HandleNoRepeatBattleEnd()
     {
         SetRebattleButton(false);
         backButton.gameObject.SetActive(true);
@@ -504,6 +514,10 @@ public class BattleManager : MonoBehaviour
     }
     #endregion
 
+    /// <summary>
+    /// 设置战斗画布是否显示
+    /// </summary>
+    /// <param name="visible"></param>
     public void SetBattleCanvasVisible(bool visible)
     {
         battleCanvas.alpha = visible ? 1f : 0f;

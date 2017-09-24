@@ -82,10 +82,18 @@ public partial class ItemPack : IItemPack
     {
         return name;
     }
+    /// <summary>
+    /// 设置是否满足领取条件。
+    /// </summary>
+    /// <param name="able"></param>
     public void SetCanRecieve(bool able)
     {
         canRecieved = able;
     }
+    /// <summary>
+    /// 设置领取权限。
+    /// </summary>
+    /// <param name="access"></param>
     public void SetAccess(bool access)
     {
         haveAccessToRecieve = access;

@@ -74,33 +74,36 @@ public class BattleInstanceTooltip : MonoBehaviour
         }
         StringBuilder sb = new StringBuilder();
 
-        if (!grid.Interactive)
+
+        var limitation = grid.limit;
+        if (limitation.attackTimesPerDay != -1 && grid.GetAttackCount() >= limitation.attackTimesPerDay)
         {
-
-            var limitation = grid.limit;
-            if (limitation.attackTimesPerDay != -1 && grid.GetAttackCount() >= limitation.attackTimesPerDay)
+            int amount;
+            if (!grid.CanUseResetPowder(out amount))
             {
-
                 return "今日的挑战次数已用完。";
             }
-
-            if (limitation.preGridIds != null && limitation.preGridIds.Length != 0)
+            else
             {
-                sb.AppendLine(TextUtils.GetColoredText("<size=18>解锁该关卡条件：</size>", 255, 30, 30, 255));
-                for (int i = 0; i < limitation.preGridIds.Length; i++)
-                {
-                    var limitGrid = ScenarioManager.GetGridDataById(limitation.preGridIds[i]);
-                    sb.Append(" -通过");
-                    //设置一下关卡名的颜色，正常为#00DFFFFF
-                    string gridName = limitGrid.isBoss ? TextUtils.GetColoredText(limitGrid.name, 150f, 100f, 255f, 255f) : "<color=#00DFFFFF>" + limitGrid.name + "</color>";
-                    sb.AppendLine(gridName);
-                }
-                sb.Append("注：全部通过才可解锁");
+                sb.AppendLine("今日挑战次数已用完，但是可以使用" + amount + "个Boss重置粉末继续挑战。");
+                sb.AppendLine();
             }
-            return sb.ToString();
-
         }
-        if (grid.limit.attackTimesPerDay != -1)
+        else if (!grid.Interactive && limitation.preGridIds != null && limitation.preGridIds.Length != 0)
+        {
+            sb.AppendLine(TextUtils.GetColoredText("<size=18>解锁该关卡条件：</size>", 255, 30, 30, 255));
+            for (int i = 0; i < limitation.preGridIds.Length; i++)
+            {
+                var limitGrid = ScenarioManager.GetGridDataById(limitation.preGridIds[i]);
+                sb.Append(" -通过");
+                //设置一下关卡名的颜色，正常为#00DFFFFF
+                string gridName = limitGrid.isBoss ? TextUtils.GetColoredText(limitGrid.name, 150f, 100f, 255f, 255f) : "<color=#00DFFFFF>" + limitGrid.name + "</color>";
+                sb.AppendLine(gridName);
+            }
+            sb.Append("注：全部通过才可解锁");
+            return sb.ToString();
+        }
+        if (grid.limit.attackTimesPerDay != -1 && !grid.CanUseResetPowder())
         {
             sb.Append(TextUtils.GetGreenText("今日挑战剩余次数："));
             int maxAttackCount = grid.limit.attackTimesPerDay;

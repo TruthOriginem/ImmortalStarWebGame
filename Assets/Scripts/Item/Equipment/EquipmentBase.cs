@@ -297,7 +297,7 @@ public class EquipmentBase : ItemBase
         return sb.ToString();
     }
     /// <summary>
-    /// 返回的数为强化等级 + 再塑等级*11，即强化0级，再塑3的合计等级为33
+    /// 返回的数为强化等级 + 再塑等级*11，即强化0级，再塑3的合计等级为33,强化等级10再塑等级10 = 120合计等级
     /// </summary>
     /// <returns></returns>
     public int GetAllocatedLevel()

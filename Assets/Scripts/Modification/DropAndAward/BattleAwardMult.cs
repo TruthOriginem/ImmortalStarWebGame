@@ -5,24 +5,28 @@ using System.Collections;
 /// 战斗/挂机结算时
 /// </summary>
 public class BattleAwardMult{
-    public static float GetMoneyMult()
+    public static float GetMoneyMult(int level = -1)
     {
-        return 1f + PlayerInfoInGame.VIP_Level * 0.05f;
+        if (level == -1) level = PlayerInfoInGame.VIP_Level;
+        return 1f + level * 0.05f;
     }
-    public static float GetExpMult()
+    public static float GetExpMult(int level = -1)
     {
-        return 1f + PlayerInfoInGame.VIP_Level * 0.05f;
+        if (level == -1) level = PlayerInfoInGame.VIP_Level;
+        return 1f + level * 0.05f;
     }
-    public static float GetDropMult()
+    public static float GetDropMult(int level = -1)
     {
-        return 1f + PlayerInfoInGame.VIP_Level * 0.02f;
+        if (level == -1) level = PlayerInfoInGame.VIP_Level;
+        return 1f + level * 0.02f;
     }
     /// <summary>
     /// 远征掉落倍率
     /// </summary>
     /// <returns></returns>
-    public static float GetExpeditionDropMult()
+    public static float GetExpeditionDropMult(int level = -1)
     {
-        return 1f + PlayerInfoInGame.VIP_Level * 0.01f;
+        if (level == -1) level = PlayerInfoInGame.VIP_Level;
+        return 1f + level * 0.01f;
     }
 }

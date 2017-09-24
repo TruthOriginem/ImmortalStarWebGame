@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using SerializedClassForJson;
 using System.IO;
 using System;
+using GameId;
 
 /// <summary>
 /// 用于管理、收集所有在客户端中的BattleInstanceGrid信息
@@ -95,7 +96,15 @@ public class BattleInstanceManager : MonoBehaviour
                     //如果这个关卡是限制关卡，超过攻击次数也会被禁用
                     if (limitation.attackTimesPerDay != -1 && gridIdToAttackTimeColl[id] >= limitation.attackTimesPerDay)
                     {
-                        grid.SetCanNotAttack();
+                        int amount;
+                        if (!grid.CanUseResetPowder(out amount))
+                        {
+                            grid.SetCanNotAttack();
+                        }
+                        else if (amount > ItemDataManager.GetItemAmount(Items.BOSS_RESET_POWDER))
+                        {
+                            grid.SetCanNotAttack();
+                        }
                     }
                     //如果关卡已完成，则判断成就要素1
                     if (IsInit)

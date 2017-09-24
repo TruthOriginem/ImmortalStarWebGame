@@ -26,33 +26,15 @@ public class ShopItemToolTip : MonoBehaviour
     {
         if (grid.GetLinkedItem() != null)
         {
-            SetPositon();
             gameObject.SetActive(true);
             ItemBase item = grid.GetLinkedItem();
             title.text = item.name;
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(item.description);
-            sb.AppendLine();
-            sb.AppendLine("物品售价：");
-            if (item.price > 0)
-            {
-                sb.Append("<b>");
-                sb.Append(item.price);
-                sb.Append("</b>");
-
-                sb.AppendLine("星币");
-            }
-            if (item.dimen > 0)
-            {
-                sb.Append("<b>");
-
-                sb.Append(item.dimen);
-                sb.Append("</b>");
-
-                sb.AppendLine("次元币");
-            }
-            text.text = sb.ToString();
+            text.text = grid.GetToolTipDescription();
         }
+    }
+    void OnMouseExit()
+    {
+        gameObject.SetActive(false);
     }
     void SetPositon()
     {
@@ -61,9 +43,5 @@ public class ShopItemToolTip : MonoBehaviour
         {
             transform.localPosition = pos;
         }
-    }
-    void OnMouseExit()
-    {
-        gameObject.SetActive(false);
     }
 }

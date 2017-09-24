@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 767e53508be9f324183b114bf6b17a0f
-timeCreated: 1502267117
+timeCreated: 1503679857
 licenseType: Pro
 TextureImporter:
   fileIDToRecycleName:
@@ -138,6 +138,7 @@ TextureImporter:
     21300262: starFrame_4
     21300264: starFrame_5
     21300266: basekit_0_1
+    21300268: basekit_0_2
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -362,7 +363,7 @@ TextureImporter:
       name: basekit_0_0
       rect:
         serializedVersion: 2
-        x: 1133
+        x: 1299
         y: 703
         width: 159
         height: 160
@@ -446,8 +447,8 @@ TextureImporter:
       name: SLA_Frame_18
       rect:
         serializedVersion: 2
-        x: 400
-        y: 894
+        x: 1589
+        y: 246
         width: 111
         height: 111
       alignment: 1
@@ -460,8 +461,8 @@ TextureImporter:
       name: SLA_Frame_11
       rect:
         serializedVersion: 2
-        x: 1476
-        y: 37
+        x: 1702
+        y: 246
         width: 111
         height: 111
       alignment: 1
@@ -474,8 +475,8 @@ TextureImporter:
       name: SLA_Frame_14
       rect:
         serializedVersion: 2
-        x: 1589
-        y: 37
+        x: 1815
+        y: 246
         width: 111
         height: 111
       alignment: 1
@@ -488,8 +489,8 @@ TextureImporter:
       name: SLA_Frame_05
       rect:
         serializedVersion: 2
-        x: 1815
-        y: 376
+        x: 1928
+        y: 246
         width: 111
         height: 111
       alignment: 1
@@ -502,8 +503,8 @@ TextureImporter:
       name: SLA_Frame_08
       rect:
         serializedVersion: 2
-        x: 1702
-        y: 376
+        x: 1476
+        y: 359
         width: 111
         height: 111
       alignment: 1
@@ -516,8 +517,8 @@ TextureImporter:
       name: SLA_Frame_02
       rect:
         serializedVersion: 2
-        x: 1476
-        y: 376
+        x: 1589
+        y: 359
         width: 111
         height: 111
       alignment: 1
@@ -530,8 +531,8 @@ TextureImporter:
       name: SLA_Frame_10
       rect:
         serializedVersion: 2
-        x: 1815
-        y: 263
+        x: 1702
+        y: 359
         width: 111
         height: 111
       alignment: 1
@@ -544,8 +545,8 @@ TextureImporter:
       name: SLA_Frame_17
       rect:
         serializedVersion: 2
-        x: 1589
-        y: 263
+        x: 1815
+        y: 359
         width: 111
         height: 111
       alignment: 1
@@ -558,8 +559,8 @@ TextureImporter:
       name: SLA_Frame_04
       rect:
         serializedVersion: 2
-        x: 1476
-        y: 263
+        x: 1928
+        y: 359
         width: 111
         height: 111
       alignment: 1
@@ -572,8 +573,8 @@ TextureImporter:
       name: SLA_Frame_15
       rect:
         serializedVersion: 2
-        x: 1928
-        y: 150
+        x: 1476
+        y: 472
         width: 111
         height: 111
       alignment: 1
@@ -586,8 +587,8 @@ TextureImporter:
       name: SLA_Frame_13
       rect:
         serializedVersion: 2
-        x: 1815
-        y: 150
+        x: 1476
+        y: 585
         width: 111
         height: 111
       alignment: 1
@@ -600,8 +601,8 @@ TextureImporter:
       name: SLA_Frame_12
       rect:
         serializedVersion: 2
-        x: 1589
-        y: 376
+        x: 1476
+        y: 698
         width: 111
         height: 111
       alignment: 1
@@ -614,8 +615,8 @@ TextureImporter:
       name: SLA_Frame_03
       rect:
         serializedVersion: 2
-        x: 1702
-        y: 263
+        x: 400
+        y: 894
         width: 111
         height: 111
       alignment: 1
@@ -628,8 +629,8 @@ TextureImporter:
       name: SLA_Frame_01
       rect:
         serializedVersion: 2
-        x: 1928
-        y: 263
+        x: 1608
+        y: 0
         width: 111
         height: 111
       alignment: 1
@@ -642,8 +643,8 @@ TextureImporter:
       name: SLA_Frame_07
       rect:
         serializedVersion: 2
-        x: 1702
-        y: 37
+        x: 1608
+        y: 113
         width: 111
         height: 111
       alignment: 1
@@ -656,8 +657,8 @@ TextureImporter:
       name: SLA_Frame_19
       rect:
         serializedVersion: 2
-        x: 1815
-        y: 37
+        x: 1476
+        y: 246
         width: 111
         height: 111
       alignment: 1
@@ -670,8 +671,8 @@ TextureImporter:
       name: SLA_Frame_20
       rect:
         serializedVersion: 2
-        x: 1928
-        y: 37
+        x: 1721
+        y: 0
         width: 111
         height: 111
       alignment: 1
@@ -684,8 +685,8 @@ TextureImporter:
       name: SLA_Frame_09
       rect:
         serializedVersion: 2
-        x: 1476
-        y: 150
+        x: 1721
+        y: 113
         width: 111
         height: 111
       alignment: 1
@@ -698,8 +699,8 @@ TextureImporter:
       name: SLA_Frame_16
       rect:
         serializedVersion: 2
-        x: 1589
-        y: 150
+        x: 1834
+        y: 0
         width: 111
         height: 111
       alignment: 1
@@ -712,8 +713,8 @@ TextureImporter:
       name: SLA_Frame_06
       rect:
         serializedVersion: 2
-        x: 1702
-        y: 150
+        x: 1834
+        y: 113
         width: 111
         height: 111
       alignment: 1
@@ -727,7 +728,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 962
-        y: 571
+        y: 514
         width: 207
         height: 55
       alignment: 1
@@ -755,7 +756,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 962
-        y: 514
+        y: 571
         width: 207
         height: 55
       alignment: 1
@@ -782,8 +783,8 @@ TextureImporter:
       name: con_tooltip_bg
       rect:
         serializedVersion: 2
-        x: 1558
-        y: 489
+        x: 1589
+        y: 554
         width: 68
         height: 137
       alignment: 1
@@ -797,7 +798,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1133
-        y: 916
+        y: 968
         width: 137
         height: 49
       alignment: 1
@@ -811,7 +812,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1133
-        y: 865
+        y: 917
         width: 137
         height: 49
       alignment: 1
@@ -825,7 +826,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1133
-        y: 967
+        y: 866
         width: 137
         height: 49
       alignment: 1
@@ -894,8 +895,8 @@ TextureImporter:
       name: Table_Row_Normal_Background_Hover
       rect:
         serializedVersion: 2
-        x: 1476
-        y: 0
+        x: 1299
+        y: 917
         width: 128
         height: 35
       alignment: 1
@@ -908,8 +909,8 @@ TextureImporter:
       name: player_icon
       rect:
         serializedVersion: 2
-        x: 1476
-        y: 899
+        x: 1753
+        y: 472
         width: 64
         height: 64
       alignment: 1
@@ -1048,8 +1049,8 @@ TextureImporter:
       name: ScrollBar_Vertical_Background
       rect:
         serializedVersion: 2
-        x: 1426
-        y: 783
+        x: 1460
+        y: 703
         width: 9
         height: 129
       alignment: 1
@@ -1063,7 +1064,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 932
-        y: 978
+        y: 918
         width: 28
         height: 28
       alignment: 1
@@ -1077,7 +1078,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 932
-        y: 918
+        y: 948
         width: 28
         height: 28
       alignment: 1
@@ -1090,8 +1091,8 @@ TextureImporter:
       name: toggleHover
       rect:
         serializedVersion: 2
-        x: 932
-        y: 948
+        x: 1446
+        y: 514
         width: 28
         height: 28
       alignment: 1
@@ -1104,8 +1105,8 @@ TextureImporter:
       name: radioNormal
       rect:
         serializedVersion: 2
-        x: 1446
-        y: 514
+        x: 932
+        y: 978
         width: 28
         height: 28
       alignment: 1
@@ -1202,8 +1203,8 @@ TextureImporter:
       name: tinyButton_Mail
       rect:
         serializedVersion: 2
-        x: 1426
-        y: 703
+        x: 1429
+        y: 865
         width: 30
         height: 23
       alignment: 1
@@ -1230,8 +1231,8 @@ TextureImporter:
       name: tinyButton_Decline
       rect:
         serializedVersion: 2
-        x: 1426
-        y: 728
+        x: 1272
+        y: 866
         width: 24
         height: 26
       alignment: 1
@@ -1244,8 +1245,8 @@ TextureImporter:
       name: tinyButton_Social
       rect:
         serializedVersion: 2
-        x: 1426
-        y: 756
+        x: 1272
+        y: 917
         width: 24
         height: 25
       alignment: 1
@@ -1342,7 +1343,7 @@ TextureImporter:
       name: iconButton_Decline_Hover
       rect:
         serializedVersion: 2
-        x: 617
+        x: 597
         y: 1002
         width: 18
         height: 20
@@ -1356,7 +1357,7 @@ TextureImporter:
       name: iconButton_Decline_Pressed
       rect:
         serializedVersion: 2
-        x: 577
+        x: 617
         y: 1002
         width: 18
         height: 20
@@ -1370,7 +1371,7 @@ TextureImporter:
       name: iconButton_Decline_Normal
       rect:
         serializedVersion: 2
-        x: 597
+        x: 577
         y: 1002
         width: 18
         height: 20
@@ -1426,7 +1427,7 @@ TextureImporter:
       name: arrowButtonMiddle_Normal
       rect:
         serializedVersion: 2
-        x: 430
+        x: 400
         y: 1007
         width: 13
         height: 15
@@ -1440,7 +1441,7 @@ TextureImporter:
       name: arrowButtonMiddle_Pressed
       rect:
         serializedVersion: 2
-        x: 400
+        x: 430
         y: 1007
         width: 13
         height: 15
@@ -1594,6 +1595,20 @@ TextureImporter:
       name: ScrollBar_Vertical_Bottom_Button
       rect:
         serializedVersion: 2
+        x: 948
+        y: 625
+        width: 9
+        height: 9
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: ScrollBar_Vertical_Top_Button
+      rect:
+        serializedVersion: 2
         x: 17
         y: 1013
         width: 9
@@ -1605,7 +1620,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
-      name: ScrollBar_Vertical_Top_Button
+      name: ScrollBar_Horizontal_Button_Right
       rect:
         serializedVersion: 2
         x: 937
@@ -1619,25 +1634,11 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
-      name: ScrollBar_Horizontal_Button_Right
+      name: ScrollBar_Horizontal_Button_Left
       rect:
         serializedVersion: 2
         x: 28
         y: 1013
-        width: 9
-        height: 9
-      alignment: 1
-      pivot: {x: 0, y: 1}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-    - serializedVersion: 2
-      name: ScrollBar_Horizontal_Button_Left
-      rect:
-        serializedVersion: 2
-        x: 948
-        y: 625
         width: 9
         height: 9
       alignment: 1
@@ -1664,7 +1665,7 @@ TextureImporter:
       name: radioCheckmark
       rect:
         serializedVersion: 2
-        x: 39
+        x: 47
         y: 1013
         width: 6
         height: 6
@@ -1678,7 +1679,7 @@ TextureImporter:
       name: toggleCheckmark
       rect:
         serializedVersion: 2
-        x: 47
+        x: 39
         y: 1013
         width: 6
         height: 6
@@ -1706,8 +1707,8 @@ TextureImporter:
       name: common_Tooltip_bg
       rect:
         serializedVersion: 2
-        x: 1294
-        y: 703
+        x: 1476
+        y: 0
         width: 130
         height: 244
       alignment: 1
@@ -1720,8 +1721,8 @@ TextureImporter:
       name: ToolTipMenu_BG
       rect:
         serializedVersion: 2
-        x: 1294
-        y: 949
+        x: 1299
+        y: 865
         width: 128
         height: 50
       alignment: 1
@@ -1734,8 +1735,8 @@ TextureImporter:
       name: ToolTipMenu_Item
       rect:
         serializedVersion: 2
-        x: 1606
-        y: 0
+        x: 1299
+        y: 954
         width: 128
         height: 30
       alignment: 1
@@ -1748,8 +1749,8 @@ TextureImporter:
       name: starFrame_1
       rect:
         serializedVersion: 2
-        x: 1476
-        y: 571
+        x: 1947
+        y: 113
         width: 80
         height: 80
       alignment: 1
@@ -1763,7 +1764,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1476
-        y: 653
+        y: 811
         width: 80
         height: 80
       alignment: 1
@@ -1777,7 +1778,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1476
-        y: 735
+        y: 893
         width: 80
         height: 80
       alignment: 1
@@ -1790,8 +1791,8 @@ TextureImporter:
       name: starFrame_4
       rect:
         serializedVersion: 2
-        x: 1476
-        y: 817
+        x: 1589
+        y: 472
         width: 80
         height: 80
       alignment: 1
@@ -1804,8 +1805,8 @@ TextureImporter:
       name: starFrame_5
       rect:
         serializedVersion: 2
-        x: 1476
-        y: 489
+        x: 1671
+        y: 472
         width: 80
         height: 80
       alignment: 1
@@ -1818,13 +1819,27 @@ TextureImporter:
       name: basekit_0_1
       rect:
         serializedVersion: 2
-        x: 1928
-        y: 376
+        x: 1947
+        y: 0
         width: 100
         height: 84
       alignment: 1
       pivot: {x: 0, y: 1}
       border: {x: 17, y: 17, z: 17, w: 17}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: basekit_0_2
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 703
+        width: 164
+        height: 161
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 59, y: 45, z: 59, w: 60}
       outline: []
       physicsShape: []
       tessellationDetail: -1

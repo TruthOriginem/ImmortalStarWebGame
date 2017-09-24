@@ -61,7 +61,6 @@ public class BattleResult
             int money;//金钱统计
             Dictionary<string, lint> idsToAmount = GenerateResultsDict(data, true, true, 1, out money, out totalExp);
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(TextUtils.GetSizedString("结算:", 16));
             requests = grid.eqDrop.CreateSpecRequests(1, BattleAwardMult.GetDropMult());
             if (requests != null)
             {
@@ -168,7 +167,6 @@ public class BattleResult
                 Dictionary<string, lint> idsToAmount = GenerateExpeditionResultsDict(data, info);
 
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine(TextUtils.GetSizedString("结算:", 20));
                 string[] items_ids = idsToAmount.Keys.ToArray();//里面不存在，在更新道具的时候
                 lint[] amounts = idsToAmount.Values.ToArray();
                 for (int i = 0; i < items_ids.Length; i++)
@@ -197,6 +195,7 @@ public class BattleResult
             }
         }
         #endregion
+        #region 机械擂台
         if (linkedInfo is MachineMatchManager)
         {
             BattleManager.ResultString = win ? "胜利。" : "失败。";
@@ -206,6 +205,36 @@ public class BattleResult
             SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(Items.MM_TICKET, -1).ToJson(false));
             SyncRequest.AppendRequest(Requests.MACHINE_MATCH_DATA, info);
             yield return PlayerRequestBundle.RequestSyncUpdate();
+        }
+        #endregion
+        if (linkedInfo is DeepMemoryManager)
+        {
+            DeepMemoryManager manager = linkedInfo as DeepMemoryManager;
+            if (win)
+            {
+                int score = manager.GetScoreShouldGet();
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("胜利！");
+                if (ItemDataManager.GetItemAmount(Items.CARD_DM_DOUBLE) > 0)
+                {
+                    score *= 2;
+                    sb.AppendLine("使用了双倍卡，获得积分翻倍。");
+                    SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(Items.CARD_DM_DOUBLE, -1).ToJson(false));
+                }
+                TempDeepMemorySyncData data = new TempDeepMemorySyncData
+                {
+                    addDepth = 1,
+                    addScore = score
+                };
+                SyncRequest.AppendRequest(Requests.DEEP_MEMORY_DATA, data);
+                yield return PlayerRequestBundle.RequestSyncUpdate();
+                sb.AppendFormat("获得{0}回溯积分并成功下潜一层。", score);
+                BattleManager.ResultString = sb.ToString();
+            }
+            else
+            {
+                BattleManager.ResultString = "失败...";
+            }
         }
     }
 

@@ -44,6 +44,11 @@ public class Battle
         {
             InitMachineMatchPVPUnits(MachineMatchManager.CurrentTarget);
         }
+        if (enemyData is DeepMemoryManager)
+        {
+            var manager = enemyData as DeepMemoryManager;
+            InitDeepMemoryUnits(manager.GetEnemyAttrByDepth(), manager.GetEnemyLevel());
+        }
     }
     public Battle(EnemySpawnData data)
     {
@@ -60,16 +65,7 @@ public class Battle
     /// </summary>
     private void InitAllUnits()
     {
-        #region 初始化玩家单位
-        TempPropertyRecord playerRecord = new TempPropertyRecord(PlayerInfoInGame.Instance.GetDynamicAttrs());
-        //战前技能属性调整
-        UnitModifyManager.ModifyRecordBeforeBattle(SkillDataManager.GetPlayersBeforeBattleSkill(), playerRecord);
-        BattleUnit playerUnit = new BattleUnit(PlayerInfoInGame.Id, PlayerInfoInGame.NickName, PlayerInfoInGame.Level, BattleUnit.SIDE.PLAYER, playerRecord);
-        playerRecord.hp = playerRecord.GetValue(Attrs.MHP);
-        playerRecord.mp = playerRecord.GetValue(Attrs.MMP);
-        playerUnit.SetSkills(SkillDataManager.GetPlayersDuringBattleSkill());
-        playerUnits.Add(playerUnit);
-        #endregion
+        InitPlayerUnit();
         foreach (EnemyGroup group in enemySpawnData.enemyGroups)
         {
             for (int i = 0; i < group.amount; i++)
@@ -98,7 +94,23 @@ public class Battle
     }
     private void InitMachineMatchPVPUnits(PlayerUnit enemy)
     {
-        #region 初始化玩家单位
+        InitPlayerUnit();
+        enemyUnits.Add(enemy.CreateBattleUnit(BattleUnit.SIDE.ENEMY));
+    }
+    private void InitDeepMemoryUnits(EnemyAttribute attr, lint level)
+    {
+        InitPlayerUnit();
+        string name = attr.name;
+        name += "(Lv." + level + ")";
+        var dic = EnemyDataManager.GenerateAttrs(attr, level);
+        TempPropertyRecord record = new TempPropertyRecord(dic);
+        var enemy = new BattleUnit(attr.id, name, level, BattleUnit.SIDE.ENEMY, record);
+        enemy.SetSkills(new Dictionary<BaseSkill, int>());
+        enemyUnits.Add(enemy);
+    }
+
+    public void InitPlayerUnit()
+    {
         TempPropertyRecord playerRecord = new TempPropertyRecord(PlayerInfoInGame.Instance.GetDynamicAttrs());
         //战前技能属性调整
         UnitModifyManager.ModifyRecordBeforeBattle(SkillDataManager.GetPlayersBeforeBattleSkill(), playerRecord);
@@ -107,8 +119,6 @@ public class Battle
         playerRecord.mp = playerRecord.GetValue(Attrs.MMP);
         playerUnit.SetSkills(SkillDataManager.GetPlayersDuringBattleSkill());
         playerUnits.Add(playerUnit);
-        #endregion
-        enemyUnits.Add(enemy.CreateBattleUnit(BattleUnit.SIDE.ENEMY));
     }
     /// <summary>
     /// 如果死的敌人=所有敌人或者死的玩家=所有玩家则表示应该结束了。

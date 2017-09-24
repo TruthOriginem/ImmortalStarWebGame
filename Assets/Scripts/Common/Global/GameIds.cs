@@ -28,6 +28,7 @@ namespace GameId
         /// 再塑灵石
         /// </summary>
         public const string REHANCE_SPAR = "rehance_spar";
+        public const string BOSS_RESET_POWDER = "boss_reset_powder";
         public const string MONEY_CHEST = "money_chest";
         public const string DEEP_GOOD = "deep_good";
         public const string STAR_ASH = "star_ash";
@@ -37,6 +38,7 @@ namespace GameId
         public const string SPB_PIECE = "spb_piece";
         public const string CARD_EXP_DOUBLE = "card_for_expDouble";
         public const string CARD_DROP_DOUBLE = "card_for_dropDouble";
+        public const string CARD_DM_DOUBLE = "card_for_dmScoreDouble";
         public const string EXTREME_CRYSTAL_LV1 = "extreme_crystal_lv1";
         public const string EXTREME_CRYSTAL_LV2 = "extreme_crystal_lv2";
         public const string MM_TICKET = "mm_ticket";
@@ -80,6 +82,7 @@ namespace GameId
         public const string GIFT_PACK_DATA = "giftPackData";
         public const string CHIP_HANDLER_DATA = "chipHandlerData";
         public const string MACHINE_MATCH_DATA = "machineMData";
+        public const string DEEP_MEMORY_DATA = "deepMemoryData";
     }
     /// <summary>
     /// 常用的技能id。

@@ -13,7 +13,8 @@ public class RankListManager : MonoBehaviour
         MONEY, //星币排行榜
         LEVEL,
         EXPEDITION,
-        MACHINEMATCH
+        MACHINEMATCH,
+        DEEPMEMORY
     }
 
     public Text totalPageText;
@@ -164,6 +165,15 @@ public class RankListManager : MonoBehaviour
         {
             rankType = RANK_TYPE.MACHINEMATCH;
             rankTitleArg3.text = "擂台积分";
+            ResetRankList();
+        }
+    }
+    public void TurnToDeepMemoryRank(bool turn)
+    {
+        if (turn)
+        {
+            rankType = RANK_TYPE.DEEPMEMORY;
+            rankTitleArg3.text = "记忆层数";
             ResetRankList();
         }
     }

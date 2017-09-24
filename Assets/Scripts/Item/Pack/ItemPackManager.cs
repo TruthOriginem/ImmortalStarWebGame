@@ -11,12 +11,15 @@ public class ItemPackManager : MonoBehaviour
     static Dictionary<ItemPacks, ItemPack> packs = new Dictionary<ItemPacks, ItemPack>();
     static TempItemPackBundle bundle;
     public static ItemPackManager Instance { get; set; }
-
+    static ItemPackManager()
+    {
+        packs.Add(ItemPacks.SIGN_IN, ItemPack.Generate(ItemPacks.SIGN_IN, "签到礼包"));
+        packs.Add(ItemPacks.VIP_NORMAL, ItemPack.Generate(ItemPacks.VIP_NORMAL, "VIP每日礼包"));
+    }
     private void Awake()
     {
         Instance = this;
-        packs.Add(ItemPacks.SIGN_IN, ItemPack.Generate(ItemPacks.SIGN_IN, "签到礼包"));
-        packs.Add(ItemPacks.VIP_NORMAL, ItemPack.Generate(ItemPacks.VIP_NORMAL, "VIP每日礼包"));
+
     }
     public static ItemPack GetItemPack(ItemPacks idenum)
     {
@@ -67,7 +70,7 @@ public class ItemPackManager : MonoBehaviour
         packId = pack.GetPackId();
         pack.SetAccess(true);
         packDT = GetIPLastRecieveTime(packId).Date;
-        diffDay = (serverNoSpecDT - packDT).Days;
+        diffDay = (serverNoSpecDT - packDT).Days;//相差天数
         canRecieved = diffDay > 0;
         pack.SetCanRecieve(canRecieved);
         //如果未领取，即要领取的是当前等级+1的，如果已领取，便是当前等级
@@ -79,7 +82,7 @@ public class ItemPackManager : MonoBehaviour
         pack = packs[ItemPacks.VIP_NORMAL];
         packId = pack.GetPackId();
         packDT = GetIPLastRecieveTime(packId).Date;
-        diffDay = (serverNoSpecDT - packDT).Days;
+        diffDay = (serverNoSpecDT - packDT).Days;//相差天数
         canRecieved = diffDay > 0;
         pack.SetCanRecieve(canRecieved);
         packLevel = PlayerInfoInGame.VIP_Level;

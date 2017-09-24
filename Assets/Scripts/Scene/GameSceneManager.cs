@@ -15,8 +15,6 @@ public class GameSceneManager : MonoBehaviour
 
     [Header("杂项")]
     public Text propertyText;
-    public Slider playerHpSlider;
-    public Slider playerMpSlider;
 
     public CanvasGroup togglesCanvas;
 
@@ -64,8 +62,6 @@ public class GameSceneManager : MonoBehaviour
         if (PropertyDirty && nowScene == propertyWindow)
         {
             PlayerInfoInGame playerProperty = PlayerInfoInGame.Instance;
-            playerHpSlider.value = 1;
-            playerMpSlider.value = 1;
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("昵称： " + PlayerInfoInGame.NickName);
             sb.Append("等级：<b> " + PlayerInfoInGame.Level);

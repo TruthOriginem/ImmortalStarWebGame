@@ -19,7 +19,7 @@ namespace GameId
         {
             return "enh_l" + level;
         }
-
+        #region 普通道具
         /// <summary>
         /// 再塑秘石
         /// </summary>
@@ -36,12 +36,14 @@ namespace GameId
         /// 原灵碎片
         /// </summary>
         public const string SPB_PIECE = "spb_piece";
+        #endregion
         public const string CARD_EXP_DOUBLE = "card_for_expDouble";
         public const string CARD_DROP_DOUBLE = "card_for_dropDouble";
         public const string CARD_DM_DOUBLE = "card_for_dmScoreDouble";
         public const string EXTREME_CRYSTAL_LV1 = "extreme_crystal_lv1";
         public const string EXTREME_CRYSTAL_LV2 = "extreme_crystal_lv2";
         public const string MM_TICKET = "mm_ticket";
+        public const string BOX_CHIP = "box_chip";
     }
     /// <summary>
     /// 常用的游戏字符串.

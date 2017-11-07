@@ -92,8 +92,8 @@ public class HangUpManager : MonoBehaviour
     {
         yield return BattleInstanceManager.Instance.RefreshAllGrids();
         //刷新左边的信息
-        yield return PlayerRequestBundle.RequestGetRecord<TempLigRecord>();
-        TempLigRecord record = PlayerRequestBundle.record as TempLigRecord;
+        yield return RequestBundle.RequestGetRecord<TempLigRecord>();
+        TempLigRecord record = RequestBundle.record as TempLigRecord;
         if (record == null)
         {
             CU.ShowConnectFailed();
@@ -242,19 +242,19 @@ public class HangUpManager : MonoBehaviour
         if (DialogResult.Yes == dialogResult)
         {
             linkedRecord.lig_hangTime = 0;//标识为0代表开始挂机
-            yield return PlayerRequestBundle.RequestUpdateRecord(linkedRecord);
+            yield return RequestBundle.RequestUpdateRecord(linkedRecord);
             LoadScene();
         }
     }
 
     IEnumerator BeginCount()
     {
-        yield return PlayerRequestBundle.RequestGetRecord<TempLigRecord>();
-        if (PlayerRequestBundle.record == null)
+        yield return RequestBundle.RequestGetRecord<TempLigRecord>();
+        if (RequestBundle.record == null)
         {
             yield break;
         }
-        linkedRecord = PlayerRequestBundle.record as TempLigRecord;
+        linkedRecord = RequestBundle.record as TempLigRecord;
 
         BatInsGridData grid = ScenarioManager.GetGridDataById(linkedRecord.lig_id);
         int times = GetHangTimes();
@@ -268,7 +268,7 @@ public class HangUpManager : MonoBehaviour
 
         //标识完成挂机并更新状态
         linkedRecord.lig_hangTime = -1;
-        yield return PlayerRequestBundle.RequestUpdateRecord(linkedRecord, iia, attr, requests);
+        yield return RequestBundle.RequestUpdateRecord(linkedRecord, iia, attr, requests);
 
         StringBuilder sb = new StringBuilder();
         sb.Append("您挂机了");

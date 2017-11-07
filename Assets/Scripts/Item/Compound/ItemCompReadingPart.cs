@@ -150,7 +150,7 @@ public class ItemCompReadingPart : MonoBehaviour
         TempPlayerAttribute attr;
         Dictionary<string, lint> dict = linkedCompoundData.GetCompDict(amount, out attr);
         CU.ShowConnectingUI();
-        yield return PlayerRequestBundle.RequestUpdateIIA(new IIABinds(dict), attr);
+        yield return RequestBundle.RequestUpdateIIA(new IIABinds(dict), attr);
         ItemCompManager.Instance.InitOrRefresh(false);
         RefreshUI(linkedCompoundData);
         CU.HideConnectingUI();

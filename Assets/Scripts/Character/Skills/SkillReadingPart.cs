@@ -89,7 +89,7 @@ public class SkillReadingPart : MonoBehaviour
                 if (result == DialogResult.Yes)
                 {
                     skill.Level++;
-                    PlayerRequestBundle.RequestUpdateSkills(-skill.GetNeedSP());
+                    RequestBundle.RequestUpdateSkills(-skill.GetNeedSP());
                 }
             }, MessageBoxButtons.YesNo);
 
@@ -101,7 +101,7 @@ public class SkillReadingPart : MonoBehaviour
             return;
         }
         skill.Equipped = skill.Equipped ? false : true;
-        PlayerRequestBundle.RequestUpdateSkills(0);
+        RequestBundle.RequestUpdateSkills(0);
     }
 
 }

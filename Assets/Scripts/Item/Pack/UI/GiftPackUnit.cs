@@ -85,7 +85,7 @@ public class GiftPackUnit : MonoBehaviour
         SyncRequest.AppendRequest(Requests.PLAYER_DATA, attr);
         SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.ToJson(false));
         SyncRequest.AppendRequest(Requests.GIFT_PACK_DATA, gpu);
-        yield return PlayerRequestBundle.RequestSyncUpdate();
+        yield return RequestBundle.RequestSyncUpdate();
         MessageBox.Show("成功领取了:\n" + packNowString, "恭喜");
         gp_manager.RefreshAll();
     }

@@ -157,7 +157,7 @@ public class ExpeditionManager : MonoBehaviour
         exInfo.maxLightYear = exInfo.nowLightYear > expeInfo.maxLightYear ? exInfo.nowLightYear : expeInfo.maxLightYear;
         TempPlayerAttribute attr = new TempPlayerAttribute();
         attr.money -= money;
-        yield return PlayerRequestBundle.RequestUpdateRecord(exInfo, null, attr);
+        yield return RequestBundle.RequestUpdateRecord(exInfo, null, attr);
         InitOrRefresh();
     }
     /// <summary>
@@ -204,7 +204,7 @@ public class ExpeditionManager : MonoBehaviour
             exInfo.maxLightYear = exInfo.nowLightYear > expeInfo.maxLightYear ? exInfo.nowLightYear : expeInfo.maxLightYear;
             TempPlayerAttribute attr = new TempPlayerAttribute();
             attr.money -= CalculateTotalMoneyToPay(exInfo.nowLightYear) * 2;
-            yield return PlayerRequestBundle.RequestUpdateRecord(exInfo, null, attr);
+            yield return RequestBundle.RequestUpdateRecord(exInfo, null, attr);
             InitOrRefresh();
             yield break;
         }

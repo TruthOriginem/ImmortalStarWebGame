@@ -27,7 +27,7 @@ public class StorageManager : MonoBehaviour
     IEnumerator _InitOrRefresh()
     {
         spawnPool.DespawnAll();
-        yield return PlayerRequestBundle.RequestUpdateItemsInPack();
+        yield return RequestBundle.RequestUpdateItemsInPack();
         List<EquipmentBase> eqInRe = PlayerInfoInGame.GetAllEquipments(false, true);
         eqInRe.Sort(new EquipmentLevelSorter());
         for (int i = 0; i < eqInRe.Count; i++)
@@ -56,7 +56,7 @@ public class StorageManager : MonoBehaviour
         form.AddField("type", 2);
         form.AddField("equipped", 0);
         form.AddField("isInStorage", 0);
-        WWW w = new WWW(CU.ParsePath(PlayerRequestBundle.UPDATE_ITEM_INDEX_FILEPATH), form);
+        WWW w = new WWW(CU.ParsePath(RequestBundle.UPDATE_ITEM_INDEX_FILEPATH), form);
         yield return w;
         CU.HideConnectingUI();
         if (!CU.IsPostSucceed(w))

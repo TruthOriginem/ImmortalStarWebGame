@@ -167,9 +167,21 @@ namespace ItemContainerSuite
         }
 
     }
-    public class ItemContainerParam
+    /// <summary>
+    /// 调用ItemContainer的方法类。
+    /// </summary>
+    public static class ItemContainerParam
     {
-        public ItemContainerParam(float width, float height, int col = 8, int row = 4, float spacingX = 10, float spacingY = 10)
+        /// <summary>
+        /// 设置当前物体容器的具体UI参数
+        /// </summary>
+        /// <param name="width">指定物体宽度</param>
+        /// <param name="height">指定物体高度</param>
+        /// <param name="col">一列有几个</param>
+        /// <param name="row">一行有几个</param>
+        /// <param name="spacingX"></param>
+        /// <param name="spacingY"></param>
+        public static void SetParam(float width, float height, int col = 8, int row = 4, float spacingX = 10, float spacingY = 10)
         {
             ItemContainer.SetCellSize(width, height);
             ItemContainer.SetColAndRow(col, row);

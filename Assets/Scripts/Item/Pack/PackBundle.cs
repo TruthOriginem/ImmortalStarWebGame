@@ -36,7 +36,7 @@ public partial class ItemPack
             case ItemPacks.SIGN_IN:
                 itemToAmounts.Add(Items.MONEY, (5000 + 15000 * level) * sqrtPlayerLevel);
                 itemToAmounts.Add(Items.SPB_PIECE, (50 + 50 * level) * sqrtPlayerLevel);
-                itemToAmounts.Add(Items.MM_TICKET, 15);
+                itemToAmounts.Add(Items.MM_TICKET, 5);
                 itemToAmounts.Add(Items.CARD_DROP_DOUBLE, 10 + 2 * level);
                 itemToAmounts.Add(Items.CARD_EXP_DOUBLE, 20 + 4 * level);
                 itemToAmounts.Add(Items.CARD_DM_DOUBLE, 1 + (int)(0.5 * level));

@@ -239,7 +239,7 @@ public class BattleManager : MonoBehaviour
         courseContent.localPosition = new Vector3(0f, 0f, 0f);
         ClearEnemyList();
         //更新玩家属性
-        yield return PlayerRequestBundle.RequestSyncUpdate();
+        yield return RequestBundle.RequestSyncUpdate();
         //初始化战斗
         battle = new Battle(enemyData);
         //下拉菜单加入敌人选项

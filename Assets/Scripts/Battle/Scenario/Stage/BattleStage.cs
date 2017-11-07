@@ -170,7 +170,7 @@ public class BattleStage : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         IIABinds bind = new IIABinds(itemId, -1);
         SyncRequest.AppendRequest(Requests.EX_LEVEL_DATA, exdata);
         SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.ToJson(false));
-        yield return PlayerRequestBundle.RequestSyncUpdate();
+        yield return RequestBundle.RequestSyncUpdate();
         BattleLayerManager.Instance.Init();
     }
 

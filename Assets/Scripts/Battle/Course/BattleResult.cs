@@ -47,6 +47,12 @@ public class BattleResult
     {
         PlayerInfoInGame.Instance.StartCoroutine(GainResultCor(win));
     }
+    /// <summary>
+    /// 普通关卡战斗的结果
+    /// </summary>
+    /// <param name="grid"></param>
+    /// <param name="lostTime"></param>
+    /// <returns></returns>
     IEnumerator GainResultCor(BatInsGridData grid, int lostTime)
     {
         //yield return PlayerInfoInGame.Instance.RequestUpdatePlayerItems();
@@ -143,7 +149,7 @@ public class BattleResult
             BattleManager.ResultString = "失败。";
         }
 
-        yield return PlayerRequestBundle.RequestSyncUpdate();
+        yield return RequestBundle.RequestSyncUpdate();
         yield return BattleInstanceManager.Instance.RefreshAllGrids();
     }
     IEnumerator GainResultCor(bool win)
@@ -182,7 +188,7 @@ public class BattleResult
                 expeInfo.ifEscaped = false;
                 BattleManager.ResultString = sb.ToString();
                 //Debug.Log(expeInfo.nowLightYear);
-                yield return PlayerRequestBundle.RequestUpdateRecord(expeInfo, binds, pattr);
+                yield return RequestBundle.RequestUpdateRecord(expeInfo, binds, pattr);
             }
             else
             {
@@ -191,7 +197,7 @@ public class BattleResult
                 TempPlayerExpeditionInfo expeInfo = new TempPlayerExpeditionInfo();
                 expeInfo.nowLightYear = 0;
                 expeInfo.maxLightYear = info.nowMaxLightYear;
-                yield return PlayerRequestBundle.RequestUpdateRecord(expeInfo, null, pattr);
+                yield return RequestBundle.RequestUpdateRecord(expeInfo, null, pattr);
             }
         }
         #endregion
@@ -204,7 +210,7 @@ public class BattleResult
             info.addChall = 1;
             SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(Items.MM_TICKET, -1).ToJson(false));
             SyncRequest.AppendRequest(Requests.MACHINE_MATCH_DATA, info);
-            yield return PlayerRequestBundle.RequestSyncUpdate();
+            yield return RequestBundle.RequestSyncUpdate();
         }
         #endregion
         if (linkedInfo is DeepMemoryManager)
@@ -227,7 +233,7 @@ public class BattleResult
                     addScore = score
                 };
                 SyncRequest.AppendRequest(Requests.DEEP_MEMORY_DATA, data);
-                yield return PlayerRequestBundle.RequestSyncUpdate();
+                yield return RequestBundle.RequestSyncUpdate();
                 sb.AppendFormat("获得{0}回溯积分并成功下潜一层。", score);
                 BattleManager.ResultString = sb.ToString();
             }
@@ -273,16 +279,20 @@ public class BattleResult
                 //怪物等级大于掉落道具需求等级才有效
                 if (e_level >= itemDrop.needLevel)
                 {
-                    float most = times * e_amount * itemDrop.amount * (1f + itemDrop.multLevel * (e_level - itemDrop.needLevel));
-                    most *= countMult ? BattleAwardMult.GetDropMult() : 1f;
+                    float total = times * e_amount * itemDrop.amount * (1f + itemDrop.multLevel * (e_level - itemDrop.needLevel));
+                    //Debug.Log(total);
+                    if (!itemDrop.id.Equals(Items.MONEY))
+                    {
+                        total *= countMult ? BattleAwardMult.GetDropMult() : 1f;
+                    }
                     float number;//最低和最高的浮点数
                     if (doRandom)
                     {
-                        number = Random.Range(most * itemDrop.chance, most);
+                        number = Random.Range(total * itemDrop.chance, total);
                     }
                     else
                     {
-                        number = Mathf.Round(most * (0.5f + 0.5f * itemDrop.chance));
+                        number = Mathf.Round(total * (0.5f + 0.5f * itemDrop.chance));
                     }
                     int amount = (int)number;//比如number = 0.9，amount = 0，下面就有有90%的可能性
                     if (Random.value < (number - amount))
@@ -300,7 +310,7 @@ public class BattleResult
                 }
             }
         }
-        if (idsToAmount.ContainsKey("money"))
+        if (idsToAmount.ContainsKey(Items.MONEY))
         {
             money = idsToAmount["money"];
             money = Mathf.RoundToInt(money * (countMult ? BattleAwardMult.GetMoneyMult() : 1f));

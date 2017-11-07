@@ -1,10 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using GameId;
 
 [System.Serializable]
 public class ItemBase
 {
+    protected static readonly List<string> ITEMSCANUSE = new List<string>();
+    static ItemBase()
+    {
+        ITEMSCANUSE.Add(Items.BOX_CHIP);
+    }
+
     public string item_id;
     public string name;
     /// <summary>
@@ -91,7 +98,25 @@ public class ItemBase
     {
         return ITEM_PATH + iconFileName + ITEM_SUFFIX;
     }
-
+    /// <summary>
+    /// 如果这个道具可以用，那么返回true。
+    /// </summary>
+    /// <returns></returns>
+    public bool CanBeUse()
+    {
+        return ITEMSCANUSE.Contains(item_id);
+    }
+    /// <summary>
+    /// 使用该道具，调用具体方法。
+    /// </summary>
+    public void UseIt()
+    {
+        if (!CanBeUse())
+        {
+            return;
+        }
+        RequestBundle._StartCoroutine(ItemUseMethods.UseItem(item_id));
+    }
 
 }
 /// <summary>

@@ -53,7 +53,7 @@ public class ChipUIManager : MonoBehaviour
     }
     IEnumerator _OnShowAndRefresh()
     {
-        yield return PlayerRequestBundle.RequestUpdateItemsInPack();
+        yield return RequestBundle.RequestUpdateItemsInPack();
         spawnPool.DespawnAll();
         RefreshEqDropDown();
         var curEquip = GetCurrentEquipment();

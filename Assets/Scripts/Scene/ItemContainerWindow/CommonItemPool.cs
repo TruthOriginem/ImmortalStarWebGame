@@ -3,11 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 生成一些常用物体的对象池
+/// </summary>
 public class CommonItemPool : MonoBehaviour
 {
     [SerializeField]
     private SpawnPool spawnPool;
-
+    /// <summary>
+    /// 商店物品
+    /// </summary>
     public const string SHOP_ITEM_PREFAB = "itemSell";
     public static CommonItemPool Instance { get; set; }
     private static List<Transform> spawnedTrans = new List<Transform>();

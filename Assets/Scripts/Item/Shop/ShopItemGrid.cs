@@ -6,12 +6,15 @@ using System.Text;
 using SerializedClassForJson;
 using GameId;
 using InterfaceTools;
+using MachineMatchJson;
+
 public class ShopItemGrid : MonoBehaviour
 {
     public enum WORTH_TYPE
     {
         MONEY_OR_DIMEN,
-        DEEP_SCORE
+        DEEP_SCORE,
+        MM_SCORE
 
     }
     private string item_Id;
@@ -25,7 +28,7 @@ public class ShopItemGrid : MonoBehaviour
     private object[] buyParams;
 
     /// <summary>
-    /// 生成时需要设置的东西。
+    /// 生成后需要设置的东西。一般为链接的道具id，价值，和一些参数。
     /// </summary>
     /// <param name="buyParams">购买时的参数，一般[0]为积分</param>
     public ShopItemGrid SetParam(string item_id, WORTH_TYPE type = WORTH_TYPE.MONEY_OR_DIMEN, params object[] buyParams)
@@ -64,28 +67,39 @@ public class ShopItemGrid : MonoBehaviour
                 switch (worthType)
                 {
                     case WORTH_TYPE.MONEY_OR_DIMEN:
-                        int price = number * linkedItem.price;
-                        int dimen = number * linkedItem.dimen;
-                        if (price > 0)
                         {
-                            sb.AppendLine("<b>");
-                            sb.Append(price);
-                            sb.Append("</b>");
-                            sb.Append(" 星币");
+                            int price = number * linkedItem.price;
+                            int dimen = number * linkedItem.dimen;
+                            if (price > 0)
+                            {
+                                sb.AppendLine("<b>");
+                                sb.Append(price);
+                                sb.Append("</b>");
+                                sb.Append(" 星币");
+                            }
+                            if (dimen > 0)
+                            {
+                                sb.AppendLine("<b>");
+                                sb.Append(dimen);
+                                sb.Append("</b>");
+                                sb.Append(" 次元币");
+                            }
+                            break;
                         }
-                        if (dimen > 0)
-                        {
-                            sb.AppendLine("<b>");
-                            sb.Append(dimen);
-                            sb.Append("</b>");
-                            sb.Append(" 次元币");
-                        }
-                        break;
                     case WORTH_TYPE.DEEP_SCORE:
-                        int score = number * (int)buyParams[0];
-                        sb.AppendLine();
-                        sb.AppendFormat("<b>{0}</b> 回溯积分", score);
-                        break;
+                        {
+                            int score = number * (int)buyParams[0];
+                            sb.AppendLine();
+                            sb.AppendFormat("<b>{0}</b> 回溯积分", score);
+                            break;
+                        }
+                    case WORTH_TYPE.MM_SCORE:
+                        {
+                            int score = number * (int)buyParams[0];
+                            sb.AppendLine();
+                            sb.AppendFormat("<b>{0}</b> 挑战积分", score);
+                            break;
+                        }
                     default:
                         break;
                 }
@@ -119,19 +133,37 @@ public class ShopItemGrid : MonoBehaviour
                         attr.dimenCoin -= dimen;
                         SyncRequest.AppendRequest(Requests.PLAYER_DATA, attr);
                         SyncRequest.AppendRequest(Requests.ITEM_DATA, bind.ToJson());
-                        yield return PlayerRequestBundle.RequestSyncUpdate();
+                        yield return RequestBundle.RequestSyncUpdate();
                     }
                     break;
                 case WORTH_TYPE.DEEP_SCORE:
-                    int score = number * (int)buyParams[0];
-                    if (score <= DeepMemoryManager.CurrData.score)
                     {
-                        meetCondition = true;
-                        SyncRequest.AppendRequest(Requests.DEEP_MEMORY_DATA, new TempDeepMemorySyncData { addScore = -score });
-                        SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(item_Id, number).ToJson());
-                        yield return PlayerRequestBundle.RequestSyncUpdate(false);
+                        int score = number * (int)buyParams[0];
+                        if (score <= DeepMemoryManager.CurrData.score)
+                        {
+                            meetCondition = true;
+                            SyncRequest.AppendRequest(Requests.DEEP_MEMORY_DATA, new TempDeepMemorySyncData { addScore = -score });
+                            SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(item_Id, number).ToJson());
+                            yield return RequestBundle.RequestSyncUpdate(false);
+                        }
+                        break;
                     }
-                    break;
+                case WORTH_TYPE.MM_SCORE:
+                    {
+                        int score = number * (int)buyParams[0];
+                        if (score <= MachineMatchManager.CurrentInfo.score)
+                        {
+                            meetCondition = true;
+                            TempMMSyncInfo info = new TempMMSyncInfo()
+                            {
+                                addScore = -score
+                            };
+                            SyncRequest.AppendRequest(Requests.MACHINE_MATCH_DATA, info);
+                            SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(item_Id, number).ToJson());
+                            yield return RequestBundle.RequestSyncUpdate(false);
+                        }
+                        break;
+                    }
                 default:
                     break;
             }
@@ -173,10 +205,19 @@ public class ShopItemGrid : MonoBehaviour
                     }
                     break;
                 case WORTH_TYPE.DEEP_SCORE:
-                    int score = (int)buyParams[0];
-                    sb.AppendLine();
-                    sb.AppendFormat("<b>{0}</b> 回溯积分", score);
-                    break;
+                    {
+                        int score = (int)buyParams[0];
+                        sb.AppendLine();
+                        sb.AppendFormat("<b>{0}</b> 回溯积分", score);
+                        break;
+                    }
+                case WORTH_TYPE.MM_SCORE:
+                    {
+                        int score = (int)buyParams[0];
+                        sb.AppendLine();
+                        sb.AppendFormat("<b>{0}</b> 挑战积分", score);
+                        break;
+                    }
             }
             return sb.ToString();
         }

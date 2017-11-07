@@ -80,7 +80,7 @@ public class CategoryManager : MonoBehaviour
         {
             yield break;
         }
-        yield return PlayerRequestBundle.RequestUpdateItemsInPack();
+        yield return RequestBundle.RequestUpdateItemsInPack();
         List<ItemBase> items = PlayerInfoInGame.CurrentItems;
         if (items.Count == 0)
         {
@@ -216,7 +216,7 @@ public class CategoryManager : MonoBehaviour
         }
         else
         {
-            if (enterTransform.tag == "Grid")//拖到格子里
+            if (enterTransform.tag.Equals("Grid"))//拖到格子里
             {
                 BaseGridUI gridUI = enterTransform.GetComponent<BaseGridUI>();
                 if (gridUI == null)
@@ -257,10 +257,18 @@ public class CategoryManager : MonoBehaviour
                 {
                     if (gridUI.GetPermittedType() == EQ_TYPE.NOT_EQUIPMENT)//如果该网格没有装备要求
                     {
-                        ItemBase item = ItemModal.GetItemUI(enterTransform.name).GetLinkedItem();
-                        DespawnItemUI(enterTransform.GetChild(0));
-                        CreateNewItemUI(item, prevTransform);
-                        CreateNewItemUI(dragItemUI.GetLinkedItem(), enterTransform);
+                        BaseGridUI prevGridUI = prevTransform.GetComponent<BaseGridUI>();
+                        if (prevGridUI.GetPermittedType() != EQ_TYPE.NOT_EQUIPMENT)
+                        {
+                            CreateNewItemUI(dragItemUI.GetLinkedItem(), prevTransform);
+                        }
+                        else
+                        {
+                            ItemBase item = ItemModal.GetItemUI(enterTransform.name).GetLinkedItem();
+                            DespawnItemUI(enterTransform.GetChild(0));
+                            CreateNewItemUI(item, prevTransform);
+                            CreateNewItemUI(dragItemUI.GetLinkedItem(), enterTransform);
+                        }
                     }
                     else
                     {
@@ -449,7 +457,7 @@ public class CategoryManager : MonoBehaviour
         //如果这时候是互换、摧毁等场合的话
         if (!isRefreshing)
         {
-            PlayerRequestBundle.UpdateItemsIndex(item);
+            RequestBundle.UpdateItemsIndex(item);
         }
 
         ItemModal.AddItemUI(parent.name, itemUI);
@@ -586,19 +594,19 @@ public class CategoryManager : MonoBehaviour
     {
         TempPlayerAttribute attr = new TempPlayerAttribute();
         attr.money = price;
-        yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(null, null, equipids), price <= 0 ? null : attr, null);
+        yield return RequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(null, null, equipids), price <= 0 ? null : attr, null);
         yield return RequestLoad();
     }
     IEnumerator _QuickDestoryEquipments(string[] equipids, int spbPieces)
     {
         SyncRequest.AppendRequest(Requests.EQ_TO_DELETE_DATA, new IIABinds(null, null, equipids).ToJson(true));
         SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(Items.SPB_PIECE, spbPieces));
-        yield return PlayerRequestBundle.RequestSyncUpdate(false);
+        yield return RequestBundle.RequestSyncUpdate(false);
         yield return RequestLoad();
     }
     IEnumerator SortCor(Dictionary<ItemBase, int> sortedItems)
     {
-        yield return PlayerRequestBundle.RequestUpdateIndexInPack(sortedItems);
+        yield return RequestBundle.RequestUpdateIndexInPack(sortedItems);
         yield return RequestLoad();
     }
     void DespawnItemUI(Transform item)

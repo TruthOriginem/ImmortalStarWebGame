@@ -9,7 +9,7 @@ using GameId;
 /// 依附于PlayerInfoInGame
 /// <para>主要功能是对数据库提出请求之类的</para>
 /// </summary>
-public class PlayerRequestBundle : MonoBehaviour
+public class RequestBundle : MonoBehaviour
 {
     /// <summary>
     /// 用于记录当前的player_record的
@@ -23,14 +23,21 @@ public class PlayerRequestBundle : MonoBehaviour
     private const string GET_LIG_FILEPATH = "scripts/player/instance/getLastInstanceGrid.php";
     private const string GET_SKILLS_FILEPATH = "scripts/player/skill/getSkillDatas.php";
     private const string GIVE_SUGGESTION = "scripts/player/system/giveSuggestion.php";
-    public static PlayerRequestBundle Instance { get; set; }
+    public static RequestBundle Instance { get; set; }
 
     void Awake()
     {
         Instance = this;
     }
-
-
+    /// <summary>
+    /// 交给该类单例来运行协程。
+    /// </summary>
+    /// <param name="coroutine"></param>
+    /// <returns></returns>
+    public static Coroutine _StartCoroutine(IEnumerator coroutine)
+    {
+        return Instance.StartCoroutine(coroutine);
+    }
     /// <summary>
     /// 上传道具/武器的背包序号
     /// </summary>
@@ -492,7 +499,7 @@ public class SyncRequest
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public static WWW CreateSyncWWW(string path = PlayerRequestBundle.UPDATE_UNIVERSAL_FILEPATH)
+    public static WWW CreateSyncWWW(string path = RequestBundle.UPDATE_UNIVERSAL_FILEPATH)
     {
         var form = CompleteRequestForm();
         return form == null ? null : new WWW(CU.ParsePath(path), form);

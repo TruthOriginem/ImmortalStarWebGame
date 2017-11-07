@@ -77,7 +77,7 @@ public class ChipManager : MonoBehaviour
         change.setEquipId = equip_id;
         change.chipId = data.GetId();
         SyncRequest.AppendRequest(Requests.CHIP_HANDLER_DATA, change);
-        yield return PlayerRequestBundle.RequestSyncUpdate(false);
+        yield return RequestBundle.RequestSyncUpdate(false);
     }
     static IEnumerator _UnstallChip(ChipData data)
     {
@@ -87,7 +87,7 @@ public class ChipManager : MonoBehaviour
         change.addedLevel = -data.GetLevel() / 2;
         change.addedKillAmounts = -data.GetKillAmounts();
         SyncRequest.AppendRequest(Requests.CHIP_HANDLER_DATA, change);
-        yield return PlayerRequestBundle.RequestSyncUpdate(false);
+        yield return RequestBundle.RequestSyncUpdate(false);
     }
     static IEnumerator _UpgradeChip(ChipData data)
     {
@@ -97,7 +97,7 @@ public class ChipManager : MonoBehaviour
         change.addedKillAmounts = -data.GetNextLevelNeedKillAmounts();
         SyncRequest.AppendRequest(Requests.CHIP_HANDLER_DATA, change);
         SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(Items.SPB_PIECE, data.GetNextLevelNeedSpbPieces()).ToJson(false));
-        yield return PlayerRequestBundle.RequestSyncUpdate(false);
+        yield return RequestBundle.RequestSyncUpdate(false);
     }
     static IEnumerator _DropChip(ChipData data)
     {
@@ -105,7 +105,7 @@ public class ChipManager : MonoBehaviour
         change.chipId = data.GetId();
         change.deleteIt = true;
         SyncRequest.AppendRequest(Requests.CHIP_HANDLER_DATA, change);
-        yield return PlayerRequestBundle.RequestSyncUpdate(false);
+        yield return RequestBundle.RequestSyncUpdate(false);
     }
     /// <summary>
     /// 根据给定信息随机生成芯片数据，如果未能生成成功则返回只有其他加经验的。
@@ -161,7 +161,95 @@ public class ChipManager : MonoBehaviour
         tier = tierPicker.Pick();
         //随机效果，但目前只有属性加成
         int effectId = Effects.ATTR;
-        string effectGenInfo = "";
+        string effectGenInfo = GenerateEffectGenInfo(effectId);
+        genData.effectGenInfo = effectGenInfo;
+        genData.effectId = effectId;
+        genData.starRarity = tier;
+        return genData;
+    }
+    /// <summary>
+    /// 直接根据指定Tier生成一个随机芯片。
+    /// </summary>
+    /// <param name="tier"></param>
+    /// <returns></returns>
+    public static TempChipRandGenData GenerateRandomDataByTargetTier(int tier,int effectId = Effects.ATTR)
+    {
+        var data = new TempChipRandGenData()
+        {
+            effectId = effectId,
+            effectGenInfo = GenerateEffectGenInfo(effectId),
+            starRarity = tier
+        };
+
+        return data;
+    }
+    /// <summary>
+    /// 通过怪物组获得当前掉落芯片概率
+    /// </summary>
+    /// <param name="actualSpawnData"></param>
+    /// <returns></returns>
+    public static float GetActualDropPossibility(EnemySpawnData actualSpawnData)
+    {
+        float actualPoss = BASE_DROP_POSSIBILITY * BattleAwardMult.GetDropMult();
+        int enemyAmount = 0;
+        int totalLevel = 0;
+        for (int i = 0; i < actualSpawnData.enemyGroups.Count; i++)
+        {
+            var group = actualSpawnData.enemyGroups[i];
+            enemyAmount += group.amount;
+            totalLevel += group.enemy.Level;
+        }
+        float averageEnemyLevel = totalLevel / (float)enemyAmount;
+        float limitLevel = PlayerInfoInGame.Level * 0.33f;
+        if (limitLevel > averageEnemyLevel)
+        {
+            //最低降至原本概率的0.1倍
+            actualPoss *= (1f - 0.9f * ((limitLevel - averageEnemyLevel) / limitLevel));
+        }
+        return actualPoss;
+    }
+    /// <summary>
+    /// 通过关卡，极限等级获得最高能得到的芯片稀有度
+    /// </summary>
+    /// <param name="extreLevel"></param>
+    /// <returns></returns>
+    public static int GetMaxTierByExLevel(lint extreLevel)
+    {
+        lint exLevel = extreLevel;
+        int tier = 1;
+        if (exLevel >= 20)
+        {
+            tier = 5;
+        }
+        else if (exLevel >= 10)
+        {
+            tier = 4;
+        }
+        else if (exLevel >= 5)
+        {
+            tier = 3;
+        }
+        else if (exLevel >= 2)
+        {
+            tier = 2;
+        }
+        else if (exLevel >= 1)
+        {
+            tier = 1;
+        }
+        else
+        {
+            tier = 0;
+        }
+        return tier;
+    }
+    /// <summary>
+    /// 获得指定芯片效果的芯片生成信息。
+    /// </summary>
+    /// <param name="effectId"></param>
+    /// <returns></returns>
+    static string GenerateEffectGenInfo(int effectId)
+    {
         switch (effectId)
         {
             case Effects.ATTR:
@@ -211,76 +299,10 @@ public class ChipManager : MonoBehaviour
                         dic.Add(attr.Id, attrValues[i]);
                     }
                 }
-                effectGenInfo = EDictionary.SerializeToJson(dic);
-                #endregion
-                break;
+                return EDictionary.SerializeToJson(dic);
+            #endregion
             default:
-                break;
+                return "";
         }
-        genData.effectGenInfo = effectGenInfo;
-        genData.effectId = effectId;
-        genData.starRarity = tier;
-        return genData;
     }
-    /// <summary>
-    /// 通过怪物组获得当前掉落芯片概率
-    /// </summary>
-    /// <param name="actualSpawnData"></param>
-    /// <returns></returns>
-    public static float GetActualDropPossibility(EnemySpawnData actualSpawnData)
-    {
-        float actualPoss = BASE_DROP_POSSIBILITY * BattleAwardMult.GetDropMult();
-        int enemyAmount = 0;
-        int totalLevel = 0;
-        for (int i = 0; i < actualSpawnData.enemyGroups.Count; i++)
-        {
-            var group = actualSpawnData.enemyGroups[i];
-            enemyAmount += group.amount;
-            totalLevel += group.enemy.Level;
-        }
-        float averageEnemyLevel = totalLevel / (float)enemyAmount;
-        float limitLevel = PlayerInfoInGame.Level * 0.33f;
-        if (limitLevel > averageEnemyLevel)
-        {
-            //最低降至原本概率的0.1倍
-            actualPoss *= (1f - 0.9f * ((limitLevel - averageEnemyLevel) / limitLevel));
-        }
-        return actualPoss;
-    }
-    /// <summary>
-    /// 通过极限等级获得最高能得到的芯片稀有度
-    /// </summary>
-    /// <param name="extreLevel"></param>
-    /// <returns></returns>
-    public static int GetMaxTierByExLevel(lint extreLevel)
-    {
-        lint exLevel = extreLevel;
-        int tier = 1;
-        if (exLevel >= 20)
-        {
-            tier = 5;
-        }
-        else if (exLevel >= 10)
-        {
-            tier = 4;
-        }
-        else if (exLevel >= 5)
-        {
-            tier = 3;
-        }
-        else if (exLevel >= 2)
-        {
-            tier = 2;
-        }
-        else if (exLevel >= 1)
-        {
-            tier = 1;
-        }
-        else
-        {
-            tier = 0;
-        }
-        return tier;
-    }
-
 }

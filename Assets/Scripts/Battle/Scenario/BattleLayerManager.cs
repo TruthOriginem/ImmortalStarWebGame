@@ -45,8 +45,8 @@ public class BattleLayerManager : MonoBehaviour
     IEnumerator InitCor()
     {
         yield return BattleInstanceManager.Instance.RefreshAllGrids();
-        yield return PlayerRequestBundle.RequestGetRecord<TempLigRecord>();
-        TempLigRecord record = PlayerRequestBundle.record as TempLigRecord;
+        yield return RequestBundle.RequestGetRecord<TempLigRecord>();
+        TempLigRecord record = RequestBundle.record as TempLigRecord;
         HangUpManager.isHanging = record.lig_hangTime >= 0;
         ScenarioManager.Instance.InitOrRefreshBattleStageWindow();
     }

@@ -118,6 +118,7 @@ public class PlayerInfoInGame : MonoBehaviour
 
     //private bool autoUpdate = true;
     public static bool DebugMode = false;
+    public static bool FirstRefresh = false;
 
     //source指的是原始属性字典，dynamic指的是最终计算所得属性字典
     //
@@ -375,20 +376,26 @@ public class PlayerInfoInGame : MonoBehaviour
         {
             for (int i = 0; i < DesignationManager.DesignToGets.Count; i++)
             {
-                yield return PlayerRequestBundle.RequestAddDesignation(DesignationManager.DesignToGets[i]);
+                yield return RequestBundle.RequestAddDesignation(DesignationManager.DesignToGets[i]);
             }
             updateDesign = true;
             DesignationManager.DesignToGets.Clear();
         }*/
         //先更新人物拥有道具
-        yield return PlayerRequestBundle.RequestUpdateItemsInPack();
+        yield return RequestBundle.RequestUpdateItemsInPack();
         //更新人物状态
         yield return _OnlyUpdatePlayerAttrs();
         //然后更新人物技能
-        yield return PlayerRequestBundle.RequestGetSkillDatas();
+        yield return RequestBundle.RequestGetSkillDatas();
         //更新UI下方信息
         MoneyShower.RefreshMoneyShower();
         DesignationManager.CheckPlayerInfo();
+        //如果是第一次更新
+        if (FirstRefresh)
+        {
+            FirstRefresh = false;
+        }
+        //如果星币超过5亿
         if (GetMoney() > 500000000)
         {
             var tempattr = new TempPlayerAttribute();
@@ -396,10 +403,8 @@ public class PlayerInfoInGame : MonoBehaviour
             SyncRequest.AppendRequest(Requests.PLAYER_DATA, tempattr);
             IIABinds binds = new IIABinds(Items.MONEY_CHEST, 1);
             SyncRequest.AppendRequest(Requests.ITEM_DATA, binds.ToJson(false));
-            yield return PlayerRequestBundle.RequestSyncUpdate();
+            yield return RequestBundle.RequestSyncUpdate();
         }
-        //if (updateDesign) OCManager.Refresh();
-        //System.GC.Collect();
     }
 
 
@@ -428,7 +433,7 @@ public class PlayerInfoInGame : MonoBehaviour
     /// </summary>
     public Coroutine RequestUpdatePlayerItems()
     {
-        return PlayerRequestBundle.RequestUpdateItemsInPack();
+        return RequestBundle.RequestUpdateItemsInPack();
     }
 
     /// <summary>

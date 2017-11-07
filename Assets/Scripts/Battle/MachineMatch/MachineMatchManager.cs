@@ -1,4 +1,5 @@
 ﻿using GameId;
+using ItemContainerSuite;
 using MachineMatchJson;
 using SerializedClassForJson;
 using System.Collections;
@@ -24,10 +25,19 @@ public class MachineMatchManager : MonoBehaviour
         }
     }
 
+    public static TempMachineMatchInfo CurrentInfo
+    {
+        get
+        {
+            return Instance.currentInfo;
+        }
+    }
+
     private const string GET_INFO_PATH = "scripts/player/machinematch/getMachineMatchInfo.php";
     private const string GET_MEM_PATH = "scripts/player/machinematch/getMMMemInfo.php";
     private static PlayerUnit currentTarget;
     private MachineMatchUIManager UIManager;
+    private TempMachineMatchInfo currentInfo;
     private void Awake()
     {
         Instance = this;
@@ -50,6 +60,7 @@ public class MachineMatchManager : MonoBehaviour
         {
             //首先获取玩家基本属性，需要注意的是，大部分逻辑将在这里搞定。
             TempMachineMatchInfo info = JsonUtility.FromJson<TempMachineMatchInfo>(w.text);
+            currentInfo = info;
             var targetIds = info.currentTargetIds;
             List<PlayerUnit> unitsToBeInit = new List<PlayerUnit>();
             for (int i = 0; i < targetIds.Length; i++)
@@ -133,6 +144,24 @@ public class MachineMatchManager : MonoBehaviour
     public static int GetMaxChallPerTimes()
     {
         return 5 + Mathf.CeilToInt(PlayerInfoInGame.VIP_Level * 0.25f);
+    }
+    public void OpenShop()
+    {
+        List<Transform> transforms = new List<Transform>();
+        Transform trans = CommonItemPool.Spawn(CommonItemPool.SHOP_ITEM_PREFAB);
+        trans.GetComponent<ShopItemGrid>().SetParam(Items.BOX_CHIP, ShopItemGrid.WORTH_TYPE.MM_SCORE, 100);
+        transforms.Add(trans);
+
+        ItemContainer.ShowContainer(transforms, () =>
+        {
+            var rect = trans.GetComponent<RectTransform>().rect;
+            ItemContainerParam.SetParam(rect.width, rect.height, 4);
+        }, () =>
+        {
+            CommonItemPool.RecycleAll();
+            InitOrRefresh();
+            //Debug.Log("回收成功");
+        }, "挑战商店", "使用挑战积分兑换/购买物品。");
     }
 }
 namespace MachineMatchJson

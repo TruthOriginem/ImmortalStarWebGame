@@ -98,7 +98,7 @@ public class DesignationManager : MonoBehaviour
     }
     IEnumerator ApplyCor(int id)
     {
-        yield return PlayerRequestBundle.RequestEquipDesignation(id);
+        yield return RequestBundle.RequestEquipDesignation(id);
         yield return PlayerInfoInGame.Instance.RequestUpdatePlayerInfo();
         InitOrRefresh();
         applyButton.interactable = PlayerInfoInGame.Design_NowEquipped != id;
@@ -175,7 +175,7 @@ public class DesignationManager : MonoBehaviour
     {
         for (int i = 0; i < DesignToGets.Count; i++)
         {
-            yield return PlayerRequestBundle.RequestAddDesignation(DesignToGets[i]);
+            yield return RequestBundle.RequestAddDesignation(DesignToGets[i]);
             PlayerInfoInGame.Design_Ids.Add(DesignToGets[i]);
         }
         DesignToGets.Clear();

@@ -19,6 +19,12 @@ public static class EArray
 }
 public static class EMath
 {
+    /// <summary>
+    /// 四舍五入至指定位数。
+    /// </summary>
+    /// <param name="number"></param>
+    /// <param name="digit"></param>
+    /// <returns></returns>
     public static float Round(float number, int digit)
     {
         int mult = 1;

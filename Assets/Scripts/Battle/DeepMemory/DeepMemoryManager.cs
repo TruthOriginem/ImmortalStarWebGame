@@ -353,7 +353,7 @@ public class DeepMemoryManager : MonoBehaviour
 
     IEnumerator _OpenSync()
     {
-        yield return PlayerRequestBundle.RequestSyncUpdate();
+        yield return RequestBundle.RequestSyncUpdate();
         yield return _InitOrRefresh();
     }
     /// <summary>
@@ -506,7 +506,7 @@ public class DeepMemoryManager : MonoBehaviour
         ItemContainer.ShowContainer(transforms, () =>
          {
              var rect = trans.GetComponent<RectTransform>().rect;
-             new ItemContainerParam(rect.width, rect.height, 4);
+             ItemContainerParam.SetParam(rect.width, rect.height, 4);
          }, () =>
          {
              CommonItemPool.RecycleAll();

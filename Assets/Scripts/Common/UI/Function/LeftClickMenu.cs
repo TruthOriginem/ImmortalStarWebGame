@@ -169,22 +169,22 @@ public class LeftClickMenu : MonoBehaviour
         attr.money = price * amount;
         if (item is EquipmentBase)
         {
-            yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(null, null, new string[] { item.item_id }), price <= 0 ? null : attr, null);
+            yield return RequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(null, null, new string[] { item.item_id }), price <= 0 ? null : attr, null);
         }
         else
         {
-            yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(new string[] { item.item_id }, new lint[] { -amount }), price <= 0 ? null : attr, null);
+            yield return RequestBundle.RequestUpdateRecord<Object>(null, new IIABinds(new string[] { item.item_id }, new lint[] { -amount }), price <= 0 ? null : attr, null);
         }
         yield return CategoryManager.Instance.RequestLoad();
     }
     IEnumerator OnGridClickInCategoryCor(IIABinds binds)
     {
-        yield return PlayerRequestBundle.RequestUpdateRecord<Object>(null, binds, null, null);
+        yield return RequestBundle.RequestUpdateRecord<Object>(null, binds, null, null);
         yield return CategoryManager.Instance.RequestLoad();
     }
     IEnumerator OnGridClickInReCor(EquipmentBase equip)
     {
-        yield return PlayerRequestBundle.MakeEquipToStorage(equip);
+        yield return RequestBundle.MakeEquipToStorage(equip);
         yield return CategoryManager.Instance.RequestLoad();
     }
     /// <summary>

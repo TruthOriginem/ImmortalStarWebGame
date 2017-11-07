@@ -113,8 +113,8 @@ public class BattleInstanceTooltip : MonoBehaviour
             sb.AppendLine();
         }
 
-        Dictionary<string, int> idsToLeast = new Dictionary<string, int>();
-        Dictionary<string, int> idsToLarge = new Dictionary<string, int>();
+        Dictionary<string, float> idsToLeast = new Dictionary<string, float>();
+        Dictionary<string, float> idsToLarge = new Dictionary<string, float>();
         int totalExp = 0;
         var actualEnemyGroup = grid.enemys.GetActualData(grid.sId);
         foreach (EnemyGroup group in actualEnemyGroup.enemyGroups)
@@ -134,19 +134,19 @@ public class BattleInstanceTooltip : MonoBehaviour
                 TempItemDrops itemDrop = attr.dropItems[i];
                 if (group.enemy.Level >= itemDrop.needLevel)
                 {
-                    float amount = group.amount * itemDrop.amount * (1f + itemDrop.multLevel * (group.enemy.Level - itemDrop.multLevel));
-                    amount *= BattleAwardMult.GetDropMult();
+                    float amount = group.amount * itemDrop.amount * (1f + itemDrop.multLevel * (group.enemy.Level - itemDrop.needLevel));
+                    //Debug.Log(amount);
                     if (idsToLarge.ContainsKey(itemDrop.id))
                     {
 
-                        idsToLarge[itemDrop.id] += Mathf.RoundToInt(amount);
-                        idsToLeast[itemDrop.id] += Mathf.RoundToInt(amount * itemDrop.chance);
+                        idsToLarge[itemDrop.id] += amount;
+                        idsToLeast[itemDrop.id] += amount * itemDrop.chance;
                     }
                     else
                     {
 
-                        idsToLarge.Add(itemDrop.id, Mathf.RoundToInt(amount));
-                        idsToLeast.Add(itemDrop.id, Mathf.RoundToInt(amount * itemDrop.chance));
+                        idsToLarge.Add(itemDrop.id, amount);
+                        idsToLeast.Add(itemDrop.id, amount * itemDrop.chance);
                     }
                 }
             }
@@ -171,7 +171,7 @@ public class BattleInstanceTooltip : MonoBehaviour
             bool isMoney = kv.Key == "money";
             string signal = isMoney ? "▽ " : "▼ ";
             string name = isMoney ? TextUtils.GetMoneyText(ItemDataManager.GetItemName(kv.Key)) : ItemDataManager.GetItemName(kv.Key);
-            sb.AppendFormat("{0}{1} : {2} ~ {3}", signal, name, idsToLeast[kv.Key], idsToLarge[kv.Key]);
+            sb.AppendFormat("{0}{1} : {2} ~ {3}", signal, name, (int)idsToLeast[kv.Key], (int)idsToLarge[kv.Key]);
             if (PlayerInfoInGame.VIP_Level >= 1)
             {
                 sb.Append("<color=#FFAE00FF>(+");

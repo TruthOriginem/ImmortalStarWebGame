@@ -126,7 +126,7 @@ public class MachineMatchManager : MonoBehaviour
     IEnumerator _RefreshAndChange()
     {
         TempMMSyncInfo info = new TempMMSyncInfo();
-        info.addChange = 2;
+        info.addChange = 1;
         SyncRequest.AppendRequest(Requests.MACHINE_MATCH_DATA, info);
         SyncRequest.AppendRequest(Requests.ITEM_DATA, new IIABinds(Items.MM_TICKET, -2).ToJson(false));
         WWW w = SyncRequest.CreateSyncWWW();

@@ -16,6 +16,7 @@ public class LeftClickMenu : MonoBehaviour
     public Button dropButton;
     public Button destoryButton;
     public Button saveButton;
+    public Button useItemButton;
 
     private bool isShowing = false;
 
@@ -33,7 +34,6 @@ public class LeftClickMenu : MonoBehaviour
         BaseGridUI.onGridLeftClick = null;
         BaseGridUI.onGridLeftClick += OnGridClickInCategory;
         gameObject.SetActive(false);
-
     }
 
     void Update()
@@ -74,18 +74,26 @@ public class LeftClickMenu : MonoBehaviour
             {
                 if (item.CanBeSold())
                 {
+                    //如果可以被卖出，添加卖出和摧毁按钮
                     buttons.Add(sellButton);
                     buttons.Add(destoryButton);
                 }
                 else
                 {
+                    buttons.Add(destoryButton);
                     return;
                 }
+                //只要是装备，就可以添加放入仓库按钮
                 buttons.Add(saveButton);
             }
             else
             {
+                //添加使用道具按钮
                 buttons.Add(item.CanBeSold() ? sellButton : dropButton);
+                if (item.CanBeUse())
+                {
+                    buttons.Add(useItemButton);
+                }
             }
             ClickInit(buttons.ToArray());
             //    Debug.Log(item.GetAmount());
@@ -159,6 +167,12 @@ public class LeftClickMenu : MonoBehaviour
             {
                 EquipmentBase equip = item as EquipmentBase;
                 PlayerInfoInGame.Instance.StartCoroutine(OnGridClickInReCor(equip));
+                Disable();
+            });
+            useItemButton.onClick.AddListener(() =>
+            {
+                //直接开启一个使用道具的协程
+                RequestBundle._StartCoroutine(ItemUseMethods.UseItem(item.item_id));
                 Disable();
             });
         }

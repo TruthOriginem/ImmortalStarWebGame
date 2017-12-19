@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-
+/// <summary>
+/// 化短为长整型。
+/// </summary>
 public struct lint : IComparable<lint>
 {
 
